@@ -1,0 +1,4 @@
+modEntry = {
+FileHooks = "lua/Prowler/FileHooks.lua",
+Priority = -1
+}

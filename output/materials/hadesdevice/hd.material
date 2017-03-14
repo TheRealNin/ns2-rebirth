@@ -1,0 +1,10 @@
+shader = "shaders/Model_emissive_alpha.surface_shader"
+albedoMap =     "materials/hadesdevice/hd.dds"
+specularMap =   "materials/hadesdevice/hd.dds"
+opacityMap =    "materials/hadesdevice/hd_opacity.dds"
+emissiveMap =   "materials/hadesdevice/hd.dds"
+normalMap =     "materials/dev/dev_normal.dds"
+specularMap =   "materials/dev/black.dds"
+
+surface = "thin_metal"
+

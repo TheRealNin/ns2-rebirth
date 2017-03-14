@@ -1,0 +1,1 @@
+kHealingFieldAmount = 300kHealingFieldDuration = 15kHealingFieldCooldown = 0.5kHealingFieldRadius = 5

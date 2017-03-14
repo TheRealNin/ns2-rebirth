@@ -1,0 +1,10 @@
+shader = "shaders/Model_emissive_alpha.surface_shader"
+albedoMap =   "materials/thirdperson/thirdperson.dds"
+specularMap = "materials/thirdperson/thirdperson.dds"
+opacityMap =  "materials/thirdperson/thirdperson_opacity.dds"
+emissiveMap = "materials/thirdperson/thirdperson.dds"
+normalMap =   "materials/dev/dev_normal.dds"
+specularMap = "materials/dev/black.dds"
+
+surface = "thin_metal"
+

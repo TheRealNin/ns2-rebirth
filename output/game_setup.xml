@@ -1,0 +1,10 @@
+
+<game>
+	<name>AnyTeam</name>
+	<description>Natural Selection 2 - Any Team</description>
+	<icon>icons/ns2_64x64.png</icon>
+	<client>lua/Client.lua</client>
+	<server>lua/AnyTeam/Server.lua</server>
+	<loading>lua/Loading.lua</loading>
+  <soundinfo>sound/NS2.soundinfo</soundinfo>
+</game>

@@ -1,0 +1,2 @@
+
+kProwlerFov = 100

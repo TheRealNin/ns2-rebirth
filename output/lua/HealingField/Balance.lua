@@ -1,0 +1,1 @@
+kHealingFieldCost = 2

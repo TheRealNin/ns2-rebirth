@@ -1,0 +1,4 @@
+modEntry = {
+FileHooks = "lua/HealingField/FileHooks.lua",
+Priority = -10
+}
