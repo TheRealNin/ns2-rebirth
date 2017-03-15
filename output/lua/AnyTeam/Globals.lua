@@ -1,5 +1,5 @@
 
-
+kAnyTeamEnabled = true
 
 if AddModPanel then 
     local kOverviewMaterial = PrecacheAsset("materials/anyteam/overview.material")

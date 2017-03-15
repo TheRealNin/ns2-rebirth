@@ -41,7 +41,7 @@ function HealingField:OnInitialized()
 end
 
 function HealingField:GetRepeatCinematic()
-    if Client.GetLocalPlayer() and not GetAreFriends(self, Client.GetLocalPlayer()) then
+    if kAnyTeamEnabled and Client.GetLocalPlayer() and GetAreEnemies(self, Client.GetLocalPlayer()) then
         return HealingField.kFieldEffectEnemy
     end
     return HealingField.kFieldEffect

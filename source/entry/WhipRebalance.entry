@@ -1,4 +1,0 @@
-modEntry = {
-FileHooks = "lua/WhipRebalance/FileHooks.lua",
-Priority = 60
-}

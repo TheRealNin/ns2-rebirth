@@ -34,17 +34,19 @@ end
 
 function Whip:OnAttackHit(target)
 
-    -- work around broken entity stuff
+    -- You have to set the origin periodically to work around broken entity stuff
     self:SetOrigin(self:GetOrigin())
 
     if target and self.slapping then
         if not self:GetIsOnFire() and self:CanAttack(target, Whip.kRange) then
+            target:SetOrigin(target:GetOrigin())
             self:SlapTarget(target)                           
         end
     end
     
     if target and self.bombarding then
         if not self:GetIsOnFire() and self.bombardTargetSelector:ValidateTarget(target) then
+            target:SetOrigin(target:GetOrigin())
             self:BombardTarget(target)
         end        
     end
