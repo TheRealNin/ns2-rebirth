@@ -18,7 +18,7 @@ function BuildTechData()
         [kTechDataBuildTime] = kHadesDeviceBuildTime,
         [kTechDataMaxHealth] = kHadesDeviceHealth,
         [kTechDataMaxArmor] = kHadesDeviceArmor,
-        [kTechDataTooltipInfo] = string.format("After a %s second arming time, the device can be detonated by a marine dealing massive damage to everything nearby.", kHadesDeviceArmTime),
+        [kTechDataTooltipInfo] = string.format("Requires activation by a marine. This device counts down for %s seconds and then explodes, dealing massive damage to everything nearby.", kHadesDeviceDetonateTime),
         [kTechDataHotkey] = Move.E,
         [kTechDataAlertText] = "Hades Device taking damage",
         [kTechDataNotOnInfestation] = kPreventMarineStructuresOnInfestation,

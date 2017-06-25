@@ -235,7 +235,7 @@ kDamageType = enum(
     'Gas', 'NerveGas', 'StructuresOnly', 
     'Falling', 'Door', 'Flame', 'Infestation', 
     'Corrode', 'ArmorOnly', 'Biological', 'StructuresOnlyLight', 
-    'Spreading', 'GrenadeLauncher'
+    'Spreading', 'GrenadeLauncher', 'MachineGun'
 })
 
 -- Describe damage types for tooltips
@@ -256,7 +256,8 @@ kDamageTypeDesc = {
     "StructuresOnlyLight: Damages structures only, light damage.",
     "Splash: same as structures only but always affects ARCs (friendly fire).",
     "Spreading: Does less damage against small targets.",
-    "GrenadeLauncher: Double structure damage, 20% reduction in player damage"
+    "GrenadeLauncher: Double structure damage, 20% reduction in player damage",
+    "MachineGun: Deals 1.5x amount of base damage against players"
 }
 
 kSpreadingDamageScalar = 0.75
@@ -527,6 +528,10 @@ local function DoubleHealthPerArmorForStructures(target, attacker, doer, damage,
     return damage, armorFractionUsed, healthPerArmor
 end
 
+local kMachineGunPlayerDamageScalar = 1.5
+local function MultiplyForMachineGun(target, attacker, doer, damage, armorFractionUsed, healthPerArmor, damageType, hitPoint)
+    return ConditionalValue(target:isa("Player") or target:isa("Exosuit"), damage * kMachineGunPlayerDamageScalar, damage), armorFractionUsed, healthPerArmor
+end
 
 kDamageTypeGlobalRules = nil
 kDamageTypeRules = nil
@@ -581,6 +586,10 @@ local function BuildDamageTypeRules()
     table.insert(kDamageTypeRules[kDamageType.GrenadeLauncher], ReduceForPlayersDoubleStructure)
     -- ------------------------------
     
+    -- Machine Gun rules
+    kDamageTypeRules[kDamageType.MachineGun] = {}
+    table.insert(kDamageTypeRules[kDamageType.MachineGun], MultiplyForMachineGun)
+    -- ------------------------------
     -- structural heavy rules
     kDamageTypeRules[kDamageType.StructuralHeavy] = {}
     table.insert(kDamageTypeRules[kDamageType.StructuralHeavy], HalfHealthPerArmor)

@@ -31,7 +31,7 @@ local kLineColors =
 {
     [kMarineTeamType] = Color(0, 0.8, 1, 0.5),
     [kAlienTeamType] = Color(1, 0.4, 0, 0.5),
-    [kPrecursorTeamType] = Color(0.77, 0.16, 0.62, 0.5),
+	[kPrecursorTeamType] = Color(0.77, 0.16, 0.62, 0.5),
 }
 
 local kGrey = Color(0.18, 0.18, 0.18, 1)
@@ -48,8 +48,7 @@ local kTechMapIconColors =
 local kStartOffset =
 {
     [kMarineTeamType] = kMarineTechMapYStart,
-    [kAlienTeamType] = kAlienTechMapYStart,
-    [kPrecursorTeamType] = kMarineTechMapYStart
+    [kAlienTeamType] = kAlienTechMapYStart
 }
 
 local kIconSize
@@ -198,7 +197,16 @@ function GUITechMap:Initialize()
         table.insert(self.lines, CreateLine(self, startPoint, endPoint, self.teamType))
     
     end
+    
+    self:SetIsVisible(not HelpScreen_GetHelpScreen():GetIsBeingDisplayed())
 
+end
+
+function GUITechMap:SetIsVisible(state)
+    
+    self.visible = state
+    self:Update(0)
+    
 end
 
 function GUITechMap:Uninitialize()
@@ -228,7 +236,15 @@ function GUITechMap:ShowTechMap(show)
 end
 
 function GUITechMap:GetIsVisible()
-    return self.background ~= nil and self.background:GetIsVisible()
+    
+    return self.visible
+    
+end
+
+function GUITechMap:GetIsDisplayed()
+    
+    return self.background ~= nil and self.background:GetIsVisible() and self.visible
+    
 end
 
 function GUITechMap:Update(deltaTime)
@@ -266,7 +282,7 @@ function GUITechMap:Update(deltaTime)
         self.registered = false
     end
     
-    local showMap = self.techMapButton or self.showtechMap
+    local showMap = (self.techMapButton or self.showtechMap) and self.visible
     
     self.background:SetIsVisible(showMap)
 
@@ -342,7 +358,7 @@ function GUITechMap:Update(deltaTime)
                         techIcon.ProgressMeter, techIcon.ProgressMeterBackground = CreateProgressMeter(techIcon.Icon)
                     end
                     
-                    techIcon.ProgressMeterBackground:SetIsVisible(true)
+                    techIcon.ProgressMeterBackground:SetIsVisible(self.visible)
                     techIcon.ProgressMeter:SetSize(Vector((kProgressMeterSize.x - 2) * researchProgress, kProgressMeterSize.y - 2, 0))
                     
                     useColor = self.researchingColor
