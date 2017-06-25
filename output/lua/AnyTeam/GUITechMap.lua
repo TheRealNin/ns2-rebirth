@@ -48,7 +48,8 @@ local kTechMapIconColors =
 local kStartOffset =
 {
     [kMarineTeamType] = kMarineTechMapYStart,
-    [kAlienTeamType] = kAlienTechMapYStart
+    [kAlienTeamType] = kAlienTechMapYStart,
+    [kPrecursorTeamType] = kMarineTechMapYStart
 }
 
 local kIconSize
