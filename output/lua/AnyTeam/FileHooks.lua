@@ -77,6 +77,7 @@ ModLoader.SetupFileHook( "lua/DropPack.lua", "lua/AnyTeam/DropPack.lua", "post" 
 
 -- relevancymask fixes
 ModLoader.SetupFileHook( "lua/Cyst.lua", "lua/AnyTeam/Cyst.lua", "post" )
+ModLoader.SetupFileHook( "lua/CystUtility.lua", "lua/AnyTeam/CystUtility.lua", "post" )
 ModLoader.SetupFileHook( "lua/Hive.lua", "lua/AnyTeam/Hive.lua", "post" )
 ModLoader.SetupFileHook( "lua/Drifter.lua", "lua/AnyTeam/Drifter.lua", "post" )
 ModLoader.SetupFileHook( "lua/EvolutionChamber.lua", "lua/AnyTeam/EvolutionChamber.lua", "post" )

@@ -45,7 +45,8 @@ function Cyst:SetIncludeRelevancyMask(includeMask)
         --Print("Relevant to team 2")
         includeMask = bit.bor(includeMask, kRelevantToTeam2Commander)
     else
-        --Print(self.teamNumber)
+        includeMask = bit.bor(includeMask, kRelevantToTeam2Commander)
+        includeMask = bit.bor(includeMask, kRelevantToTeam1Commander)
     end
     ScriptActor.SetIncludeRelevancyMask(self, includeMask)    
 

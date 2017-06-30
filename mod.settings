@@ -1,10 +1,10 @@
 name        = "NS2:Rebirth"
 source_dir  = "source"
 output_dir  = "output"
-description = [=[The complete collection of mods that makes up the Rebirth Project: http://steamcommunity.com/sharedfiles/filedetails/?id=846060238
-
-A gameplay and interface overhaul designed to lower the skill floor, while making the game more diverse and more interesting.
-
+description = [=[The complete collection of mods that makes up the Rebirth Project: http://steamcommunity.com/sharedfiles/filedetails/?id=846060238
+
+A gameplay and interface overhaul designed to lower the skill floor, while making the game more diverse and more interesting.
+
 ModID: 34aa8aec]=]
 image       = "preview.jpg"
 tag_modtype = "Custom Game Mode"

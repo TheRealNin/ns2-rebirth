@@ -267,7 +267,8 @@ function CystGhostModel:Update()
     if modelCoords then        
         
         local player = Client.GetLocalPlayer()
-        
+        local teamNumber = player:GetTeamNumber()
+    
         player:DestroyGhostGuides(true)
         
         cystPoints, parent, normals = GetCystPoints(modelCoords.origin, PlayerUI_GetTeamNumber())
@@ -288,7 +289,7 @@ function CystGhostModel:Update()
             
         end
         
-        local redeployCysts = GetEntitiesWithinRange("Cyst", modelCoords.origin, kCystRedeployRange)
+        local redeployCysts = GetEntitiesForTeamWithinRange("Cyst", teamNumber, modelCoords.origin, kCystRedeployRange)
         MarkPotentialDeployedCysts(redeployCysts, modelCoords.origin)
         
     end
