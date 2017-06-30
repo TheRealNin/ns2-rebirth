@@ -53,6 +53,7 @@ function Skulk:OnLeap()
     
     self.leaping = true
     self.wallWalking = false
+    self.jumping = true
     self:DisableGroundMove(0.2)
     
     self.timeOfLeap = Shared.GetTime()
