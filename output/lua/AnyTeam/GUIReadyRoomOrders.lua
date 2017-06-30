@@ -82,35 +82,7 @@ function GUIReadyRoomOrders:OnResolutionChanged(oldX, oldY, newX, newY)
 end
 
 local niceWords = {
-    "you are awesome",  
-    "that everything looks nice on you",
-    "you're pretty",
-    "you could probably lead a rebellion",
-    "you are smart",
-    "have you been working out?",
-    "I like your socks",
-    "well done!",
-    "heya good lookin'",
-    "lots of people like you",
-    "you're unique",
-    "you're pretty good with computers",
-    "you are sweet",
-    "you're pretty helpful",
-    "I bet you make delicious food",
-    "You're more helpful than you realize",
-    "don't worry, you'll do great",
-    "you rock",
-    "you matter to me",
-    "On a scale from 1 to 10, you're an 11",
-    "you have great insights",
-    "I hope you feel amazing today",
-    "you are nice",
-    "you're so impressive",
-    "thanks for reading these",
-    "You bring out the best in other people",
-    "Your name suits you to a T",
-    "You're great at figuring stuff out",
-    "How do you keep being so funny and making everyone laugh?"}
+    "You're playing NS2: Any Team"}
     
 
 function GUIReadyRoomOrders:Initialize()
