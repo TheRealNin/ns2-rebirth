@@ -111,6 +111,7 @@ ModLoader.SetupFileHook( "lua/Whip_Server.lua", "lua/AnyTeam/Whip_Server.lua", "
 -- outline fixes
 ModLoader.SetupFileHook( "lua/HiveVision.lua", "lua/AnyTeam/HiveVision.lua", "post" )
 ModLoader.SetupFileHook( "lua/HiveVisionMixin.lua", "lua/AnyTeam/HiveVisionMixin.lua", "post" )
+ModLoader.SetupFileHook( "lua/CloakableMixin.lua", "lua/AnyTeam/CloakableMixin.lua", "post" )
 
 
 -- REPLACEMENTS
