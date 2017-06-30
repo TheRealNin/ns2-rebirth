@@ -106,7 +106,7 @@ local oldReset = GUIAlienHUD.Reset
 function GUIAlienHUD:Reset()
     oldReset(self)
     if self.parasiteState then
-        Print("Resetting the parasite state")
+        --Print("Resetting the parasite state")
         self.parasiteState:SetUniformScale(self.scale)
         self.parasiteState:SetSize(GUIAlienHUD.kParasiteSize)
         self.parasiteState:SetPosition(GUIAlienHUD.kParasitePos)

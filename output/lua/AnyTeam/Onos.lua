@@ -23,3 +23,37 @@ function Onos:ModifyDamageTaken(damageTable, attacker, doer, damageType)
     
 
 end
+
+
+-- copied from exo
+local kSmashEggRange = 1.5
+local function SmashNearbyEggs(self)
+
+    assert(Server)
+    
+    
+    local nearbyEggs = GetEntitiesForTeamWithinRange("Egg", GetEnemyTeamNumber(self:GetTeamNumber()), self:GetOrigin(), kSmashEggRange)
+    for e = 1, #nearbyEggs do
+        nearbyEggs[e]:Kill(self, self, self:GetOrigin(), Vector(0, -1, 0))
+    end
+    
+    local nearbyEmbryos = GetEntitiesForTeamWithinRange("Embryo", GetEnemyTeamNumber(self:GetTeamNumber()), self:GetOrigin(), kSmashEggRange)
+    for e = 1, #nearbyEmbryos do
+        nearbyEmbryos[e]:Kill(self, self, self:GetOrigin(), Vector(0, -1, 0))
+    end
+    
+    
+    -- Keep on killing those nasty eggs forever.
+    return true
+    
+end
+
+local oldCreate = Onos.OnCreate
+function Onos:OnCreate()
+    oldCreate(self)
+    
+    if Server then
+        self:AddTimedCallback(SmashNearbyEggs, 0.1)
+    end
+    
+end
