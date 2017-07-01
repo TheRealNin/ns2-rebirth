@@ -85,6 +85,15 @@ ModLoader.SetupFileHook( "lua/Babbler.lua", "lua/AnyTeam/Babbler.lua", "post" )
 
 -- bot fixes
 ModLoader.SetupFileHook( "lua/bots/PlayerBrain.lua", "lua/AnyTeam/bots/PlayerBrain.lua", "post" )
+-- bot REPLACEMENTS
+ModLoader.SetupFileHook( "lua/bots/TeamBrain.lua", "lua/AnyTeam/bots/TeamBrain.lua", "replace" )
+ModLoader.SetupFileHook( "lua/bots/CommanderBot.lua", "lua/AnyTeam/bots/CommanderBot.lua", "replace" )
+ModLoader.SetupFileHook( "lua/bots/FadeBrain_Data.lua", "lua/AnyTeam/bots/FadeBrain_Data.lua", "replace" )
+ModLoader.SetupFileHook( "lua/bots/GorgeBrain_Data.lua", "lua/AnyTeam/bots/GorgeBrain_Data.lua", "replace" )
+ModLoader.SetupFileHook( "lua/bots/LerkBrain_Data.lua", "lua/AnyTeam/bots/LerkBrain_Data.lua", "replace" )
+ModLoader.SetupFileHook( "lua/bots/MarineBrain_Data.lua", "lua/AnyTeam/bots/MarineBrain_Data.lua", "replace" )
+ModLoader.SetupFileHook( "lua/bots/OnosBrain_Data.lua", "lua/AnyTeam/bots/OnosBrain_Data.lua", "replace" )
+ModLoader.SetupFileHook( "lua/bots/SkulkBrain_Data.lua", "lua/AnyTeam/bots/SkulkBrain_Data.lua", "replace" )
 
 -- GUI fixes
 ModLoader.SetupFileHook( "lua/GUIProduction.lua", "lua/AnyTeam/GUIProduction.lua", "post" )
