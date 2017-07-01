@@ -23,8 +23,8 @@ kEnemyTeamType = 6
 
 kNeutralTeamNumber = 0
 
-kTeam1Type = kAlienTeamType --kPrecursorTeamType
-kTeam2Type = kAlienTeamType --kPrecursorTeamType
+kTeam1Type = kMarineTeamType --kPrecursorTeamType
+kTeam2Type = kMarineTeamType --kPrecursorTeamType
 
 kTeamIndexToType = { }
 kTeamIndexToType[kTeamInvalid]      = kNeutralTeamType

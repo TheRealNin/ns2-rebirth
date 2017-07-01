@@ -76,7 +76,7 @@ function GUIAlienHUD:Update(deltaTime)
     
     -- update parasite state
     
-    if self.lastParasiteState ~= parasiteState then
+    if self.parasiteState and self.lastParasiteState ~= parasiteState then
 
         self.parasiteState:DestroyAnimations()
         self.parasiteState:SetColor(GUIAlienHUD.kParasiteColor[PlayerUI_GetPlayerParasiteState()], 0)
