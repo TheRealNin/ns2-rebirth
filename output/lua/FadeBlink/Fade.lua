@@ -2,7 +2,7 @@
 local kSwipeRange = 2.1
 local kMaxSpeed = 7.5
 local kBlinkSpeed = 100
-local kshadowStepTime = 0.1
+local kshadowStepTime = 0.2
 local kMinEnterEtherealTime = 0.35
 local kFadeScanDuration = 4
 
