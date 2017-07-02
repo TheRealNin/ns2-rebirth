@@ -44,7 +44,11 @@ function GUIAlienHUD:Initialize()
     
     
     -- this has to happen before the screeneffects override
+    -- but we need to disable the reset
+    local oldReset = GUIAlienHUD.Reset
+    GUIAlienHUD.Reset = function() end
     oldInitialize(self)
+    GUIAlienHUD.Reset = oldReset
     
     self.parasiteState = self:CreateAnimatedGraphicItem()
     self.parasiteState:SetTexture(GUIAlienHUD.kParasiteTextureName)
@@ -62,7 +66,7 @@ function GUIAlienHUD:Initialize()
     self.parasiteTimer:Initialize( parasiteTimerSettings )
     self.parasiteState:AddChild( self.parasiteTimer:GetBackground() )
     
-	Client.DestroyScreenEffect(Player.screenEffects.darkVision)
+    Client.DestroyScreenEffect(Player.screenEffects.darkVision)
     Player.screenEffects.darkVision = Client.CreateScreenEffect("shaders/AnyTeamVision.screenfx")
     
     self:Reset()
@@ -76,10 +80,11 @@ function GUIAlienHUD:Update(deltaTime)
     
     -- update parasite state
     
-    if self.parasiteState and self.lastParasiteState ~= parasiteState then
+    if self.parasiteState and self.parasiteState.SetColor and self.lastParasiteState ~= parasiteState then
 
         self.parasiteState:DestroyAnimations()
-        self.parasiteState:SetColor(GUIAlienHUD.kParasiteColor[PlayerUI_GetPlayerParasiteState()], 0)
+        local color = GUIAlienHUD.kParasiteColor[PlayerUI_GetPlayerParasiteState()] or Color(0,0,0,0)
+        self.parasiteState:SetColor(color, 0)
         
         if self.lastParasiteState < PlayerUI_GetPlayerParasiteState() then
             self.parasiteState:SetSize(GUIAlienHUD.kParasiteSize * 1.55)
@@ -105,7 +110,7 @@ end
 local oldReset = GUIAlienHUD.Reset
 function GUIAlienHUD:Reset()
     oldReset(self)
-    if self.parasiteState then
+    if self.parasiteState and self.scale then
         --Print("Resetting the parasite state")
         self.parasiteState:SetUniformScale(self.scale)
         self.parasiteState:SetSize(GUIAlienHUD.kParasiteSize)
