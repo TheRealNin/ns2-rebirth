@@ -8,4 +8,7 @@ ModLoader.SetupFileHook( "lua/Fade.lua", "lua/FadeBlink/Fade.lua", "post" )
 ModLoader.SetupFileHook( "lua/Balance.lua", "lua/FadeBlink/Balance.lua", "post" )
 ModLoader.SetupFileHook( "lua/Weapons/Alien/Blink.lua", "lua/FadeBlink/Blink.lua", "post" )
 ModLoader.SetupFileHook( "lua/Weapons/Alien/Metabolize.lua", "lua/FadeBlink/Metabolize.lua", "post" )
+ModLoader.SetupFileHook( "lua/Weapons/Alien/SwipeBlink.lua", "lua/FadeBlink/SwipeBlink.lua", "post" )
 --ModLoader.SetupFileHook( "lua/Mixins/BaseMoveMixin.lua", "lua/FadeBlink/BaseMoveMixin.lua", "post" )
+
+ModLoader.SetupFileHook( "lua/GUIAlienBuyMenu.lua", "lua/FadeBlink/GUIAlienBuyMenu.lua", "post" )

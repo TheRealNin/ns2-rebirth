@@ -83,48 +83,52 @@ function BlinkEndTarget(self)
   local sphereCenter = Vector(0,  capsuleRadius * 1.0, 0)
   local center = Vector(0, capsuleHeight * 0.5 + capsuleRadius, 0)
   
-  local traceStart = player:GetEyePos() + sphereCenter
-  local traceEnd = lookedAtPoint + sphereCenter
-  
-  local trace = Shared.TraceCapsule( traceStart, traceEnd, capsuleRadius * 1.0, 0, CollisionRep.Move, PhysicsMask.All, EntityFilterOneAndIsa(player, "Babbler"))
-  -- trace is now the furthest point we can see with the mini sphere
-  
-  local coords = self:GetCoords()
-  
-  -- did we fail to find any points?
-  if trace.fraction <= 0.01 then
-    coords.origin = player:GetOrigin() 
-    return coords
+  local numStarts = 2
+  for startStep=0,numStarts,1 do
+    local traceStart = player:GetEyePos() + sphereCenter - startStep * capsuleHeight * 0.5
+    local traceEnd = lookedAtPoint + sphereCenter
+    
+    local trace = Shared.TraceCapsule( traceStart, traceEnd, capsuleRadius * 1.0, 0, CollisionRep.Move, PhysicsMask.All, EntityFilterOneAndIsa(player, "Babbler"))
+    -- trace is now the furthest point we can see with the mini sphere
+    
+    local coords = self:GetCoords()
+    
+    -- did we fail to find any points?
+    --[[
+    if trace.fraction <= 0.01 then
+      coords.origin = player:GetOrigin() 
+      return coords
+    end
+    ]]
+    
+    -- now test points to see if there is a spot we can spawn the player using the real capsuleHeight
+    local numSteps = 10
+    for i=0,numSteps,1 do
+      local newFraction = trace.fraction * ((numSteps - i) / numSteps)
+      local spherePoint = traceStart * (1-newFraction) + traceEnd * newFraction
+      local sphereStart = spherePoint + center
+      local sphereBottomEnd = spherePoint - center
+      local sphereEnd = spherePoint
+      local capsuleTrace = Shared.TraceCapsule(sphereStart, sphereEnd, capsuleRadius, capsuleHeight, CollisionRep.Move, PhysicsMask.Movement, EntityFilterOneAndIsa(player, "Babbler"))
+      if capsuleTrace.fraction > 0.05 then
+        local newOrigin = sphereStart * (1-capsuleTrace.fraction) + sphereEnd * capsuleTrace.fraction  - center
+        coords.origin =newOrigin
+        return coords
+      end
+      local capsuleBottomTrace = Shared.TraceCapsule(sphereStart, sphereBottomEnd, capsuleRadius, capsuleHeight, CollisionRep.Move, PhysicsMask.Movement,  EntityFilterOneAndIsa(player, "Babbler"))
+      if capsuleBottomTrace.fraction > 0.05 then
+        local newOrigin = sphereStart * (1-capsuleBottomTrace.fraction) + sphereBottomEnd * capsuleBottomTrace.fraction  - center
+        coords.origin =newOrigin
+        return coords
+      end
+      capsuleBottomTrace = Shared.TraceCapsule(sphereBottomEnd, sphereStart, capsuleRadius, capsuleHeight, CollisionRep.Move, PhysicsMask.Movement,  EntityFilterOneAndIsa(player, "Babbler"))
+      if capsuleBottomTrace.fraction > 0.05 then
+        local newOrigin = sphereBottomEnd * (1-capsuleBottomTrace.fraction) + sphereStart * capsuleBottomTrace.fraction  - center
+        coords.origin =newOrigin
+        return coords
+      end
+    end
   end
-  
-  -- now test points to see if there is a spot we can spawn the player using the real capsuleHeight
-  local numSteps = 10
-  for i=0,numSteps,1 do
-    local newFraction = trace.fraction * ((numSteps - i) / numSteps)
-    local spherePoint = traceStart * (1-newFraction) + traceEnd * newFraction
-    local sphereStart = spherePoint + center
-    local sphereBottomEnd = spherePoint - center
-    local sphereEnd = spherePoint
-    local capsuleTrace = Shared.TraceCapsule(sphereStart, sphereEnd, capsuleRadius, capsuleHeight, CollisionRep.Move, PhysicsMask.Movement, EntityFilterOneAndIsa(player, "Babbler"))
-    if capsuleTrace.fraction > 0.01 then
-      local newOrigin = sphereStart * (1-capsuleTrace.fraction) + sphereEnd * capsuleTrace.fraction  - center
-      coords.origin =newOrigin
-      return coords
-    end
-    local capsuleBottomTrace = Shared.TraceCapsule(sphereStart, sphereBottomEnd, capsuleRadius, capsuleHeight, CollisionRep.Move, PhysicsMask.Movement,  EntityFilterOneAndIsa(player, "Babbler"))
-    if capsuleBottomTrace.fraction > 0.01 then
-      local newOrigin = sphereStart * (1-capsuleBottomTrace.fraction) + sphereBottomEnd * capsuleBottomTrace.fraction  - center
-      coords.origin =newOrigin
-      return coords
-    end
-    capsuleBottomTrace = Shared.TraceCapsule(sphereBottomEnd, sphereStart, capsuleRadius, capsuleHeight, CollisionRep.Move, PhysicsMask.Movement,  EntityFilterOneAndIsa(player, "Babbler"))
-    if capsuleBottomTrace.fraction > 0.01 then
-      local newOrigin = sphereBottomEnd * (1-capsuleBottomTrace.fraction) + sphereStart * capsuleBottomTrace.fraction  - center
-      coords.origin =newOrigin
-      return coords
-    end
-  end
-  
   -- we failed, so lets try the older, safer version to see if it finds a coord?
   return OldBlinkEndTarget(self)
 end
