@@ -1,0 +1,4 @@
+modEntry = {
+FileHooks = "lua/NinBalance/FileHooks.lua",
+Priority = -5
+}

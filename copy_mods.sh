@@ -11,3 +11,4 @@ cp -R /c/Users/Adam/Documents/ModPanels/output/* $dest
 cp -R /c/Users/Adam/Documents/Prowler/output/* $dest
 cp -R /c/Users/Adam/Documents/ThirdPerson/output/* $dest
 cp -R /c/Users/Adam/Documents/WhipRebalance/output/* $dest
+cp -R /c/Users/Adam/Documents/NinBalance/output/* $dest

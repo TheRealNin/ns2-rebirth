@@ -1,0 +1,2 @@
+
+kHydrasPerHive = 3
