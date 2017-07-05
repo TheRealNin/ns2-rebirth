@@ -63,4 +63,9 @@ function Marine:OnCreate()
     InitMixin(self, FireMixin)
 end
 
+local kMarineEngageOffset = Vector(0, 1.5, 0)
+function Marine:GetEngagementPointOverride()
+    return self:GetOrigin() + kMarineEngageOffset
+end
+
 Shared.LinkClassToMap("Marine", Marine.kMapName, networkVars, true)

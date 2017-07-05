@@ -341,6 +341,36 @@ if Server then
         
     end
     
+    -- No enforced balanced teams on join as the auto team balance system balances teams.
+    function NS2Gamerules:GetCanJoinTeamNumber(player, teamNumber)
+
+        local forceEvenTeams = Server.GetConfigSetting("force_even_teams_on_join")
+        if forceEvenTeams then
+
+            local team1Players, _, team1Bots = self.team1:GetNumPlayers()
+            team1Players = team1Players - team1Bots
+            local team2Players, _, team2Bots = self.team2:GetNumPlayers()
+            team2Players = team2Players - team2Bots
+            
+            if (team1Players > team2Players) and (teamNumber == self.team1:GetTeamNumber()) then
+                return false, 0
+            elseif (team2Players > team1Players) and (teamNumber == self.team2:GetTeamNumber()) then
+                return false, 0
+            end
+
+        end
+
+        if not Shared.GetCheatsEnabled() and Server.IsDedicated() and
+                not self.botTraining and player:GetPlayerLevel() ~= -1 then
+            if self.gameInfo:GetRookieMode() and player:GetPlayerLevel() >= kRookieAllowedLevel then
+                return false, 2
+            end
+        end
+        
+        return true
+        
+    end
+    
     function NS2Gamerules:KillEnemiesNearCommandStructureInPreGame(timePassed)
     
         if self:GetGameState() < kGameState.Countdown then

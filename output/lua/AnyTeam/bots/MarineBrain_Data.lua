@@ -113,12 +113,12 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
     end
 
     local sighted = target:GetIsSighted()
-    local aimPos = sighted and GetBestAimPoint( target ) or lastSeenPos
+    local aimPos = GetBestAimPoint( target ) or lastSeenPos
     local dist = GetDistanceToTouch( eyePos, target )
     local doFire = false
 
     -- Avoid doing expensive vis check if we are too far
-    local hasClearShot = dist < 20.0 and bot:GetBotCanSeeTarget( target )
+    local hasClearShot = dist < 30.0 and bot:GetBotCanSeeTarget( target )
 
     if not hasClearShot then
 
@@ -137,9 +137,14 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
             bot:GetMotion():SetDesiredMoveTarget( aimPos )
             doFire = true
         elseif dist < 10.0 then
-            -- too close - back away while firing
-            bot:GetMotion():SetDesiredMoveTarget( nil )
-            bot:GetMotion():SetDesiredMoveDirection( -( aimPos-eyePos ) )
+           bot:GetMotion():SetDesiredMoveTarget( ( aimPos-eyePos ) )
+            -- too close - back away while firing if health is still high
+            if target.health / target.maxHealth > 0.6 then
+              bot:GetMotion():SetDesiredMoveDirection( -( aimPos-eyePos ) )
+            else
+              bot:GetMotion():SetDesiredMoveDirection( ( aimPos-eyePos ) )
+            end
+
             doFire = true
         else
             -- good distance
@@ -386,9 +391,9 @@ kMarineBrainActions =
 
             local threat = s:Get("biggestThreat")
 
-            if threat ~= nil and threat.distance < 10 and s:Get("clipFraction") > 0.0 then
+            if threat ~= nil and threat.distance < 15 and s:Get("clipFraction") > 0.0 then
                 -- threat really close, and we have some ammo, shoot it!
-                weight = 0.0
+                weight = 0.01
             else
                 weight = EvalLPF( s:Get("clipFraction"), {
                         { 0.0 , 15 } , 
@@ -491,7 +496,7 @@ kMarineBrainActions =
             else
 
                 -- Could be attack, weld, etc.
-                weight = 2.0
+                weight = 3.0
 
             end
 
@@ -863,10 +868,10 @@ local function GetAttackUrgency(bot, mem)
             [kMinimapBlipType.Lerk] = numOthers >= 2   and 0.1 or 5.0,
             [kMinimapBlipType.Fade] = numOthers >= 3   and 0.1 or 6.0,
             [kMinimapBlipType.Onos] =  numOthers >= 4  and 0.1 or 7.0,
-            [kMinimapBlipType.Marine] = numOthers >= 2 and 0.1 or 4.0,
-            [kMinimapBlipType.JetpackMarine] = numOthers >= 2 and 0.1 or 4.0,
+            [kMinimapBlipType.Marine] = numOthers >= 2 and 0.1 or 6.0,
+            [kMinimapBlipType.JetpackMarine] = numOthers >= 2 and 0.1 or 5.0,
             [kMinimapBlipType.Exo] =  numOthers >= 4  and 0.1 or 7.0,
-            [kMinimapBlipType.Sentry]  = numOthers >= 2   and 0.1 or 3.0
+            [kMinimapBlipType.Sentry]  = numOthers >= 2   and 0.1 or 5.0
         }
         return activeUrgencies
     end
@@ -969,7 +974,7 @@ function CreateMarineBrainSenses()
     s:Add("nearestArmory", function(db)
 
             local marine = db.bot:GetPlayer()
-            local armories = GetEntitiesForTeam( "Armory", kMarineTeamType )
+            local armories = GetEntitiesForTeam( "Armory", marine:GetTeamNumber() )
 
             local dist, armory = GetMinTableEntry( armories,
                 function(armory)
@@ -995,7 +1000,7 @@ function CreateMarineBrainSenses()
 
             local marine = db.bot:GetPlayer()
             local marinePos = marine:GetOrigin()
-            local powers = GetEntitiesForTeam( "PowerPoint", kMarineTeamType )
+            local powers = GetEntities( "PowerPoint" )
 
             local dist, power = GetMinTableEntry( powers,
                 function(power)
@@ -1010,7 +1015,7 @@ function CreateMarineBrainSenses()
     s:Add("nearestWeldable", function(db)
 
             local marine = db.bot:GetPlayer()
-            local targets = GetEntitiesWithMixinForTeamWithinRange( "Weldable", kMarineTeamType, marine:GetOrigin(), 10.0 )
+            local targets = GetEntitiesWithMixinForTeamWithinRange( "Weldable", marine:GetTeamNumber(), marine:GetOrigin(), 20.0 )
 
             local dist, target = GetMinTableEntry( targets,
                 function(target)
@@ -1055,7 +1060,8 @@ function CreateMarineBrainSenses()
 
     s:Add("comPingElapsed", function(db)
 
-            local pingTime = GetGamerules():GetTeam1():GetCommanderPingTime()
+            local marine = db.bot:GetPlayer()
+            local pingTime = GetGamerules():GetTeam(marine:GetTeamNumber()):GetCommanderPingTime()
 
             if pingTime > 0 and pingTime ~= nil and pingTime < Shared.GetTime() then
                 return Shared.GetTime() - pingTime
@@ -1066,7 +1072,9 @@ function CreateMarineBrainSenses()
             end)
 
     s:Add("comPingPosition", function(db)
-            local rawPos = GetGamerules():GetTeam1():GetCommanderPingPosition()
+            
+            local marine = db.bot:GetPlayer()
+            local rawPos = GetGamerules():GetTeam(marine:GetTeamNumber()):GetCommanderPingPosition()
             -- the position is usually up in the air somewhere, so pretend we did a commander pick to put it somewhere sensible
             local trace = GetCommanderPickTarget(
                 db.bot:GetPlayer(), -- not right, but whatever
