@@ -348,9 +348,12 @@ if Server then
         if forceEvenTeams then
 
             local team1Players, _, team1Bots = self.team1:GetNumPlayers()
-            team1Players = team1Players - team1Bots
             local team2Players, _, team2Bots = self.team2:GetNumPlayers()
-            team2Players = team2Players - team2Bots
+            --Log("player.botBrain: %s", player.botBrain)
+            if not player.botBrain then
+              team1Players = team1Players - team1Bots
+              team2Players = team2Players - team2Bots
+            end
             
             if (team1Players > team2Players) and (teamNumber == self.team1:GetTeamNumber()) then
                 return false, 0

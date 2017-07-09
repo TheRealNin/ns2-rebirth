@@ -74,6 +74,7 @@ ModLoader.SetupFileHook( "lua/Entity.lua", "lua/AnyTeam/Entity.lua", "post" )
 ModLoader.SetupFileHook( "lua/Player.lua", "lua/AnyTeam/Player.lua", "post" )
 ModLoader.SetupFileHook( "lua/WallMovementMixin.lua", "lua/AnyTeam/WallMovementMixin.lua", "post" )
 ModLoader.SetupFileHook( "lua/DropPack.lua", "lua/AnyTeam/DropPack.lua", "post" )
+--ModLoader.SetupFileHook( "lua/GUISelectionPanel.lua", "lua/AnyTeam/GUISelectionPanel.lua", "post" )
 
 -- relevancymask fixes
 ModLoader.SetupFileHook( "lua/Cyst.lua", "lua/AnyTeam/Cyst.lua", "post" )
@@ -85,6 +86,7 @@ ModLoader.SetupFileHook( "lua/Babbler.lua", "lua/AnyTeam/Babbler.lua", "post" )
 
 -- bot fixes
 ModLoader.SetupFileHook( "lua/bots/PlayerBrain.lua", "lua/AnyTeam/bots/PlayerBrain.lua", "post" )
+--ModLoader.SetupFileHook( "lua/bots/Bot.lua", "lua/AnyTeam/bots/Bot.lua", "post" )
 -- bot REPLACEMENTS
 ModLoader.SetupFileHook( "lua/bots/TeamBrain.lua", "lua/AnyTeam/bots/TeamBrain.lua", "replace" )
 ModLoader.SetupFileHook( "lua/bots/CommanderBot.lua", "lua/AnyTeam/bots/CommanderBot.lua", "replace" )

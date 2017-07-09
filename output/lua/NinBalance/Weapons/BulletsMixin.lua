@@ -1,5 +1,5 @@
 
--- check for umbra and play local hit effects (bullets only)
+
 function BulletsMixin:ApplyBulletGameplayEffects(player, target, endPoint, direction, damage, surface, showTracer)
     
     if (player and endPoint) then

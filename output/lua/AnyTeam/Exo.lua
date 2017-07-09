@@ -1,6 +1,4 @@
 
-local electrifiedSpeedScalar = 0.5
-
 local kExoModifier = {}
 kExoModifier["Shotgun"] = kExoBulletModifier
 kExoModifier["Rifle"] = kExoBulletModifier
@@ -50,12 +48,15 @@ end
 
 function Exo:SetElectrified(time)
 
+    time = time * kExoElectrifiedMult
+    
     if self.timeElectrifyEnds - Shared.GetTime() < time then
     
         self.timeElectrifyEnds = Shared.GetTime() + time
         self.electrified = true
         
     end
+    self:SetFuel( 0 )
     
 end
 
@@ -64,7 +65,7 @@ function Exo:GetMaxSpeed(possible)
     local maxSpeed = oldGetMaxSpeed(self, possible)
     
     if self.electrified then
-        maxSpeed = electrifiedSpeedScalar * maxSpeed
+        maxSpeed = kElectrifiedSpeedScalar * maxSpeed
     end
     
     return maxSpeed

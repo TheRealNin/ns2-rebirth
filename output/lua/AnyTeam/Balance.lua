@@ -15,7 +15,6 @@ kTeamVsTeamDamage[kMarineTeamType][kNeutralTeamType] = 1.33
 kTeamVsTeamDamage[kAlienTeamType] = {}
 kTeamVsTeamDamage[kAlienTeamType][kAlienTeamType] = 0.85
 
-
--- Jetpack THIS IS TEMPORARY AND JUST FOR JON
---kJetpackUseFuelRate = .105 -- was .21
---kJetpackReplenishFuelRate = .055 -- was .11
+-- this is the exo speed modifier when you get hit by a shock grenade
+kElectrifiedSpeedScalar = 0.2
+kExoElectrifiedMult = 1.5
