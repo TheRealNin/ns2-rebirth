@@ -5,7 +5,7 @@ kHydraDamage = 2.5  -- was 15 -- From NS1
 
 
 kWelderDamagePerSecond = 60 -- was 30
-kAxeDamage = 50 -- was 25
+kAxeDamage = 35 -- was 25
 kBurnDamagePerSecond = 6 -- was 2
 
 kBulletDamageFalloffStart = 6
