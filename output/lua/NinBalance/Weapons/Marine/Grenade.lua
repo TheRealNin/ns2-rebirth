@@ -1,6 +1,6 @@
 
 
-Grenade.kMinLifeTime = 0.0 -- allow marines to kill themselves - it's hilarious!
+--Grenade.kMinLifeTime = 0.0 -- allow marines to kill themselves - it's hilarious!
 Grenade.kRadius = nil -- geez this was large before
 Grenade.kClearOnEnemyImpact = false
 
