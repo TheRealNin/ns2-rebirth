@@ -31,7 +31,7 @@ local kDamageTextures =
 
 GUIDamageIndicators.kDamageIndicatorOffset = GUIScale(48)
 
-local kHitEffectSize = 1200 -- considers GUIScale already
+local kHitEffectSize = 800 -- considers GUIScale already
 
 function GUIDamageIndicators:Initialize()
 

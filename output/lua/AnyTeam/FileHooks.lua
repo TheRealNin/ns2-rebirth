@@ -74,6 +74,7 @@ ModLoader.SetupFileHook( "lua/Entity.lua", "lua/AnyTeam/Entity.lua", "post" )
 ModLoader.SetupFileHook( "lua/Player.lua", "lua/AnyTeam/Player.lua", "post" )
 ModLoader.SetupFileHook( "lua/WallMovementMixin.lua", "lua/AnyTeam/WallMovementMixin.lua", "post" )
 ModLoader.SetupFileHook( "lua/DropPack.lua", "lua/AnyTeam/DropPack.lua", "post" )
+ModLoader.SetupFileHook( "lua/SelectableMixin.lua", "lua/AnyTeam/SelectableMixin.lua", "post" )
 --ModLoader.SetupFileHook( "lua/GUISelectionPanel.lua", "lua/AnyTeam/GUISelectionPanel.lua", "post" )
 
 -- relevancymask fixes

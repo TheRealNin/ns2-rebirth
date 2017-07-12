@@ -67,7 +67,7 @@ end
 
 function PowerPoint:GetCanBeUsed(player, useSuccessTable)
 
-    if player:isa("Exo") then
+    if player:isa("Exo") or player:isa("Alien") then
         useSuccessTable.useSuccess = false
         return
     end
