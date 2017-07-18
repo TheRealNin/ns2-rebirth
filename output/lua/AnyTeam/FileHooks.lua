@@ -3,6 +3,7 @@ ModLoader.SetupFileHook( "lua/Server.lua", "lua/AnyTeam/Server.lua", "post" )
 
 --- CORE CHANGES
 ModLoader.SetupFileHook( "lua/Mixins/BaseModelMixin.lua", "lua/AnyTeam/Mixins/BaseModelMixin.lua", "replace" )
+ModLoader.SetupFileHook( "lua/MapCycle.lua", "lua/AnyTeam/MapCycle.lua", "post" )
 
 -- NS2+ fixes
 ModLoader.SetupFileHook( "lua/NS2Plus/Client/CHUD_Outlines.lua", "lua/AnyTeam/NS2Plus/CHUD_Disabled.lua", "replace" )

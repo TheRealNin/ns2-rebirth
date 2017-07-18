@@ -1,2 +1,0 @@
-shader = "cinematics/vfx_materials/marine_enemy_highlight.surface_shader"
-normalMap = "%inherit"

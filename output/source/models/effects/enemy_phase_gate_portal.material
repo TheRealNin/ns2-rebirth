@@ -1,3 +1,0 @@
-shader = "shaders/Emissive.surface_shader"
-emissiveMap = "models/effects/enemy_phase_gate_portal.dds"
-surface = "electric"

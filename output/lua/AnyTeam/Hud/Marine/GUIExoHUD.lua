@@ -116,6 +116,8 @@ function GUIExoHUD:Initialize()
     
     self.targets = { }
     
+    self.visible = true
+    
 end
 
 function GUIExoHUD:Uninitialize()
@@ -128,7 +130,12 @@ function GUIExoHUD:Uninitialize()
 end
 
 function GUIExoHUD:SetIsVisible(isVisible)
+    self.visible = isVisible
     self.background:SetIsVisible(isVisible)
+end
+
+function GUIExoHUD:GetIsVisible()
+   return self.visible
 end
 
 local function GetFreeTargetItem(self)

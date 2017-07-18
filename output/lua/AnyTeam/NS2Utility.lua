@@ -23,6 +23,9 @@ end
 
 function GetCommanderSwitchTeamAllowed()
 
+    if kForceMvM or kForceAvA then
+        return false
+    end
 
     local gameState = kGameState.PreGame
 

@@ -9,7 +9,7 @@ local kSendNoCommanderMessageRate = 10
 if Server then
 
     function NS2Gamerules:BuildTeam(teamType)
-
+        
         if teamType == kAlienTeamType then
             return AlienTeam()
         end
@@ -23,6 +23,13 @@ if Server then
     end
     
     function NS2Gamerules:SwitchTeamType(teamIndex, newTeamType)
+        
+        if kForceMvM then
+            newTeamType = kMarineTeamType
+        end
+        if kForceAvA then
+            newTeamType = kAlienTeamType
+        end
         
         self:SetGameState(kGameState.NotStarted)
         

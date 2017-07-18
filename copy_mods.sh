@@ -1,6 +1,7 @@
 #!/usr/bin/bash
 dest="/c/Users/Adam/Documents/Rebirth/output/"
 
+
 cp -R /c/Users/Adam/Documents/AlienAtmos/output/* $dest
 cp -R /c/Users/Adam/Documents/AnyTeam/output/* $dest
 cp -R /c/Users/Adam/Documents/EggSpawn/output/* $dest

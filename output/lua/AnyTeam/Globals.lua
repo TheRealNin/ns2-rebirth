@@ -26,6 +26,8 @@ kNeutralTeamNumber = 0
 kTeam1Type = kMarineTeamType --kPrecursorTeamType
 kTeam2Type = kMarineTeamType --kPrecursorTeamType
 
+kAnyTeamForcedMode = false
+
 kTeamIndexToType = { }
 kTeamIndexToType[kTeamInvalid]      = kNeutralTeamType
 kTeamIndexToType[kTeamReadyRoom]    = kNeutralTeamType
