@@ -87,6 +87,7 @@ ModLoader.SetupFileHook( "lua/EvolutionChamber.lua", "lua/AnyTeam/EvolutionChamb
 ModLoader.SetupFileHook( "lua/Babbler.lua", "lua/AnyTeam/Babbler.lua", "post" )
 
 -- bot fixes
+ModLoader.SetupFileHook( "lua/VotingAddCommanderBots.lua", "lua/AnyTeam/VotingAddCommanderBots.lua", "post" )
 ModLoader.SetupFileHook( "lua/bots/PlayerBrain.lua", "lua/AnyTeam/bots/PlayerBrain.lua", "post" )
 --ModLoader.SetupFileHook( "lua/bots/Bot.lua", "lua/AnyTeam/bots/Bot.lua", "post" )
 -- bot REPLACEMENTS
