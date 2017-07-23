@@ -68,4 +68,28 @@ function Marine:GetEngagementPointOverride()
     return self:GetOrigin() + kMarineEngageOffset
 end
 
+local MarineModifier = {}
+MarineModifier["Railgun"] = kMarineRailgunModifier
+
+
+function Marine:ModifyDamageTaken(damageTable, attacker, doer, damageType)
+    
+    -- apply "umbra" to marines so that railgun deals less damage
+    if attacker:GetTeamType() == kMarineTeamType then
+    
+        local modifier = 1
+        if doer then        
+            modifier = MarineModifier[doer:GetClassName()] or 1        
+        end
+    
+        damageTable.damage = damageTable.damage * modifier
+        
+    end
+    
+
+end
+
+
+
+
 Shared.LinkClassToMap("Marine", Marine.kMapName, networkVars, true)

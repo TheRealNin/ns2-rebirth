@@ -4,7 +4,7 @@ newAlienWeaponEffects["acidrocket_hit"] =
         acidRocketHitEffects = 
         {
             {cinematic = "cinematics/acidrocket_impact.cinematic"},
-            {parented_sound = "sound/NS2.fev/alien/gorge/bilebomb_hit", done = true},
+            {sound = "sound/NS2.fev/alien/gorge/spit_hit", done = true},
         },
     }
     

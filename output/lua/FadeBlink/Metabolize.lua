@@ -26,7 +26,7 @@ local kAnimationGraph = PrecacheAsset("models/alien/fade/fade_view.animation_gra
 local networkVars =
 {
     lastPrimaryAttackTime = "time",
-    backtrackPosition = "integer (0 to " .. ToString(_backtrackSaveNum) .. ")"
+    backtrackPosition = "private integer (0 to " .. ToString(_backtrackSaveNum) .. ")"
 }
 
 function Metabolize:OnCreate()
@@ -48,13 +48,14 @@ end
 function Metabolize:SaveState()
     --Log("%s",  "Metabolize:SaveState")
     local player = self:GetParent()
-    if player.GetCrouching then 
+    -- for some reason it tries to sometimes save the state when we don't have GetCrouching.
+    if player and player.GetCrouching then
       self.backtrackPosition = (self.backtrackPosition + 1) % _backtrackSaveNum
       self.backtrackEntries[self.backtrackPosition] = 
       {
         origin = player:GetOrigin(), 
         lookin = GetYawFromVector(player:GetCoords().zAxis),  
-        health = player:GetHealthScalar(),
+        health = player:GetHealthFraction(),
         armor  = player:GetArmorScalar(),
         crouching = player:GetCrouching()
       }
@@ -169,22 +170,28 @@ function Metabolize:OnTag(tagName)
                 player.crouching = state.crouching
 
                 if player:GetCanMetabolizeHealth() then
-                  local oldHealth = player:GetHealthScalar()
-                  local newHealth = state.health
-                  local newArmor = state.armor
-                  player:SetHealth(newHealth * player:GetMaxHealth())
-                  player:SetArmor(newArmor * player:GetMaxArmor())
+                  local oldHealth = player:GetHealthFraction()
+                  local oldArmor = player:GetArmorScalar()
+                  
+                  local newHealth = Clamp(state.health, oldHealth, 1)
+                  local newArmor = Clamp(state.armor, oldArmor, 1)
+                  
                   local totalHealed = newHealth - oldHealth
-                  --local totalHealed = player:AddHealth(kMetabolizeHealthRegain, false, false)
-                  if Client and totalHealed > 0 then
+                  local totalArmored = newArmor - oldArmor
+                  
+                  if Client and (totalHealed > 0 or totalArmored > 0) then
                     local GUIRegenerationFeedback = ClientUI.GetScript("GUIRegenerationFeedback")
                     GUIRegenerationFeedback:TriggerRegenEffect()
                     local cinematic = Client.CreateCinematic(RenderScene.Zone_ViewModel)
                     cinematic:SetCinematic(kRegenerationViewCinematic)
                   end
+                  if Server then
+                    player:SetArmor(newArmor * player:GetMaxArmor())
+                    player:SetHealth(newHealth * player:GetMaxHealth())
+                  end
                 end 
             end
-            --player:AddEnergy(kMetabolizeEnergyRegain)
+            
             self.lastPrimaryAttackTime = Shared.GetTime()
             self.primaryAttacking = false
         end
