@@ -37,7 +37,9 @@ function StabBlink:DoAttack()
 
     local player = self:GetParent()
     if player then
-        CreateRocketProjectile(self, player)
+        if Server or (Client and Client.GetIsControllingPlayer()) then
+            CreateRocketProjectile(self, player)
+        end
         
         self:DoAbilityFocusCooldown(player, kAttackDuration * StabBlink.cooldownInfluence)
     end

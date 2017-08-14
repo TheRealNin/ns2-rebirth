@@ -1,6 +1,6 @@
 
 kAcidRocketDamageType = kDamageType.Structural
-kAcidRocketDamage = 65
-kAcidRocketSplashRadius = 2.5
+kAcidRocketDamage = 55
+kAcidRocketSplashRadius = 2.4
 
 kStabEnergyCost = 20
