@@ -52,7 +52,23 @@ function GUIVoiceChat:Initialize()
     UpdateItemsGUIScale(self)
     
     self.chatBars = { }
+    
+    self.visible = true -- is it ALLOWED to be visible?
 end
+
+function GUIVoiceChat:SetIsVisible(state)
+    
+    self.visible = state
+    self:Update(0)
+    
+end
+
+function GUIVoiceChat:GetIsVisible()
+    
+    return self.visible
+    
+end
+
 
 local function DestroyChatBar(destroyBar)
 
@@ -170,7 +186,7 @@ function GUIVoiceChat:Update(deltaTime)
 
             local texture = voiceChannel == VoiceChannel.Global and kGlobalSpeakerIcon or kWorldSpeakerIcon
             chatBar.Icon:SetTexture(texture)            
-            chatBar.Background:SetIsVisible(true)
+            chatBar.Background:SetIsVisible(self.visible)
             
             -- Show voice chat over death screen
             chatBar.Background:SetLayer(kGUILayerDeathScreen+1)

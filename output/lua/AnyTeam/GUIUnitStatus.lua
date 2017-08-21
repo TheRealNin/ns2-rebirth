@@ -158,6 +158,21 @@ function GUIUnitStatus:Initialize()
     
     UpdateItemsGUIScale(self)
     
+    self.visible = true
+    
+end
+
+function GUIUnitStatus:SetIsVisible(state)
+    
+    self.visible = state
+    self:Update(0)
+    
+end
+
+function GUIUnitStatus:GetIsVisible()
+    
+    return self.visible
+    
 end
 
 function GUIUnitStatus:Uninitialize()
@@ -236,7 +251,9 @@ local function CreateBlipItem(self)
     newBlip.GraphicsItem:SetColor(Color(1,1,1,0.4))
     newBlip.GraphicsItem:SetTexture(texture)
     newBlip.GraphicsItem:SetLayer(kGUILayerPlayerNameTags)
+    newBlip.GraphicsItem:SetIsVisible(self.visible)
     
+    --[[
     newBlip.OverLayGraphic = self:CreateAnimatedGraphicItem()
     newBlip.OverLayGraphic:SetAnchor(GUIItem.Left, GUIItem.Top)
     newBlip.OverLayGraphic:SetBlendTechnique(GUIItem.Add)
@@ -245,7 +262,7 @@ local function CreateBlipItem(self)
     newBlip.OverLayGraphic:SetColor(Color(1,1,1,0.4))
     newBlip.OverLayGraphic:SetTexture(texture)
     newBlip.OverLayGraphic:SetLayer(kGUILayerPlayerNameTags)
-
+    ]]--
     newBlip.ProgressingIcon = GetGUIManager():CreateGraphicItem()
     newBlip.ProgressingIcon:SetTexture(texture)
     newBlip.ProgressingIcon:SetAnchor(GUIItem.Middle, GUIItem.Top)
@@ -361,7 +378,7 @@ local function CreateBlipItem(self)
     newBlip.statusBg:SetColor(Color(0,0,0,0))
     
     newBlip.GraphicsItem:AddChild(newBlip.ProgressingIcon)
-    newBlip.GraphicsItem:AddChild(newBlip.OverLayGraphic)
+    --newBlip.GraphicsItem:AddChild(newBlip.OverLayGraphic)
     
     newBlip.ProgressingIcon:AddChild(newBlip.ActionTextShadow)
     newBlip.ProgressingIcon:AddChild(newBlip.ActionText)
@@ -496,7 +513,8 @@ local function UpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCo
     
     updateBlip.GraphicsItem:SetTexturePixelCoordinates(GetUnitStatusTextureCoordinates(blipData.Status))
     updateBlip.GraphicsItem:SetPosition(blipData.Position - GUIUnitStatus.kUnitStatusSize * .5 )
-    updateBlip.OverLayGraphic:SetTexturePixelCoordinates(GetUnitStatusTextureCoordinates(blipData.Status))
+    --updateBlip.OverLayGraphic:SetTexturePixelCoordinates(GetUnitStatusTextureCoordinates(blipData.Status))
+    updateBlip.GraphicsItem:SetIsVisible(self.visible)
     
     if teamType == kMarineTeamType and (blipData.Status == kUnitStatus.Unrepaired or blipData.Status == kUnitStatus.Damaged) then
         local color
@@ -514,7 +532,7 @@ local function UpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCo
         color.a = updateBlip.GraphicsItem:GetColor().a -- to not override the pulsate
         
         updateBlip.GraphicsItem:SetColor(color)
-        updateBlip.OverLayGraphic:SetColor(color)
+        --updateBlip.OverLayGraphic:SetColor(color)
     end
     
     local showBacking = self.fullHUD and isCrosshairTarget and not PlayerUI_IsACommander() and healthFraction ~= 0

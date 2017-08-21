@@ -9,7 +9,7 @@
 		{
 			float4 albedo = tex2D(materialAlbedoMap, input.texCoord);
 			material.albedo 	= albedo.rgb;
-			material.opacity    = albedo.a * 0.1;
+			material.opacity    = albedo.a;
 		}
 	</code>
 

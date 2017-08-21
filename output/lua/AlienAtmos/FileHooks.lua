@@ -3,6 +3,7 @@ ModLoader.SetupFileHook( "lua/MapEntityLoader.lua", "lua/AlienAtmos/MapEntityLoa
 
 ModLoader.SetupFileHook( "lua/Weapons/Marine/ClipWeapon.lua", "lua/AlienAtmos/Weapons/Marine/ClipWeapon.lua", "post" )
 ModLoader.SetupFileHook( "lua/Weapons/Marine/Minigun.lua", "lua/AlienAtmos/Weapons/Marine/Minigun.lua", "post" )
+ModLoader.SetupFileHook( "lua/Weapons/Marine/Railgun.lua", "lua/AlienAtmos/Weapons/Marine/Railgun.lua", "post" )
 
 ModLoader.SetupFileHook( "lua/Cyst.lua", "lua/AlienAtmos/Cyst.lua", "post" )
 ModLoader.SetupFileHook( "lua/Harvester.lua", "lua/AlienAtmos/Harvester.lua", "post" )

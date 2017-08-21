@@ -332,6 +332,28 @@ function GUIMinimap:Initialize()
     UpdateItemsGUIScale(self)
 end
 
+
+function GUIMinimap:SetIsVisible(state)
+    
+    self.visible = state
+    self:Update(0)
+    
+    self.minimap:SetIsVisible(state)
+    
+    local modeIsMini = self.comMode == GUIMinimapFrame.kModeMini
+    local modeIsZoom = self.comMode == GUIMinimapFrame.kModeZoom
+    for i=1, #self.locationItems do
+        self.locationItems[i].text:SetIsVisible(state and not modeIsMini and not modeIsZoom)
+    end
+    
+end
+
+function GUIMinimap:GetIsVisible()
+    
+    return self.visible
+    
+end
+
 function GUIMinimap:InitializeBackground()
 
     self.background = GUIManager:CreateGraphicItem()
@@ -488,7 +510,7 @@ local function UpdatePlayerIcon(self)
     if PlayerUI_IsOverhead() and not PlayerUI_IsCameraAnimated() then -- Handle overhead viewplane points
 
         self.playerIcon:SetIsVisible(false)
-        self.cameraLines:SetIsVisible(true)
+        self.cameraLines:SetIsVisible(self.visible)
         
         local topLeftPoint, topRightPoint, bottomLeftPoint, bottomRightPoint = OverheadUI_ViewFarPlanePoints()
         if topLeftPoint == nil then
@@ -522,7 +544,7 @@ local function UpdatePlayerIcon(self)
         local posX, posY = self:PlotToMap(playerOrigin.x, playerOrigin.z)
 
         self.cameraLines:SetIsVisible(false)
-        self.playerIcon:SetIsVisible(true)
+        self.playerIcon:SetIsVisible(self.visible)
         
         local playerIconColor = self.playerIconColor
         if playerIconColor ~= nil then
@@ -678,7 +700,7 @@ function GUIMinimap:DrawMinimapName(item, blipTeam, clientIndex, isParasited)
         
             local nameTag = GetNameTag(self, clientIndex)
             
-            nameTag:SetIsVisible(true)    
+            nameTag:SetIsVisible(self.visible)    
             nameTag:SetText(record.Name)
             
             nameTag.lastUsed = Shared.GetTime()
@@ -948,7 +970,7 @@ local function GetFreeDynamicBlip(self, xPos, yPos, blipType)
     
     local returnBlipItem = returnBlip.Item
     
-    returnBlipItem:SetIsVisible(true)
+    returnBlipItem:SetIsVisible(self.visible)
     returnBlipItem:SetColor(Color(1, 1, 1, 1))
     returnBlipItem:SetPosition(Vector(self:PlotToMap(xPos, yPos)))
     GUISetTextureCoordinatesTable(returnBlipItem, kBlipTextureCoordinates[blipType])
@@ -1005,7 +1027,7 @@ function GUIMinimap:InitMinimapIcon(icon, blipType, blipTeamType)
     icon:SetColor(icon.blipColor)
     icon:SetStencilFunc(self.stencilFunc)
     icon:SetTexture(self.iconFileName)
-    icon:SetIsVisible(true)
+    icon:SetIsVisible(self.visible)
     
     icon.resetMinimapItem = false
     
@@ -1281,7 +1303,7 @@ local function UpdateCommanderPing(self)
                 local timeSincePing, position, distance, locationName = PlayerUI_GetPingInfo(player, entity, true)
                 local posX, posY = self:PlotToMap(position.x, position.z)
                 self.commanderPing.Frame:SetPosition(Vector(posX, posY, 0))
-                self.commanderPing.Frame:SetIsVisible(timeSincePing <= kCommanderPingDuration)
+                self.commanderPing.Frame:SetIsVisible(timeSincePing <= kCommanderPingDuration and self.visible)
                 
                 local expired = GUIAnimateCommanderPing(self.commanderPing.Mark, self.commanderPing.Border, self.commanderPing.Location, kCommanderPingMinimapSize, timeSincePing, Color(1, 0, 0, 1), Color(1, 1, 1, 1))
                 if expired then
@@ -1375,7 +1397,7 @@ function GUIMinimap:ShowMap(showMap)
 
     if self.background:GetIsVisible() ~= showMap then
     
-        self.background:SetIsVisible(showMap)
+        self.background:SetIsVisible(showMap and self.visible)
         if showMap then
         
             self.timeMapOpened = Shared.GetTime()
@@ -1443,7 +1465,7 @@ end
 
 function GUIMinimap:SetLocationNamesEnabled(enabled)
     for _, locationItem in ipairs(self.locationItems) do
-        locationItem.text:SetIsVisible(enabled)
+        locationItem.text:SetIsVisible(enabled and self.visible)
     end
 end
 

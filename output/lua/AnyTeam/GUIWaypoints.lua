@@ -164,6 +164,21 @@ function GUIWaypoints:Initialize()
     self.worldArrows = table.array(8)
     self.hideArrows = table.array(8)
     
+    self.visible = true
+    
+end
+
+function GUIWaypoints:SetIsVisible(state)
+    
+    self.visible = state
+    self:Update(0)
+    
+end
+
+function GUIWaypoints:GetIsVisible()
+    
+    return self.visible
+    
 end
 
 local function InitMarineTexture(self)

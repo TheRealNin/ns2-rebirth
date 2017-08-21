@@ -31,7 +31,7 @@ local kDamageTextures =
 
 GUIDamageIndicators.kDamageIndicatorOffset = GUIScale(48)
 
-local kHitEffectSize = 800 -- considers GUIScale already
+local kHitEffectSize = 720 -- considers GUIScale already
 
 function GUIDamageIndicators:Initialize()
 
@@ -41,7 +41,24 @@ function GUIDamageIndicators:Initialize()
     self.reuseItems = { }
     
     self.hitEffectSize = Vector(0,0,0)
+    
+    self:SetIsVisible(not HelpScreen_GetHelpScreen():GetIsBeingDisplayed())
 
+end
+
+function GUIDamageIndicators:SetIsVisible(state)
+    
+    self.visible = state
+    for i=1, #self.indicatorItems do
+        self.indicatorItems[i]:SetIsVisible(state)
+    end
+    
+end
+
+function GUIDamageIndicators:GetIsVisible()
+    
+    return self.visible
+    
 end
 
 function GUIDamageIndicators:Uninitialize()
@@ -135,7 +152,7 @@ function GUIDamageIndicators:ResizeIndicatorList(numIndicators)
     while numIndicators > table.count(self.indicatorItems) do
         local newIndicatorItem = self:CreateIndicatorItem()
         table.insert(self.indicatorItems, newIndicatorItem)
-        newIndicatorItem:SetIsVisible(true)
+        newIndicatorItem:SetIsVisible(self.visible)
     end
     
     while numIndicators < table.count(self.indicatorItems) do

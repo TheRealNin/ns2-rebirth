@@ -33,12 +33,13 @@ function CreateRagdoll(fromEntity)
         ragdoll:SetCoords(fromEntity:GetCoords())
         ragdoll:SetModel(useModelName, useGraphName)
         
-        if fromEntity.GetPlayInstantRagdoll and fromEntity:GetPlayInstantRagdoll() then
+        --if fromEntity.GetPlayInstantRagdoll and fromEntity:GetPlayInstantRagdoll() then
             ragdoll:SetPhysicsType(PhysicsType.Dynamic)
             ragdoll:SetPhysicsGroup(PhysicsGroup.RagdollGroup)
-        else    
-            ragdoll:SetPhysicsGroup(PhysicsGroup.SmallStructuresGroup)    
-        end
+        -- else    
+        --    ragdoll:SetPhysicsGroup(PhysicsGroup.SmallStructuresGroup)    
+        --end
+        
         ragdoll:SetPhysicsGroupFilterMask(PhysicsMask.DroppedWeaponFilter)
         
         ragdoll:CopyAnimationState(fromEntity)

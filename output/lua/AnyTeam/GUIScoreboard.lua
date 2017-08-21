@@ -401,6 +401,20 @@ function GUIScoreboard:Initialize()
     self.hoverPlayerClientIndex = 0
 end
 
+
+function GUIScoreboard:SetIsVisible(state)
+    
+    self.hiddenOverride = not state
+    self:Update(0)
+    
+end
+
+function GUIScoreboard:GetIsVisible()
+    
+    return not self.hiddenOverride
+    
+end
+
 function GUIScoreboard:Uninitialize()
 
     for index, team in ipairs(self.teams) do
@@ -489,6 +503,8 @@ function GUIScoreboard:Update(deltaTime)
 
     PROFILE("GUIScoreboard:Update")
     
+    local vis = self.visible and not self.hiddenOverride
+    
     -- Show all the elements the frame after sorting them
     -- so it doesn't appear to shift when we open
     local displayScoreboard = self.slidePercentage > -1
@@ -498,24 +514,29 @@ function GUIScoreboard:Update(deltaTime)
     self.scoreboardBackground:SetIsVisible(displayScoreboard)
     if lastScoreboardVisState ~= displayScoreboard then
         lastScoreboardVisState = displayScoreboard
-        if self.visible == false then
+        if vis == false then
             self.updateInterval = 0.2
             self.badgeNameTooltip:Hide(0)
         end
     end
     
-    if not self.visible then
+    if not vis then
         SetMouseVisible(self, false)
     end
     
-    if not self.hoverMenu.background:GetIsVisible() then
+    if self.hoverMenu.background:GetIsVisible() then
+        if not vis then
+            self.hoverMenu:Hide()
+        end
+    else
         self.hoverPlayerClientIndex = 0
     end
 
     if not self.mouseVisible then
     
         -- Click for mouse only visible when not a commander and when the scoreboard is visible.
-        local clickForMouseBackgroundVisible = (not PlayerUI_IsACommander()) and self.visible
+        local clickForMouseBackgroundVisible = (not PlayerUI_IsACommander()) and vis
+        
         self.clickForMouseBackground:SetIsVisible(clickForMouseBackgroundVisible)
         local backgroundColor = PlayerUI_GetTeamColor()
         backgroundColor.a = 0.8
@@ -527,14 +548,14 @@ function GUIScoreboard:Update(deltaTime)
     local teamGUISize = {}
     for index, team in ipairs(self.teams) do
     
-        -- Don't draw if no players on team
+        -- Always draw even if no players on team
         local numPlayers = table.count(team["GetScores"]())
         if team.TeamNumber == 0 and numPlayers == 0 and PlayerUI_GetNumConnectingPlayers() > 0 then
             numPlayers = PlayerUI_GetNumConnectingPlayers()
         end
-        team["GUIs"]["Background"]:SetIsVisible(self.visible and (numPlayers > 0))
+        team["GUIs"]["Background"]:SetIsVisible(vis)
         
-        if self.visible then
+        if vis then
             self:UpdateTeam(team)
             if numPlayers > 0 then
                 if teamGUISize[team.TeamNumber] == nil then
@@ -546,7 +567,7 @@ function GUIScoreboard:Update(deltaTime)
         
     end
     
-    if self.visible then
+    if vis then
     
         if self.hoverPlayerClientIndex == 0 and GUIItemContainsPoint(self.scoreboardBackground, Client.GetCursorPosScreen()) then
             self.badgeNameTooltip:Hide(0)
