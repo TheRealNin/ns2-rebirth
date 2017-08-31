@@ -20,6 +20,15 @@ function GetEnemyTeamNumber(entityTeamNumber)
     
 end
 
+function GetTeamType(teamNumber)
+    if teamNumber == kTeam1Index then
+        return kTeam1Type
+    elseif teamNumber == kTeam2Index then
+        return kTeam2Type
+    end
+    return kNeutralTeamType
+end
+
 
 function GetCommanderSwitchTeamAllowed()
 

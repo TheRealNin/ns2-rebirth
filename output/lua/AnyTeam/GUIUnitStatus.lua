@@ -422,7 +422,7 @@ function AddAbilityBar(blipItem)
 
 end
 
-local function UpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCommander, baseResearchRot, showHints, playerTeamNumber )
+function GUIUnitStatus:UpdateUnitStatusBlip(blipData, updateBlip, localPlayerIsCommander, baseResearchRot, showHints, playerTeamNumber )
 
     PROFILE("GUIUnitStatus:UpdateUnitStatusBlip")
     
@@ -713,7 +713,7 @@ local function UpdateUnitStatusList(self, activeBlips, deltaTime)
     local currentIndex = 1
     for i = 1, #self.activeBlipList do
         
-        UpdateUnitStatusBlip( self, activeBlips[i], self.activeBlipList[i], localPlayerIsCommander, baseResearchRot, showHints, playerTeamNumber )
+        self:UpdateUnitStatusBlip(activeBlips[i], self.activeBlipList[i], localPlayerIsCommander, baseResearchRot, showHints, playerTeamNumber )
         
     end
 
@@ -750,7 +750,7 @@ local function UpdatePerFrameInfo(self)
                     
                 if blipData then
                     
-                    UpdateUnitStatusBlip( self, blipData, self.activeBlipList[i], localPlayerIsCommander, baseResearchRot, showHints, playerTeamNumber )
+                    self:UpdateUnitStatusBlip( blipData, self.activeBlipList[i], localPlayerIsCommander, baseResearchRot, showHints, playerTeamNumber )
             
                 end
               

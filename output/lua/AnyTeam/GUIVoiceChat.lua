@@ -191,18 +191,22 @@ function GUIVoiceChat:Update(deltaTime)
             -- Show voice chat over death screen
             chatBar.Background:SetLayer(kGUILayerDeathScreen+1)
             
+            
             local textureSet, fontColor
-            if Client.GetLocalClientTeamNumber() == clientTeam then
-                textureSet = "marine"
-                fontColor = GUIVoiceChat.kMarineFontColor
-            elseif clientTeam == kTeam1Index or clientTeam == kTeam2Index then
-                textureSet = "alien"
-                fontColor = GUIVoiceChat.kAlienFontColor
-            else
-                textureSet = "marine"
-                fontColor = GUIVoiceChat.kSpectatorFontColor
+            if clientTeam ~= kTeam1Index and clientTeam ~= kTeam2Index then
                 isSpectator = true
+            else
+                local teamType = GetTeamType(clientTeam)
+                if teamType == kMarineTeamType or teamType == kPrecursorTeamType then
+                    textureSet = "marine"
+                elseif teamType == kAlienTeamType then
+                    textureSet = "alien"
+                else
+                    textureSet = "marine"
+                end
             end
+            
+            fontColor = GetColorCustomColorForTeamNumber(clientTeam, GUIVoiceChat.kMarineFontColor, GUIVoiceChat.kAlienFontColor, GUIVoiceChat.kSpectatorFontColor)
 
             chatBar.Background:SetTexture(string.format(kBackgroundTexture, textureSet))
             -- Apply a tint to the marine background for spectator so it looks a bit more different

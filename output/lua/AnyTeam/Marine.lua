@@ -67,7 +67,7 @@ local kMarineEngageOffset = Vector(0, 1.5, 0)
 function Marine:GetEngagementPointOverride()
     return self:GetOrigin() + kMarineEngageOffset
 end
---[[
+
 local MarineModifier = {}
 MarineModifier["Railgun"] = kMarineRailgunModifier
 
@@ -88,7 +88,6 @@ function Marine:ModifyDamageTaken(damageTable, attacker, doer, damageType)
     
 
 end
-]]--
 
 
 

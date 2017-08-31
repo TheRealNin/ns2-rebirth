@@ -18,6 +18,7 @@ ModLoader.SetupFileHook( "lua/Marine_Client.lua", "lua/AlienAtmos/Marine_Client.
 ModLoader.SetupFileHook( "lua/Exo.lua", "lua/AlienAtmos/Exo.lua", "post" )
 ModLoader.SetupFileHook( "lua/Exosuit.lua", "lua/AlienAtmos/Exosuit.lua", "post" )
 ModLoader.SetupFileHook( "lua/Render.lua", "lua/AlienAtmos/Render.lua", "post" )
+ModLoader.SetupFileHook( "lua/MarineWeaponEffects.lua", "lua/AlienAtmos/MarineWeaponEffects.lua", "post" )
 
 ModLoader.SetupFileHook( "lua/Ragdoll.lua", "lua/AlienAtmos/Ragdoll.lua", "post" )
 ModLoader.SetupFileHook( "lua/RagdollMixin.lua", "lua/AlienAtmos/RagdollMixin.lua", "post" )

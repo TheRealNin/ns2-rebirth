@@ -39,13 +39,34 @@ function GetColorForTeamNumber(teamNumber)
     end
     ]]--
     local localTeamNumber = Client.GetLocalPlayer():GetTeamNumber() or -1
-    if localTeamNumber == teamNumber then
+    if localTeamNumber == teamNumber and (localTeamNumber == 1 or localTeamNumber == 2) then
         return kMarineTeamColor
     elseif localTeamNumber == GetEnemyTeamNumber(teamNumber) then
         return kAlienTeamColor
     end
     
     return kNeutralTeamColor   
+    
+end
+
+function GetColorCustomColorForTeamNumber(teamNumber, MarineTeamColor, AlienTeamColor, NeutralTeamColor)
+
+    local localTeamNumber = Client.GetLocalPlayer():GetTeamNumber() or -1
+    if (localTeamNumber == 1 or localTeamNumber == 2) then
+        if localTeamNumber == teamNumber then
+            return MarineTeamColor
+        elseif localTeamNumber == GetEnemyTeamNumber(teamNumber) then
+            return AlienTeamColor
+        end
+    else
+        if teamNumber == kTeam1Index then
+            return MarineTeamColor
+        elseif teamNumber == kTeam2Index  then
+            return AlienTeamColor
+        end
+    end
+    
+    return NeutralTeamColor   
     
 end
 

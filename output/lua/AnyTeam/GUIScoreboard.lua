@@ -73,7 +73,7 @@ local kHiveProfileURL = "http://hive.naturalselection2.com/profile/"
 local kMinTruncatedNameLength = 8
 
 -- Color constants.
-GUIScoreboard.kBlueColor = ColorIntToColor(kMarineTeamColor)
+GUIScoreboard.kBlueColor = kBlueColor
 GUIScoreboard.kBlueHighlightColor = Color(0.30, 0.69, 1, 1)
 GUIScoreboard.kRedColor = kRedColor--ColorIntToColor(kAlienTeamColor)
 GUIScoreboard.kRedHighlightColor = Color(1, 0.79, 0.23, 1)
@@ -136,6 +136,8 @@ local function CreateTeamBackground(self, teamNumber)
         teamItem:SetAnchor(GUIItem.Middle, GUIItem.Top)
         
     end
+    
+    color = GetColorCustomColorForTeamNumber(teamNumber, GUIScoreboard.kBlueColor, GUIScoreboard.kRedColor, GUIScoreboard.kSpectatorColor)
     
     teamItem:SetColor(Color(0, 0, 0, 0.75))
     teamItem:SetIsVisible(false)
@@ -553,7 +555,7 @@ function GUIScoreboard:Update(deltaTime)
         if team.TeamNumber == 0 and numPlayers == 0 and PlayerUI_GetNumConnectingPlayers() > 0 then
             numPlayers = PlayerUI_GetNumConnectingPlayers()
         end
-        team["GUIs"]["Background"]:SetIsVisible(vis)
+        team["GUIs"]["Background"]:SetIsVisible(vis and (numPlayers > 0))
         
         if vis then
             self:UpdateTeam(team)
@@ -1332,12 +1334,8 @@ function GUIScoreboard:SendKeyEvent(key, down)
             
             if isCommander then
                 teamColorBg = GUIScoreboard.kCommanderFontColor
-            elseif teamNumber == 1 then
-                teamColorBg = GUIScoreboard.kBlueColor
-            elseif teamNumber == 2 then
-                teamColorBg = GUIScoreboard.kRedColor
             else
-                teamColorBg = GUIScoreboard.kSpectatorColor
+                teamColorBg = GetColorCustomColorForTeamNumber(teamNumber, GUIScoreboard.kBlueColor, GUIScoreboard.kRedColor, GUIScoreboard.kSpectatorColor)
             end
             
             local bgColor = teamColorBg * 0.1

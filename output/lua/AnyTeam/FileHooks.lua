@@ -108,6 +108,8 @@ ModLoader.SetupFileHook( "lua/Alien_Client.lua", "lua/AnyTeam/Alien_Client.lua",
 ModLoader.SetupFileHook( "lua/GUIAuraDisplay.lua", "lua/AnyTeam/GUIAuraDisplay.lua", "post" )
 ModLoader.SetupFileHook( "lua/PowerUtility.lua", "lua/AnyTeam/PowerUtility.lua", "post" )
 ModLoader.SetupFileHook( "lua/GUIDeathScreen.lua", "lua/AnyTeam/GUIDeathScreen.lua", "post" )
+-- this is just to change the color (it's in a bad spot)
+ModLoader.SetupFileHook( "lua/Insight.lua", "lua/AnyTeam/Insight.lua", "post" )
 
 -- weapons
 ModLoader.SetupFileHook( "lua/Weapons/Alien/Ability.lua", "lua/AnyTeam/Weapons/Alien/Ability.lua", "post" )
