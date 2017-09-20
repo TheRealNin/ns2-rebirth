@@ -127,12 +127,7 @@ function RepairBot:GetEngagementPointOverride()
     return self:GetOrigin() + Vector(0, self:GetHoverHeight(), 0)
 end
 function RepairBot:ModifyGravityForce(gravityTable)
-    if self:GetIsOnGround() then
-        gravityTable.gravity = 0
-    else
-        gravityTable.gravity = gravityTable.gravity * kGravityFraction
-    end
-
+    gravityTable.gravity = 0
 end
 
 function RepairBot:ModifyJump(input, velocity, jumpVelocity)

@@ -10,7 +10,7 @@ AcidRocket.kMapName            = "acidrocket"
 AcidRocket.kProjectileCinematic = PrecacheAsset("cinematics/acidrocket_projectile.cinematic")
 
 AcidRocket.kRadius             = 0.05
-AcidRocket.kDetonateRadius     = 0.65
+AcidRocket.kDetonateRadius     = 0.35
 AcidRocket.kClearOnImpact      = true
 AcidRocket.kClearOnEnemyImpact = true
 

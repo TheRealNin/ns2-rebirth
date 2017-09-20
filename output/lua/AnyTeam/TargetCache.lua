@@ -133,15 +133,17 @@ class 'TargetType'
 function TargetType:Init(name, teamNumber, tag)
     self.name = name
     self.teamNumber = teamNumber
-    --Log("Team number: %s", teamNumber)
+    -- Log("Team number: %s", teamNumber)
     self.tag = tag
-    --Log("Init %s: %s, %s", name, teamNumber, tag)
+    -- Log("Init %s: %s, %s", name, teamNumber, tag)
 
     -- the entities that have been selected by their TargetType. A proper hashtable, not a list.
     self.entityIdMap = {}
     
     -- wonder how much this slows down lookups?
-    self.teamFilterFunction = function (entity) return entity:GetTeamNumber() == teamNumber end
+    self.teamFilterFunction = function (entity) 
+        return entity:GetTeamNumber() == teamNumber
+    end
         
     return self
 end
@@ -152,7 +154,7 @@ end
 --
 function TargetType:EntityAdded(entity)
     if self:ContainsType(entity) and not self.entityIdMap[entity:GetId()] then
-        -- Log("%s: added %s", self.name, entity)
+        -- Log("%s: added %s, teamNumber: %s", self.name, entity, entity:GetTeamNumber())
         self.entityIdMap[entity:GetId()] = true
         self:OnEntityAdded(entity)
     end
@@ -183,7 +185,7 @@ end
 -- True if we the entity belongs to our TargetType
 --
 function TargetType:ContainsType(entity)
-    return HasMixin(entity, self.tag) and entity:GetTeamNumber() == self.teamNumber
+    return HasMixin(entity, self.tag)
 end
 
 
@@ -310,7 +312,7 @@ function StaticTargetCache:ValidateCache()
         local eyePos = self.selector.attacker:GetEyePos()
         local targets = self.targetType:GetAllPossibleTargets(eyePos, self.selector.range)
         for _, target in ipairs(targets) do
-            if target:GetTeamNumber() == self.targetType.teamNumber then
+            if target:GetTeamNumber() == self.targetType.teamNumber or target:GetTeamNumber() == kNeutralTeamType then
                 self:MaybeAddTarget(target, eyePos)
             end
         end

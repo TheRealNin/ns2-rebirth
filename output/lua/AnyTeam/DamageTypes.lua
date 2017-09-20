@@ -335,8 +335,22 @@ local function ApplyAttackerModifiers(target, attacker, doer, damage, armorFract
 
 end
 
-local function ApplyTargetModifiers(target, attacker, doer, damage, armorFractionUsed, healthPerArmor,  damageType, hitPoint)
+local function ApplyTeamModifiers(target, attacker, doer, damage, armorFractionUsed, healthPerArmor,  damageType, hitPoint)
 
+    -- team vs team type damage multiplier
+    local attackerType = attacker:GetTeamType()
+    local targetType = target:GetTeamType()
+    if kTeamVsTeamDamage[attackerType] then
+        Log("Multiplying damage by %s because %s attacked %s (was %s)", (kTeamVsTeamDamage[attackerType][targetType] or 1.0), attackerType, targetType, damage)
+        damage = damage * (kTeamVsTeamDamage[attackerType][targetType] or 1.0)
+    end
+    
+    
+    return damage, armorFractionUsed, healthPerArmor
+end
+
+local function ApplyTargetModifiers(target, attacker, doer, damage, armorFractionUsed, healthPerArmor,  damageType, hitPoint)
+    
     -- The host can provide an override for this function.
     if target.ComputeDamageOverride then
         damage = target:ComputeDamageOverride(attacker, damage, damageType, hitPoint)
@@ -364,13 +378,6 @@ local function ApplyTargetModifiers(target, attacker, doer, damage, armorFractio
         target:ModifyDamageTaken(damageTable, attacker, doer, damageType, hitPoint)
     end
     
-    -- team vs team type damage multiplier
-    local attackerType = attacker:GetTeamType()
-    local targetType = target:GetTeamType()
-    if kTeamVsTeamDamage[attackerType] then
-        --Log("Multiplying damage by %s because %s attacked %s", (kTeamVsTeamDamage[attackerType][targetType] or 1.0), attackerType, targetType)
-        damageTable.damage = damageTable.damage * (kTeamVsTeamDamage[attackerType][targetType] or 1.0)
-    end
     
     return damageTable.damage, damageTable.armorFractionUsed, damageTable.healthPerArmor
 
@@ -550,6 +557,7 @@ local function BuildDamageTypeRules()
     table.insert(kDamageTypeGlobalRules, ApplyDefaultHealthPerArmor)
     table.insert(kDamageTypeGlobalRules, ApplyAttackerModifiers)
     table.insert(kDamageTypeGlobalRules, ApplyTargetModifiers)
+    table.insert(kDamageTypeGlobalRules, ApplyTeamModifiers)
     table.insert(kDamageTypeGlobalRules, ApplyFriendlyFireModifier)
     -- ------------------------------
     
@@ -695,7 +703,7 @@ function GetDamageByType(target, attacker, doer, damage, damageType, hitPoint, w
     end
     
     if damage > 0 and healthPerArmor > 0 then
-
+        Log("healthPerArmor: %s, armorFractionUsed: %s", healthPerArmor, armorFractionUsed)
         -- Each point of armor blocks a point of health but is only destroyed at half that rate (like NS1)
         -- Thanks Harimau!
         local healthPointsBlocked = math.min(healthPerArmor * target.armor, armorFractionUsed * damage)
@@ -705,7 +713,7 @@ function GetDamageByType(target, attacker, doer, damage, damageType, hitPoint, w
         healthUsed = damage - healthPointsBlocked
 
     end
-    
+    Log("damage: %s, armorUsed: %s, healthUsed: %s", damage, armorUsed, healthUsed)
     return damage, armorUsed, healthUsed
 
 end

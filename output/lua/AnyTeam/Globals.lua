@@ -128,7 +128,7 @@ kGameState = enum( {'NotStarted', 'WarmUp', 'PreGame', 'Countdown', 'Started', '
 kPlayerMoveOrderCompleteDistance = 3.0
 
 
-function AppendToEnum( tbl, key )
+local function AppendToEnum( tbl, key )
 	if rawget(tbl,key) ~= nil then
 		return
 	end

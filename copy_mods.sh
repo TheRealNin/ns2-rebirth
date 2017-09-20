@@ -14,3 +14,4 @@ cp -R /c/Users/Adam/Documents/ThirdPerson/output/* $dest
 cp -R /c/Users/Adam/Documents/WhipRebalance/output/* $dest
 cp -R /c/Users/Adam/Documents/NinBalance/output/* $dest
 cp -R /c/Users/Adam/Documents/FadeAcidRocket/output/* $dest
+cp -R /c/Users/Adam/Documents/ArmoryGUI/output/* $dest

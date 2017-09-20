@@ -50,17 +50,23 @@ end
 
 local kAuxPowerBackupSound = PrecacheAsset("sound/NS2.fev/marine/power_node/backup")
 
+-- new function!
+function PowerPoint:IsPoweringFriendlyTo(entity)
 
+    for _, powerUser in ipairs(GetEntitiesWithMixinForTeam("PowerConsumer", entity:GetTeamNumber())) do
+        if powerUser.GetIsAlive and powerUser:GetIsAlive() and powerUser.GetLocationId and powerUser:GetLocationId() == self:GetLocationId() then
+            return true
+        end
+    end
+    return false
+end
 
 function PowerPoint:ModifyDamageTaken(damageTable, attacker, doer, damageType)
     
     -- anti-troll tech: don't allow marines to destroy a powernode if they have a building that is using it
     if attacker:GetTeamType() == kMarineTeamType and attacker:isa("Player") then
-        for _, powerUser in ipairs(GetEntitiesWithMixinForTeam("PowerConsumer", attacker:GetTeamNumber())) do
-            if powerUser.GetIsAlive and powerUser:GetIsAlive() and powerUser.GetLocationId and powerUser:GetLocationId() == self:GetLocationId() then
-                damageTable.damage = 0
-                break
-            end
+        if self:IsPoweringFriendlyTo(attacker) then
+            damageTable.damage = 0
         end
     end
 end

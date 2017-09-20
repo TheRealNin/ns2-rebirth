@@ -9,6 +9,8 @@ kMarineRegenerationHeal = 50 --"Amount of hp per second" was the comment???, was
 kTeamVsTeamDamage = {}
 kTeamVsTeamDamage[kMarineTeamType] = {}
 kTeamVsTeamDamage[kMarineTeamType][kMarineTeamType]  = 1.33
+
+-- this would be for powernodes. Nothing else is neutral that can take damage, really....
 --kTeamVsTeamDamage[kMarineTeamType][kNeutralTeamType] = 1.33
     
 kTeamVsTeamDamage[kAlienTeamType] = {}
