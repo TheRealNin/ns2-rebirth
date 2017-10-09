@@ -341,7 +341,7 @@ local function ApplyTeamModifiers(target, attacker, doer, damage, armorFractionU
     local attackerType = attacker:GetTeamType()
     local targetType = target:GetTeamType()
     if kTeamVsTeamDamage[attackerType] then
-        Log("Multiplying damage by %s because %s attacked %s (was %s)", (kTeamVsTeamDamage[attackerType][targetType] or 1.0), attackerType, targetType, damage)
+        --Log("Multiplying damage by %s because %s attacked %s (was %s)", (kTeamVsTeamDamage[attackerType][targetType] or 1.0), attackerType, targetType, damage)
         damage = damage * (kTeamVsTeamDamage[attackerType][targetType] or 1.0)
     end
     
@@ -703,7 +703,7 @@ function GetDamageByType(target, attacker, doer, damage, damageType, hitPoint, w
     end
     
     if damage > 0 and healthPerArmor > 0 then
-        Log("healthPerArmor: %s, armorFractionUsed: %s", healthPerArmor, armorFractionUsed)
+        --Log("healthPerArmor: %s, armorFractionUsed: %s", healthPerArmor, armorFractionUsed)
         -- Each point of armor blocks a point of health but is only destroyed at half that rate (like NS1)
         -- Thanks Harimau!
         local healthPointsBlocked = math.min(healthPerArmor * target.armor, armorFractionUsed * damage)
@@ -713,7 +713,7 @@ function GetDamageByType(target, attacker, doer, damage, damageType, hitPoint, w
         healthUsed = damage - healthPointsBlocked
 
     end
-    Log("damage: %s, armorUsed: %s, healthUsed: %s", damage, armorUsed, healthUsed)
+    --Log("damage: %s, armorUsed: %s, healthUsed: %s", damage, armorUsed, healthUsed)
     return damage, armorUsed, healthUsed
 
 end

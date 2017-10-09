@@ -36,7 +36,13 @@ function Armory:GetItemList(forPlayer)
 end
 
 function Armory:GetItemSlotNames()
-    return {"Weapon slot 1", "Weapon slot 2", "Weapon slot 3", "Weapon slot 4", "Weapon slot 5"}
+    return {
+        Locale.ResolveString("BINDINGS_WEAPON_#1"),
+        Locale.ResolveString("BINDINGS_WEAPON_#2"),
+        Locale.ResolveString("BINDINGS_WEAPON_#3"),
+        Locale.ResolveString("BINDINGS_WEAPON_#4"),
+        Locale.ResolveString("BINDINGS_WEAPON_#5")
+    }
 end
 
 -- hack because both classes are defined in the same bloody file

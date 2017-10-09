@@ -1,4 +1,7 @@
 
 function PrototypeLab:GetItemSlotNames()
-    return {"Devices", "Exosuits"}
+    return {
+        Locale.ResolveString("JETPACK"), 
+        Locale.ResolveString("EXOSUIT") 
+        }
 end

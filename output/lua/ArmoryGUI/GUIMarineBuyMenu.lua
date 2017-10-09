@@ -543,6 +543,10 @@ function GUIMarineBuyMenu:_InitializeItemButtons()
         table.insert(self.itemButtons, { Button = graphicItem, Highlight = graphicItemActive, TechId = itemTechId, Cost = itemCost, ResourceIcon = costIcon, Arrow = selectedArrow, Equipped = itemEquipped } )
     
     end
+    -- this is needed to maintain comptat with ns2+ grrr
+    local function null() end
+    self.menu = {["SetTexture"] = null}
+    self.menuHeader = {["SetTexture"] = null}
     --[[
     self.menu = GetGUIManager():CreateGraphicItem()
     self.menu:SetPosition(Vector( -GUIMarineBuyMenu.kMenuWidth - GUIMarineBuyMenu.kPadding, 0, 0))
@@ -681,7 +685,7 @@ function GUIMarineBuyMenu:_UpdateItemButtons(deltaTime)
             
             -- set flashing grey if researching
             if MarineBuy_IsResearching(item.TechId) then
-                useColor = Color(0.6, 0.6, 0.6, math.cos(Shared.GetTime() * 9) * 0.4 + 0.4)
+                useColor = Color(0.25, 0.25, 0.25, math.cos(Shared.GetTime() * 4.5) * 0.2 + 0.4)
             -- set grey if not researched
             elseif not MarineBuy_IsResearched(item.TechId) then
                 useColor = Color(0.25, 0.25, 0.25, 0.9)
@@ -785,11 +789,11 @@ end
 
 function GUIMarineBuyMenu:_UpdateContent(deltaTime)
 
+    local mouseX, mouseY = Client.GetCursorPosScreen()
     local techId = self.hoverItem
     if not self.hoverItem then
         techId = self.selectedItem
     end
-    
     
     if techId then
     
@@ -815,7 +819,6 @@ function GUIMarineBuyMenu:_UpdateContent(deltaTime)
         self.itemDescription:SetText(MarineBuy_GetWeaponDescription(techId))
         self.itemDescription:SetTextClipped(true, (GUIMarineBuyMenu.kItemDescriptionSize.x - 2*GUIMarineBuyMenu.kPadding)/self.itemDescription:GetScale().x, (GUIMarineBuyMenu.kItemDescriptionSize.y - GUIMarineBuyMenu.kPadding)/self.itemDescription:GetScale().y)
 
-        local mouseX, mouseY = Client.GetCursorPosScreen()
         if (mouseX + GUIMarineBuyMenu.kItemDescriptionPaneSize.x > Client.GetScreenWidth()) then
             mouseX = mouseX - GUIMarineBuyMenu.kItemDescriptionPaneSize.x
         end

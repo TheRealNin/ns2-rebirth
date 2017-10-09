@@ -93,7 +93,7 @@
 				material.emissive = (1 - (blend + f)) * tex2D(overlayMap, input.texCoord * float2(10, 9)).rgb * float3(2, 3, 6) * 50;
 			}
             float3 hsl = RGBtoHSL(material.albedo);
-            hsl.y *= 1.8;
+            hsl.y *= 1.5;
             hsl.z *= 0.7;
             material.albedo = HSLtoRGB(hsl);
             
