@@ -476,6 +476,14 @@ local function IgnorePlayersUnlessExo(target, attacker, doer, damage, armorFract
     return ConditionalValue(target:isa("Player") and not target:isa("Exo") , 0, damage), armorFractionUsed, healthPerArmor
 end
 
+local function IgnoreARCsAndMACs(target, attacker, doer, damage, armorFractionUsed, healthPerArmor, damageType, hitPoint)
+    return ConditionalValue(target:isa("ARC") or target:isa("MAC") , 0, damage), armorFractionUsed, healthPerArmor
+end
+
+local function IgnorePowerPoints(target, attacker, doer, damage, armorFractionUsed, healthPerArmor, damageType, hitPoint)
+    return ConditionalValue(target:isa("PowerPoint") , 0, damage), armorFractionUsed, healthPerArmor
+end
+
 local function DamagePlayersOnly(target, attacker, doer, damage, armorFractionUsed, healthPerArmor, damageType, hitPoint)
     return ConditionalValue(target:isa("Player") or target:isa("Exosuit"), damage, 0), armorFractionUsed, healthPerArmor
 end
@@ -618,6 +626,8 @@ local function BuildDamageTypeRules()
      -- Splash rules
     kDamageTypeRules[kDamageType.Splash] = {}
     table.insert(kDamageTypeRules[kDamageType.Splash], DamageStructuresOnly)
+    table.insert(kDamageTypeRules[kDamageType.Splash], IgnoreARCsAndMACs)
+    table.insert(kDamageTypeRules[kDamageType.Splash], IgnorePowerPoints)
     -- ------------------------------
  
     -- fall damage rules

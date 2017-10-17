@@ -48,7 +48,7 @@ local function UpdateLOS(self)
     elseif self:GetTeamNumber() == 2 then
         mask = bit.bor(mask, kRelevantToTeam2Commander)
     end
-    if self:GetTeamNumber() == 0 then
+    if self:GetTeamNumber() == 0 then -- powerpoint
         mask = bit.bor(mask, kRelevantToTeam1Commander, kRelevantToTeam2Commander)
     end
 
@@ -184,7 +184,7 @@ if Server then
             if not otherEntity.sighted then
             
                 -- Only check sight for enemy entities.
-                local areEnemies = otherEntity:GetTeamNumber() == GetEnemyTeamNumber(self:GetTeamNumber())
+                local areEnemies = not GetAreFriends(otherEntity, self)
                 if areEnemies and GetCanSee(self, otherEntity) then
                     otherEntity:SetIsSighted(true, self)
                 end
@@ -223,6 +223,9 @@ if Server then
         self.updateLOS = true
         
         for _, entity in ipairs(GetEntitiesWithMixinForTeamWithinRange("LOS", GetEnemyTeamNumber(self:GetTeamNumber()), self:GetOrigin(), kUnitMaxLOSDistance)) do
+            entity.updateLOS = true
+        end
+        for _, entity in ipairs(GetEntitiesWithMixinForTeamWithinRange("LOS", 0, self:GetOrigin(), kUnitMaxLOSDistance)) do
             entity.updateLOS = true
         end
         

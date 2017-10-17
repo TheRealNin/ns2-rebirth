@@ -153,7 +153,7 @@ end
 -- Notification that a new entity id has been added
 --
 function TargetType:EntityAdded(entity)
-    if self:ContainsType(entity) and not self.entityIdMap[entity:GetId()] then
+    if self:ContainsType(entity) and not self.entityIdMap[entity:GetId()] and self.teamFilterFunction(entity) then
         -- Log("%s: added %s, teamNumber: %s", self.name, entity, entity:GetTeamNumber())
         self.entityIdMap[entity:GetId()] = true
         self:OnEntityAdded(entity)

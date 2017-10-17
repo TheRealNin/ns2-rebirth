@@ -84,7 +84,7 @@ end
 
 local oldGetCanFireAtTargetActual = ARC.GetCanFireAtTargetActual
 function ARC:GetCanFireAtTargetActual(target, targetPoint)    
-    return oldGetCanFireAtTargetActual(self, target, targetPoint)
+    return oldGetCanFireAtTargetActual(self, target, targetPoint) and not (target:isa("MAC") or target:isa("ARC"))
 end
 
 Shared.LinkClassToMap("ARC", ARC.kMapName, networkVars)
