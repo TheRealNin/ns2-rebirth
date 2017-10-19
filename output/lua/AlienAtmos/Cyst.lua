@@ -13,7 +13,7 @@ end
 if Client then
     local originalOnTimedUpdate = Cyst.OnTimedUpdate
     function Cyst:OnTimedUpdate(deltaTime)
-        originalOnTimedUpdate(self, deltaTime)
+        local oldReturn = originalOnTimedUpdate(self, deltaTime)
         if self:GetIsAlive() then
         
             local isVisible = not self:GetIsCloaked()
@@ -36,7 +36,7 @@ if Client then
               StartSoundEffectOnEntity(soundEffectName, self, 0.5, nil)
             end
         end
-        return kUpdateIntervalLow
+        return oldReturn
         
     end
 end
