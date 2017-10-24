@@ -11,7 +11,6 @@ ModLoader.SetupFileHook( "lua/Hive.lua", "lua/AlienAtmos/Hive.lua", "post" )
 ModLoader.SetupFileHook( "lua/DissolveMixin.lua", "lua/AlienAtmos/DissolveMixin.lua", "post" )
 ModLoader.SetupFileHook( "lua/Hive_Client.lua", "lua/AlienAtmos/Hive_Client.lua", "post" )
 ModLoader.SetupFileHook( "lua/PowerPoint.lua", "lua/AlienAtmos/PowerPoint.lua", "post" )
-ModLoader.SetupFileHook( "lua/PowerPointLightHandler.lua", "lua/AlienAtmos/PowerPointLightHandler.lua", "post" )
 ModLoader.SetupFileHook( "lua/PowerPoint_Client.lua", "lua/AlienAtmos/PowerPoint_Client.lua", "post" )
 ModLoader.SetupFileHook( "lua/Marine.lua", "lua/AlienAtmos/Marine.lua", "post" )
 ModLoader.SetupFileHook( "lua/Marine_Client.lua", "lua/AlienAtmos/Marine_Client.lua", "post" )
@@ -25,3 +24,11 @@ ModLoader.SetupFileHook( "lua/RagdollMixin.lua", "lua/AlienAtmos/RagdollMixin.lu
 
 
 ModLoader.SetupFileHook( "lua/Globals.lua", "lua/AlienAtmos/Globals.lua", "post" )
+
+
+local build = Shared.GetBuildNumber()
+if build <= 318 then
+    ModLoader.SetupFileHook( "lua/PowerPointLightHandler.lua", "lua/AlienAtmos/PowerPointLightHandler_old.lua", "post" )
+else
+    ModLoader.SetupFileHook( "lua/PowerPointLightHandler.lua", "lua/AlienAtmos/PowerPointLightHandler.lua", "post" )
+end

@@ -1,5 +1,5 @@
 
-function Armory:ResupplyPlayer(player)
+function Armory:ResupplyPlayerDisabled(player)
     
     local resuppliedPlayer = false
     
@@ -29,7 +29,7 @@ function Armory:ResupplyPlayer(player)
     elseif (player:GetArmor() < player:GetMaxArmor()) then
 
         -- third param true = ignore armor
-        player:AddArmor(Armory.kHealAmount / 2, true, false)
+        player:AddArmor(Armory.kHealAmount / 4, true, false)
 
         self:TriggerEffects("armory_health", {effecthostcoords = Coords.GetTranslation(player:GetOrigin())})
         

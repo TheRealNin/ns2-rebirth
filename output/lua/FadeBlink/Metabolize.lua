@@ -2,6 +2,7 @@
 -- lua\Weapons\Alien\Metabolize.lua
 
 
+class 'Metabolize' (Blink)
 
 local kVortexDestroy = PrecacheAsset("cinematics/alien/fade/vortex_destroy.cinematic")
 
@@ -16,8 +17,7 @@ local kBacktrackSaveInterval = 0.25
 local _backtrackSaveNum = math.round(kBacktrackMaxRewind / kBacktrackSaveInterval) + 1
 
 kMetabolizeDelay = kBacktrackDelay -- was 2.0
-local kMetabolizeEnergyRegain = 35
-local kMetabolizeHealthRegain = 15
+
 
 
 
@@ -157,9 +157,9 @@ function Metabolize:OnTag(tagName)
             local state = self:GetOldestState()
             if state and Server then
 
-                if HasMixin(self, "SmoothedRelevancy") then
-                    player:StartSmoothedRelevancy(state.origin)
-                end
+                --if HasMixin(self, "SmoothedRelevancy") then
+                --    player:StartSmoothedRelevancy(state.origin)
+                --end
                 
                 player:SetOrigin(state.origin)
                 
@@ -169,7 +169,7 @@ function Metabolize:OnTag(tagName)
                 
                 player.crouching = state.crouching
 
-                if player:GetCanMetabolizeHealth() then
+                --if player:GetCanMetabolizeHealth() then
                   local oldHealth = player:GetHealthFraction()
                   local oldArmor = player:GetArmorScalar()
                   
@@ -189,7 +189,7 @@ function Metabolize:OnTag(tagName)
                     player:SetArmor(newArmor * player:GetMaxArmor())
                     player:SetHealth(newHealth * player:GetMaxHealth())
                   end
-                end 
+                --end 
             end
             
             self.lastPrimaryAttackTime = Shared.GetTime()

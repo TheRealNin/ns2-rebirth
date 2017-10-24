@@ -39,6 +39,7 @@ function Marine:OnUpdateRender()
         else
             radius = 10
             intensity = 5
+            self.flashlight:SetCastsShadows( false )
         end
         self.flashlight:SetAtmosphericDensity(density)
         self.flashlight:SetRadius( radius ) 

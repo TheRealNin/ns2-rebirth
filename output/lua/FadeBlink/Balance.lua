@@ -1,6 +1,7 @@
 
 kFadeTeleportEnergyCost = 14 -- was 22
 
+kMetabolizeEnergyCost = 35 -- was 25
 
 --kFadeCost = 25
 --kFadeEggCost = 50

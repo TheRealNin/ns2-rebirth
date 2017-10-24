@@ -1,0 +1,4 @@
+modEntry = {
+	FileHooks = "lua/SgShine/FileHooks.lua",
+	Priority = 51
+}

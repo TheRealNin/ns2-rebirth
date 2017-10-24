@@ -1,7 +1,7 @@
 
 local kRookieModeDelay = 20
 local kPregameLength = 5 -- extra time to select your team, was 3 seconds
-local kGameStartMessageInterval = 60
+local kGameStartMessageInterval = 10
 
 -- How often to send the "No commander" message to players in seconds.
 local kSendNoCommanderMessageRate = 10
@@ -323,8 +323,7 @@ if Server then
                     SendTeamMessage(self.team1, kTeamMessageTypes.GameStartAborted)
                     SendTeamMessage(self.team2, kTeamMessageTypes.GameStartAborted)
                 end
-                -- this got REALLY ANNOYING
-                --[[
+                
                 if (not team1Commander or not team2Commander) then
                     if not self.nextGameStartMessageTime or Shared.GetTime() > self.nextGameStartMessageTime then
                         SendTeamMessage(self.team1, kTeamMessageTypes.GameStartCommanders)
@@ -341,7 +340,6 @@ if Server then
                     end
                     
                 end
-                ]]--
             end
             
         end

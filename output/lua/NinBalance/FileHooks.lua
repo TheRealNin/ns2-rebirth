@@ -15,3 +15,7 @@ ModLoader.SetupFileHook( "lua/Babbler.lua", "lua/NinBalance/Babbler.lua", "post"
 
 
 ModLoader.SetupFileHook( "lua/GUIAlienBuyMenu.lua", "lua/NinBalance/GUIAlienBuyMenu.lua", "post" )
+
+
+-- shamelessly stole Ghoul's autoselect upgrades
+ModLoader.SetupFileHook( "lua/Egg.lua", "lua/NinBalance/Egg.lua", "post" )

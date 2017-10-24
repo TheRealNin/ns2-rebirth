@@ -16,6 +16,7 @@ function Marine:DropAllWeapons()
         elseif weapon:GetIsDroppable() and 
             LookupTechData(weapon:GetTechId(), kTechDataCostKey, 0) > 0 and
             not weapon:isa("Rifle") and
+            not weapon:isa("Axe") and
             not weapon:isa("Pistol") then
             self:Drop(weapon, true, true)
         end

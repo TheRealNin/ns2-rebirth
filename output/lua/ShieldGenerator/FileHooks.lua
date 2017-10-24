@@ -1,0 +1,12 @@
+
+ModLoader.SetupFileHook( "lua/Armory.lua", "lua/ShieldGenerator/Armory.lua", "post" )
+ModLoader.SetupFileHook( "lua/Balance.lua", "lua/ShieldGenerator/Balance.lua", "post" )
+ModLoader.SetupFileHook( "lua/Marine.lua", "lua/ShieldGenerator/Marine.lua", "post" )
+ModLoader.SetupFileHook( "lua/Marine_Server.lua", "lua/ShieldGenerator/Marine_Server.lua", "post" )
+ModLoader.SetupFileHook( "lua/TechData.lua", "lua/ShieldGenerator/TechData.lua", "post" )
+ModLoader.SetupFileHook( "lua/TechTreeConstants.lua", "lua/ShieldGenerator/TechTreeConstants.lua", "post" )
+ModLoader.SetupFileHook( "lua/TechTreeButtons.lua", "lua/ShieldGenerator/TechTreeButtons.lua", "post" )
+ModLoader.SetupFileHook( "lua/MarineBuy_Client.lua", "lua/ShieldGenerator/MarineBuy_Client.lua", "post" )
+ModLoader.SetupFileHook( "lua/MarineTeam.lua", "lua/ShieldGenerator/MarineTeam.lua", "post" )
+ModLoader.SetupFileHook( "lua/NS2ConsoleCommands_Server.lua", "lua/ShieldGenerator/NS2ConsoleCommands_Server.lua", "post" )
+ModLoader.SetupFileHook( "lua/GUIMarineBuyMenu.lua", "lua/ShieldGenerator/GUIMarineBuyMenu.lua", "post" )

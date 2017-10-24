@@ -1,0 +1,10 @@
+kShieldGeneratorCost = 15
+kShieldGeneratorResearchCost = 10
+kShieldGeneratorTechResearchTime = 120
+--kPersonalShieldDamageReductionDamage = 0.9
+kPersonalShieldDamageSpecialReductionDamage = 0.5
+kPersonalShieldArmorFraction = 1.0
+kPersonalShieldRepairPerSecond = 5.0
+kPersonalShieldRepairInterval = 2.0
+kPersonalShieldRepairDelay = 6.0
+kPersonalShieldDuration = 999999

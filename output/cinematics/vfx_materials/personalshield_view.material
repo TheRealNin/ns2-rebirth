@@ -1,0 +1,4 @@
+shader = "cinematics/vfx_materials/personalshield_view.surface_shader"
+greebMap = "cinematics/vfx_materials/personalshield_greeb.dds"
+noiseMap = "materials/effects/mesh_effects/nanoshield_noise.dds"
+circuitMap = "cinematics/vfx_materials/personalshield_circuit.dds"

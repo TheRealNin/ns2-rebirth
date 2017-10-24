@@ -1,6 +1,7 @@
 #!/usr/bin/bash
 dest="/c/Users/Adam/Documents/Rebirth/output/"
 
+rm -r $dest*
 
 cp -R /c/Users/Adam/Documents/AlienAtmos/output/* $dest
 cp -R /c/Users/Adam/Documents/AnyTeam/output/* $dest
@@ -16,3 +17,5 @@ cp -R /c/Users/Adam/Documents/NinBalance/output/* $dest
 cp -R /c/Users/Adam/Documents/FadeAcidRocket/output/* $dest
 cp -R /c/Users/Adam/Documents/ArmoryGUI/output/* $dest
 cp -R /c/Users/Adam/Documents/MinimapBuildings/output/* $dest
+cp -R /c/Users/Adam/Documents/ShieldGenerator/output/* $dest
+cp -R /c/Users/Adam/Documents/SgShine/output/* $dest

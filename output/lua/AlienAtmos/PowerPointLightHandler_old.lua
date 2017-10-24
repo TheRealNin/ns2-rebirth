@@ -188,14 +188,14 @@ function NormalLightWorker:Run()
         end
 
         if probeTint ~= nil then
-            for _,probe in ipairs(self.handler.probeTable) do
+            for probe,_ in pairs(self.handler.probeTable) do
                 probe:SetTint( Color(1, 1, 1, 1) )
             end
          end
         
     end
 
-    for _,renderLight in ipairs(self.activeLights) do
+    for renderLight,_ in pairs(self.activeLights) do
 
         local intensity = nil
         local randomValue = renderLight.randomValue
@@ -293,14 +293,13 @@ function NoPowerLightWorker:Run()
     end
 
     if self.activeProbes then    
-        for _, probe in ipairs(self.handler.probeTable) do
+        for probe,_ in pairs(self.handler.probeTable) do
             probe:SetTint( probeTint )
         end
     end
 
-    local removeLights = {}
     
-    for _, renderLight in ipairs(self.activeLights) do
+    for renderLight,_ in pairs(self.activeLights) do
         
         local randomValue = renderLight.randomValue
         -- aux light starting to come on
@@ -363,12 +362,12 @@ function NoPowerLightWorker:Run()
         else
         
             -- Deactivate from initial state
-            table.insert(removeLights, renderLight)
-
+            self.activeLights[renderLight] = nil
+            
             -- in steady state, we shift lights between a constant state and a varying state.
             -- We assign each light to one of several groups, and then randomly start/stop cycling for each group.
-            local lightGroupIndex = math.random(1, NoPowerLightWorker.kNumGroups)
-            table.insert(self.lightGroups[lightGroupIndex].lights,renderLight)
+            local lightGroupIndex = math.floor(math.random() * NoPowerLightWorker.kNumGroups)
+            self.lightGroups[lightGroupIndex].lights[renderLight] = true
             
         end
         if intensity then
@@ -376,13 +375,9 @@ function NoPowerLightWorker:Run()
         end
         
     end
-    
-    for i = 1, #removeLights do
-        table.removevalue(self.activeLights, removeLights[i])
-    end
 
     -- handle the light-cycling groups.
-    for _,lightGroup in ipairs(self.lightGroups) do
+    for _,lightGroup in pairs(self.lightGroups) do
         lightGroup:Run(timePassed)
     end
 
@@ -411,7 +406,7 @@ function LightGroup:RunCycle( time)
             showCommanderLight = true
         end
         
-        for _,renderLight in ipairs(self.lights) do
+        for renderLight,_ in pairs(self.lights) do
         
             -- Fade disabled color in and out to make it very clear that the power is out
             local scalar = kNoPowerIntensity

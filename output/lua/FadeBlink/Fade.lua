@@ -1,10 +1,14 @@
 
 local kSwipeRange = 2.1
-local kMaxSpeed = 7.5
+local kMaxSpeed = 8.0
 local kBlinkSpeed = 100
-local kshadowStepTime = 0.2
+local kshadowStepTime = 0.15
 local kMinEnterEtherealTime = 0.35
 local kFadeScanDuration = 4
+
+
+local kFadeShadowDanceHealthRegen = 10
+local kFadeShadowDanceDelay = 1.0
 
 local kViewOffsetHeight = 1.4
 Fade.YExtents = 0.80 -- was 1.05
@@ -95,7 +99,7 @@ function Fade:OnProcessMove(input)
     if self.ethereal then
       if Shared.GetTime() - self.etherealStartTime < kshadowStepTime and player.OnBlinkEnd then
         --player.blinkAmount = 1
-        local shadowStepFraction = Clamp((Shared.GetTime() - self.etherealStartTime) / kshadowStepTime, 0, 1)
+        local shadowStepFraction = Clamp((Shared.GetTime() - self.etherealStartTime) / kshadowStepTime, 0, 1) * 0.5 + 0.5
         local newPos = self.startBlinkLocation * (1-shadowStepFraction) + self.endBlinkLocation * shadowStepFraction
         --player:SetOrigin(newPos)
         player:UpdateControllerFromEntity()
@@ -115,6 +119,48 @@ function Fade:OnProcessMove(input)
         self.previousweapon = nil
     end
     
+    if self:GetCanMetabolizeHealth() and not self:GetIsSighted() and self:GetHealthScalar() ~= 1 then
+        if self.timeOfLastPhase + kFadeShadowDanceDelay < Shared.GetTime() then
+            self.timeOfLastPhase = Shared.GetTime()
+            
+            local totalHealed = self:AddHealth(kFadeShadowDanceHealthRegen, false, false)
+            if Client and totalHealed > 0 then
+                local GUIRegenerationFeedback = ClientUI.GetScript("GUIRegenerationFeedback")
+                GUIRegenerationFeedback:TriggerRegenEffect()
+                local cinematic = Client.CreateCinematic(RenderScene.Zone_ViewModel)
+                cinematic:SetCinematic(kRegenerationViewCinematic)
+            end
+        end
+    end
+end
+
+-- health regen comes from another passive ability now
+function Fade:GetMovementSpecialTechId()
+    return kTechId.MetabolizeEnergy
+    --[[
+    if self:GetCanMetabolizeHealth() then
+        return kTechId.MetabolizeHealth
+    else
+        return kTechId.MetabolizeEnergy
+    end
+    ]]--
+end
+
+function Fade:OnUpdateAnimationInput(modelMixin)
+
+    if not self:GetHasMetabolizeAnimationDelay() then
+        Alien.OnUpdateAnimationInput(self, modelMixin)
+
+        --if self.timeOfLastPhase + 0.5 > Shared.GetTime() then
+        --    modelMixin:SetAnimationInput("move", "teleport")
+        --end
+    else
+        local weapon = self:GetActiveWeapon()
+        if weapon ~= nil and weapon.OnUpdateAnimationInput and weapon:GetMapName() == Metabolize.kMapName then
+            weapon:OnUpdateAnimationInput(modelMixin)
+        end
+    end
+
 end
 
 if Client then
