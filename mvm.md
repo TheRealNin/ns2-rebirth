@@ -25,7 +25,8 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 * Healing fields cannot overlap. If the commander places them too close, the older one will be destroyed.
 
 ### New armory GUI and tech
-* Shield generator boosts armor utility, giving +10 armor and auto-welding. It also better protects against GL and railgun
+* Shield generator boosts armor utility, giving +10 armor and auto-welding after a short delay
+* It also better protects against GL and Railgun, giving 50% reduction to damage from those sources as long as you have armor.
 
 ### Exosuit boombox 
 * Press 1-3 on your keyboard
@@ -34,11 +35,11 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 ### Hades Device
 * Blueprint placed by commander
 * Costs 10 res, can only be armed by a marine (not a MAC)
-* Detonates after 30 seconds, and does massive damage to all units in a radius (including friendlies)
+* Detonates after 30 seconds, and does massive damage to all units in a radius (including allies)
 
 ### Creepier Atmosphere mod
 * Rooms start dark, but flashlights are boosted
-* Many other tweaks to gameplay
+* Many other tweaks to visuals, including lens flares, textures, and decals
 
 ### Persistent Minimap Buildings
 * If you spot an enemy building, it will stay on your minimap until it is destroyed
