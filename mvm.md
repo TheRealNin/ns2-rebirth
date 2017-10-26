@@ -2,10 +2,10 @@
 title: Nin's Marine vs Marine
 ---
 
-Marine vs Marine
+Nin's Marine vs Marine
 =====
 
-MvM is powered by the Rebirth project! It includes many mods beyond what you see in Marine vs Marine. 
+NMvM is powered by the Rebirth project! It includes many mods beyond what you see in NMvM. 
 Below are only the changes that affect the Marine vs Marine gameplay.
 
 * Power nodes are neutral, and can only be damaged if your team isn't using it.
@@ -27,17 +27,22 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 * Medpacks are replaced by healing fields
 * Costs 2 res, lasts for 15 seconds, and can heal up to 300 HP per marine
 * Healing fields cannot overlap. If the commander places them too close, the older one will be destroyed.
+
 ### New armory GUI and tech
 * Shield generator boosts armor utility, giving +10 armor and auto-welding. It also better protects against GL and railgun
+
 ### Exosuit boombox 
 * Press 1-3 on your keyboard
 * can be heard clear across the map
+
 ### Hades Device
 * Blueprint placed by commander
 * Costs 10 res, can only be armed by a marine (not a MAC)
 * Detonates after 30 seconds, and does massive damage to all units in a radius (including friendlies)
+
 ### Creepier Atmosphere mod
 * Rooms start dark, but flashlights are boosted
 * Many other tweaks to gameplay
+
 ### Persistent Minimap Buildings
 * If you spot an enemy building, it will stay on your minimap until it is destroyed
