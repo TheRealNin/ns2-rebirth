@@ -19,6 +19,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 * ARCs cannot target or damage ARCs, MACs, or power nodes (maps are not designed properly for ARCing power nodes)
 * Nerve gas grenades damage armor, just like against aliens. (It's kind of more like an acid grenade)
 * Bullets have a slight damage falloff starting at 6 metres (20 feet)
+* Flamethrowers cannot ignite marine buildings, but they can ignite marines! Afterburn damage increased slightly. 
 
 ## New content
 ### Healing field
