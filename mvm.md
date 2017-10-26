@@ -19,7 +19,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 * ARCs cannot target or damage ARCs, MACs, or power nodes (maps are not designed properly for ARCing power nodes)
 * Nerve gas grenades damage armor, just like against aliens. (It's kind of more like an acid grenade)
 
-## Additionally, there are a few extra mods running:
+## Additional mods:
 ### Healing field
 * Medpacks are replaced by healing fields
 * Costs 2 res, lasts for 15 seconds, and can heal up to 300 HP per marine
