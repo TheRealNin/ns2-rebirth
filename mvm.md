@@ -1,20 +1,16 @@
 ---
 title: Nin's Marine vs Marine
 ---
-
-Nin's Marine vs Marine
-=====
-
-NMvM is powered by the Rebirth project! It includes many mods beyond what you see in NMvM. 
+Nin's MvM is powered by the Rebirth project, which includes many mods beyond what you see in the MvM-only part of the mod. 
 Below are only the changes that affect the Marine vs Marine gameplay.
 
 * Power nodes are neutral, and can only be damaged if your team isn't using it.
 * Marines can socket power nodes by walking up and pressing E
 * All friendly structures, players, and equipment have a blue outline. Enemies have no outlines.
-* All damage is increased by 33%
+* All marine to marine damage is increased by 33%
 * Marine backwards walk speed increased
 * Exo takes 25% less damage from all sources
-* Exos take an additiona 50% less damage from bullets
+* Exos take an additional 50% less damage from bullets
 * Grenades from the Grenade Launcher lose their ability to explode on impact after bouncing off a surface (prevents spam around corners and skidding along the ground).
 * Cluster grenades do 40% extra damage
 * Shotguns have a much smaller spread, but deal less damage per pellet
