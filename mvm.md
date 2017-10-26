@@ -10,12 +10,14 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 * All marine to marine damage is increased by 33%
 * Marine backwards walk speed increased
 * Exosuits takes 25% less damage from all sources, and an additional 50% less damage from bullets
+* Pulse grenades slow exosuits
 * Grenades from the Grenade Launcher lose their ability to explode on impact after bouncing off a surface (prevents spam around corners and skidding along the ground).
 * Cluster grenades do 40% extra damage
 * Shotguns have a much smaller spread, but deal less damage per pellet
 * Nanoshield reduces all damage by 50% (up from 32%)
 * Axe damage increased
 * ARCs cannot target or damage ARCs, MACs, or power nodes (maps are not designed properly for ARCing power nodes)
+* Nerve gas grenades damage armor, just like against aliens. (It's kind of more like an acid grenade)
 
 ## Additionally, there are a few extra mods running:
 ### Healing field
