@@ -4,12 +4,18 @@ title: Nin's Marine vs Marine
 Nin's MvM is powered by the Rebirth project, which includes many mods beyond what you see in the MvM-only part of the mod. 
 Below are only the changes that affect the Marine vs Marine gameplay.
 
+## Update for Oct 27
+
+* Railguns now deal half damage to structures (vanilla NS2 has them deal double)
+
+## All Changes
 * Power nodes are neutral, and can only be damaged if your team isn't using it.
 * Marines can socket power nodes by walking up and pressing E
 * All friendly structures, players, and equipment have a blue outline. Enemies have no outlines.
 * All marine to marine damage is increased by 33%
 * Marine backwards walk speed increased
 * Exosuits takes 25% less damage from all sources, and an additional 50% less damage from bullets
+* Railguns now deal half damage to structures (vanilla NS2 has them deal double)
 * Pulse grenades slow exosuits
 * Grenades from the Grenade Launcher lose their ability to explode on impact after bouncing off a surface (prevents spam around corners and skidding along the ground).
 * Cluster grenades do 40% extra damage
@@ -21,7 +27,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 * Bullets have a slight damage falloff starting at 6 metres (20 feet)
 * Flamethrowers cannot ignite marine buildings, but they can ignite marines! Afterburn damage increased slightly. 
 
-## New content
+## Extra Mods
 ### Healing field
 * Medpacks are replaced by healing fields
 * Costs 2 res, lasts for 15 seconds, and can heal up to 300 HP per marine
