@@ -4,6 +4,10 @@ title: Nin's Marine vs Marine
 Nin's MvM is powered by the Rebirth project, which includes many mods beyond what you see in the MvM-only part of the mod. 
 Below are only the changes that affect the Marine vs Marine gameplay.
 
+## Update for Oct 28
+
+* Railguns can no longer shoot through structures (but can still shoot through players)
+
 ## Update for Oct 27
 
 * Railguns now deal half damage to structures (vanilla NS2 has them deal double)
@@ -15,7 +19,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 * All marine to marine damage is increased by 33%
 * Marine backwards walk speed increased
 * Exosuits takes 25% less damage from all sources, and an additional 50% less damage from bullets
-* Railguns now deal half damage to structures (vanilla NS2 has them deal double)
+* Railguns deal half damage to structures (vanilla NS2 has them deal double) and cannot shoot through structures
 * Pulse grenades slow exosuits
 * Grenades from the Grenade Launcher lose their ability to explode on impact after bouncing off a surface (prevents spam around corners and skidding along the ground).
 * Cluster grenades do 40% extra damage
