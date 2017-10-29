@@ -6,7 +6,10 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 
 ## Update for Oct 28
 
-* Railguns can no longer shoot through structures (but can still shoot through players)
+* Railguns now deal Normal damage (instead of Structural.) This effectively reduces their damage to half that of vanilla.
+* Railgun projectile size reduced from 0.3 meters to 0.05 meters.
+* New Tech: Advanced Shield Generator. Costs 20 res and takes 120 seconds. It changes the shield generator to give +40 armor and dramatically reduces recharge delay (from 10 seconds to 3 seconds).
+* Shield Generator armor fraction is now 95% (advanced and regular versions). Vanilla armor fraction is still 70%.
 
 ## Update for Oct 27
 
@@ -19,7 +22,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 * All marine to marine damage is increased by 33%
 * Marine backwards walk speed increased
 * Exosuits takes 25% less damage from all sources, and an additional 50% less damage from bullets
-* Railguns deal half damage to structures (vanilla NS2 has them deal double) and cannot shoot through structures
+* Railguns now deal Normal damage (instead of Structural) and have a smaller projectile (making it harder to hit players)
 * Pulse grenades slow exosuits
 * Grenades from the Grenade Launcher lose their ability to explode on impact after bouncing off a surface (prevents spam around corners and skidding along the ground).
 * Cluster grenades do 40% extra damage
@@ -40,6 +43,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 ### New armory GUI and tech
 * Shield generator boosts armor utility, giving +10 armor and auto-welding after a short delay
 * It also better protects against GL and Railgun, giving 50% reduction to damage from those sources as long as you have armor.
+* Advanced Shield Generator tech changes the shield generator to give +40 armor and reduced recharge delay
 
 ### Exosuit boombox 
 * Press 1-3 on your keyboard
