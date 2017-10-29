@@ -6,7 +6,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 
 ## Update for Oct 28
 
-* Railguns now deal Normal damage (instead of Structural.) This effectively reduces their damage to half that of vanilla.
+* Railguns now deal Normal damage (instead of Structural.) This effectively reduces their damage against structures to half that of vanilla.
 * Railgun projectile size reduced from 0.3 meters to 0.05 meters.
 * New Tech: Advanced Shield Generator. Costs 20 res and takes 120 seconds. It changes the shield generator to give +40 armor and dramatically reduces recharge delay (from 10 seconds to 3 seconds).
 * Shield Generator armor fraction is now 95% (advanced and regular versions). Vanilla armor fraction is still 70%.
