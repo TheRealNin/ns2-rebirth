@@ -7,7 +7,6 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 ## Update for Nov 1
 
 * Shield Generator has been rebalanced to 3 levels. The levels cost 10,20,30 tres to research, take 90 seconds each, and give +10 armor for each level. Regeneration delay also scales down (10,5,3 seconds)
-* Bug fixes
 
 ## Update for Oct 30
 
