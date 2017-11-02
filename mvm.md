@@ -47,7 +47,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 * Healing fields cannot overlap. If the commander places them too close, the older one will be destroyed.
 
 ### New armory GUI and tech
-* Shield generator boosts armor utility, giving +10 armor and auto-welding after a 10 second delay. Costs 10 res and 120 seconds to research.
+* Shield generator boosts armor utility, giving +10 armor and auto-welding after a 10 second delay. Costs 10 res and 90 seconds to research.
 * It also better protects against GL, Miniguns, and Railgun, giving 50% reduction to damage from those sources as long as you have armor.
 * Shield generator can be upgraded to provide +10 armor per level (max +30), and can have the regeneration delay reduced to 5 and then 3 seconds at max level
 
