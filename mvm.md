@@ -4,6 +4,10 @@ title: Nin's Marine vs Marine
 Nin's MvM is powered by the Rebirth project, which includes many mods beyond what you see in the MvM-only part of the mod. 
 Below are only the changes that affect the Marine vs Marine gameplay.
 
+## Update for Nov 2
+
+* The shield generator can now be stored (inactive) when using an exosuit. There is a 1 second delay when exiting where it is not enabled.
+
 ## Update for Nov 1
 
 * Shield Generator has been rebalanced to 3 levels. The levels cost 10,20,30 tres to research, take 90 seconds each, and give +10 armor for each level. Regeneration delay also scales down (10,5,3 seconds)
