@@ -4,6 +4,11 @@ title: Nin's Marine vs Marine
 Nin's MvM is powered by the Rebirth project, which includes many mods beyond what you see in the MvM-only part of the mod. 
 Below are only the changes that affect the Marine vs Marine gameplay.
 
+## Update for Nov 6
+
+* New mod: Machine Gun Rebalance
+* Machine gun now reloads twice as fast, but firing it lowers your move speed by 20%. All other values remain the same as vanilla.
+
 ## Update for Nov 2
 
 * The shield generator can now be stored (inactive) when using an exosuit. There is a 1 second delay when exiting where it is not enabled.
@@ -70,3 +75,6 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 
 ### Persistent Minimap Buildings
 * If you spot an enemy building, it will stay on your minimap until it is destroyed
+
+### Machine Gun Rebalance
+* Machine guns now reloads twice as fast, but firing it lowers your move speed by 20%. All other values remain the same as vanilla.
