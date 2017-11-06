@@ -10,6 +10,11 @@ if Server then
         
             if target:isa("Player") and not target:GetIsAlive() and target.SetBypassRagdoll then
                 target:SetBypassRagdoll(true)
+                
+                if target:isa("Marine") then
+                    -- no explode animation, add bloodmist
+                    target:TriggerEffects("bloodmist", {effecthostcoords = Coords.GetTranslation(target:GetOrigin())})
+                end
             end
             
         end

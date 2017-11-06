@@ -151,8 +151,9 @@ function GUIUnitStatus:Initialize()
     
     self.activeStatusInfo =  {}
     
-    self.activeBlipList = { }
-    
+    self.activeBlipList = {}
+    self.dirtyBlipList = {}
+
     self.useMarineStyle = false
     self.fullHUD = Client.GetOptionInteger("hudmode", kHUDMode.Full) == kHUDMode.Full
     
@@ -234,6 +235,8 @@ local function CreateBlipItem(self)
     local newBlip = { }
     local teamType = PlayerUI_GetTeamType()
     local neutralTexture = "ui/unitstatus_neutral.dds"
+
+    newBlip.teamType = teamType
     
     newBlip.ScreenX = 0
     newBlip.ScreenY = 0
@@ -267,7 +270,7 @@ local function CreateBlipItem(self)
     newBlip.ProgressingIcon:SetTexture(texture)
     newBlip.ProgressingIcon:SetAnchor(GUIItem.Middle, GUIItem.Top)
     newBlip.ProgressingIcon:SetBlendTechnique(GUIItem.Add) 
-    newBlip.ProgressingIcon:SetTexturePixelCoordinates(unpack(GUIUnitStatus.kProgressingIconCoords))
+    newBlip.ProgressingIcon:SetTexturePixelCoordinates(GUIUnpackCoords(GUIUnitStatus.kProgressingIconCoords))
     newBlip.ProgressingIcon:SetSize(GUIUnitStatus.kProgressingIconSize)
     newBlip.ProgressingIcon:SetPosition(-GUIUnitStatus.kProgressingIconSize/2 + GUIUnitStatus.kProgressingIconOffset )
     newBlip.ProgressingIcon:SetIsVisible(false)
@@ -292,21 +295,21 @@ local function CreateBlipItem(self)
     newBlip.statusBg:SetSize(GUIUnitStatus.kStatusBgSize)
     newBlip.statusBg:SetPosition(-GUIUnitStatus.kStatusBgSize * .5 + GUIUnitStatus.kStatusBgOffset )
     newBlip.statusBg:SetClearsStencilBuffer(true)
-    newBlip.statusBg:SetTexturePixelCoordinates(unpack(GUIUnitStatus.kStatusBackgroundPixelCoords))
+    newBlip.statusBg:SetTexturePixelCoordinates(GUIUnpackCoords(GUIUnitStatus.kStatusBackgroundPixelCoords))
     
     newBlip.HealthBarBg = GetGUIManager():CreateGraphicItem()
     newBlip.HealthBarBg:SetAnchor(GUIItem.Middle, GUIItem.Bottom)
     newBlip.HealthBarBg:SetSize(Vector(kHealthBarWidth, kHealthBarHeight, 0))
     newBlip.HealthBarBg:SetPosition(Vector(-kHealthBarWidth / 2, -kHealthBarHeight - kArmorBarHeight - GUIScale(10), 0))
     newBlip.HealthBarBg:SetTexture(neutralTexture)
-    newBlip.HealthBarBg:SetTexturePixelCoordinates(unpack(GUIUnitStatus.kUnitStatusBarTexCoords))
+    newBlip.HealthBarBg:SetTexturePixelCoordinates(GUIUnpackCoords(GUIUnitStatus.kUnitStatusBarTexCoords))
     newBlip.HealthBarBg:SetColor(Color(0,0,0,0))
     
     newBlip.RegenBar = GetGUIManager():CreateGraphicItem()
     newBlip.RegenBar:SetColor(kRegenBarFriendlyColor)
     newBlip.RegenBar:SetSize(Vector(0, kHealthBarHeight, 0))
     newBlip.RegenBar:SetTexture(neutralTexture)
-    newBlip.RegenBar:SetTexturePixelCoordinates(unpack(GUIUnitStatus.kUnitStatusBarTexCoords))
+    newBlip.RegenBar:SetTexturePixelCoordinates(GUIUnpackCoords(GUIUnitStatus.kUnitStatusBarTexCoords))
     newBlip.RegenBar:SetBlendTechnique(GUIItem.Add)
     newBlip.HealthBarBg:AddChild(newBlip.RegenBar)
 
@@ -314,7 +317,7 @@ local function CreateBlipItem(self)
     newBlip.HealthBar:SetColor(kHealthBarColors[teamType])
     newBlip.HealthBar:SetSize(Vector(kHealthBarWidth, kHealthBarHeight, 0))
     newBlip.HealthBar:SetTexture(neutralTexture)
-    newBlip.HealthBar:SetTexturePixelCoordinates(unpack(GUIUnitStatus.kUnitStatusBarTexCoords))
+    newBlip.HealthBar:SetTexturePixelCoordinates(GUIUnpackCoords(GUIUnitStatus.kUnitStatusBarTexCoords))
     newBlip.HealthBar:SetBlendTechnique(GUIItem.Add)
     newBlip.HealthBarBg:AddChild(newBlip.HealthBar)
     
@@ -324,13 +327,13 @@ local function CreateBlipItem(self)
     newBlip.ArmorBarBg:SetPosition(Vector(-kArmorBarWidth / 2, -kArmorBarHeight - GUIScale(10), 0))
     newBlip.ArmorBarBg:SetTexture(neutralTexture)
     newBlip.ArmorBarBg:SetColor(Color(0,0,0,0))
-    newBlip.ArmorBarBg:SetTexturePixelCoordinates(unpack(GUIUnitStatus.kUnitStatusBarTexCoords))
+    newBlip.ArmorBarBg:SetTexturePixelCoordinates(GUIUnpackCoords(GUIUnitStatus.kUnitStatusBarTexCoords))
     
     newBlip.ArmorBar = GUIManager:CreateGraphicItem()
     newBlip.ArmorBar:SetColor(kArmorBarColors[teamType])
     newBlip.ArmorBar:SetSize(Vector(kArmorBarWidth, kArmorBarHeight, 0))
     newBlip.ArmorBar:SetTexture(neutralTexture)
-    newBlip.ArmorBar:SetTexturePixelCoordinates(unpack(GUIUnitStatus.kUnitStatusBarTexCoords))
+    newBlip.ArmorBar:SetTexturePixelCoordinates(GUIUnpackCoords(GUIUnitStatus.kUnitStatusBarTexCoords))
     newBlip.ArmorBar:SetBlendTechnique(GUIItem.Add)
     newBlip.ArmorBarBg:AddChild(newBlip.ArmorBar)
     
@@ -384,14 +387,45 @@ local function CreateBlipItem(self)
     newBlip.ProgressingIcon:AddChild(newBlip.ActionText)
     
     return newBlip
-    
+
+end
+
+local function UpdateBlipTeamType(blip)
+    local teamType = PlayerUI_GetTeamType()
+    if blip.teamType == teamType then
+        return
+    end
+
+    blip.teamType = teamType
+
+    local texture = kStatusBgTexture[teamType]
+    local fontColor = kStatusFontColor[teamType]
+
+    blip.GraphicsItem:SetTexture(texture)
+    blip.ProgressingIcon:SetTexture(texture)
+    blip.ProgressText:SetColor(fontColor)
+
+    blip.HealthBar:SetColor(kHealthBarColors[teamType])
+    blip.ArmorBar:SetColor(kArmorBarColors[teamType])
+
+end
+
+local function GetNewBlipItem(self)
+    if #self.dirtyBlipList > 0 then
+        local dirtyBlip = table.remove(self.dirtyBlipList)
+        UpdateBlipTeamType(dirtyBlip) -- We may need to update the teamType
+
+        return dirtyBlip
+    end
+
+    return CreateBlipItem(self)
 end
 
 local function AddWelderIcon(blipItem)
 
     blipItem.welderIcon = GetGUIManager():CreateGraphicItem()
     blipItem.welderIcon:SetTexture(kWelderTexture)
-    blipItem.welderIcon:SetTexturePixelCoordinates(unpack(kWelderTexCoords))
+    blipItem.welderIcon:SetTexturePixelCoordinates(GUIUnpackCoords(kWelderTexCoords))
     blipItem.welderIcon:SetSize(kWelderIconSize)
     blipItem.welderIcon:SetPosition(kWelderIconPos)
     blipItem.welderIcon:SetAnchor(GUIItem.Right, GUIItem.Center)    
@@ -400,7 +434,7 @@ local function AddWelderIcon(blipItem)
 
 end
 
-function AddAbilityBar(blipItem)
+local function AddAbilityBar(blipItem)
 
     blipItem.AbilityBarBg = GetGUIManager():CreateGraphicItem()
     blipItem.AbilityBarBg:SetAnchor(GUIItem.Middle, GUIItem.Bottom)
@@ -408,13 +442,13 @@ function AddAbilityBar(blipItem)
     blipItem.AbilityBarBg:SetPosition(Vector(-kArmorBarWidth / 2, -kArmorBarHeight * 2, 0))
     blipItem.AbilityBarBg:SetTexture("ui/unitstatus_neutral.dds")
     blipItem.AbilityBarBg:SetColor(Color(0,0,0,1))
-    blipItem.AbilityBarBg:SetTexturePixelCoordinates(unpack(GUIUnitStatus.kUnitStatusBarTexCoords))
+    blipItem.AbilityBarBg:SetTexturePixelCoordinates(GUIUnpackCoords(GUIUnitStatus.kUnitStatusBarTexCoords))
     
     blipItem.AbilityBar = GUIManager:CreateGraphicItem()
     blipItem.AbilityBar:SetColor(kAbilityBarColor)
     blipItem.AbilityBar:SetSize(Vector(kArmorBarWidth, kArmorBarHeight *2, 0))
     blipItem.AbilityBar:SetTexture("ui/unitstatus_neutral.dds")
-    blipItem.AbilityBar:SetTexturePixelCoordinates(unpack(GUIUnitStatus.kUnitStatusBarTexCoords))
+    blipItem.AbilityBar:SetTexturePixelCoordinates(GUIUnpackCoords(GUIUnitStatus.kUnitStatusBarTexCoords))
     blipItem.AbilityBar:SetBlendTechnique(GUIItem.Add)
     blipItem.AbilityBarBg:AddChild(blipItem.AbilityBar)
 
@@ -422,18 +456,22 @@ function AddAbilityBar(blipItem)
 
 end
 
-function GUIUnitStatus:UpdateUnitStatusBlip(blipData, updateBlip, localPlayerIsCommander, baseResearchRot, showHints, playerTeamNumber )
+function GUIUnitStatus:UpdateUnitStatusBlip( blipIndex, localPlayerIsCommander, baseResearchRot, showHints, playerTeamNumber )
 
     PROFILE("GUIUnitStatus:UpdateUnitStatusBlip")
+
+    local blipData = self.activeStatusInfo[blipIndex]
     
     local teamType = blipData.TeamType
     local isEnemy = playerTeamNumber ~= blipData.TeamNumber
+    local isNeutral = false
     
     local relationColor = isEnemy and kEnemyTeamType or kFriendlyTeamType
     
     local isCrosshairTarget = blipData.IsCrossHairTarget 
     if blipData.TeamNumber ~= kTeam1Index and blipData.TeamNumber ~= kTeam2Index  then
         relationColor = kNeutralTeamType
+        isNeutral = true
     end
     --Print("Is an enemy? %s. %s vs %s", isEnemy, playerTeamNumber, blipData.TeamNumber)
 
@@ -499,7 +537,7 @@ function GUIUnitStatus:UpdateUnitStatusBlip(blipData, updateBlip, localPlayerIsC
     end
 
     local textColor
-    if isEnemy then
+    if isEnemy and not isNeutral then
         textColor = GUIUnitStatus.kEnemyColor
     elseif blipData.IsParasited and blipData.IsFriend then
         textColor = kCommanderColorFloat
@@ -510,7 +548,8 @@ function GUIUnitStatus:UpdateUnitStatusBlip(blipData, updateBlip, localPlayerIsC
     end
         
     -- status icon, color and unit name
-    
+
+    local updateBlip = self.activeBlipList[blipIndex]
     updateBlip.GraphicsItem:SetTexturePixelCoordinates(GetUnitStatusTextureCoordinates(blipData.Status))
     updateBlip.GraphicsItem:SetPosition(blipData.Position - GUIUnitStatus.kUnitStatusSize * .5 )
     --updateBlip.OverLayGraphic:SetTexturePixelCoordinates(GetUnitStatusTextureCoordinates(blipData.Status))
@@ -538,7 +577,7 @@ function GUIUnitStatus:UpdateUnitStatusBlip(blipData, updateBlip, localPlayerIsC
     local showBacking = self.fullHUD and isCrosshairTarget and not PlayerUI_IsACommander() and healthFraction ~= 0
 
     updateBlip.statusBg:SetColor(Color(1,1,1,1))
-    updateBlip.statusBg:SetTexture(kTransparentTexture )
+    updateBlip.statusBg:SetTexture(kTransparentTexture)
     updateBlip.statusBg:SetPosition(blipData.HealthBarPosition - GUIUnitStatus.kStatusBgSize * .5 )
 
     -- Name
@@ -625,9 +664,7 @@ function GUIUnitStatus:UpdateUnitStatusBlip(blipData, updateBlip, localPlayerIsC
         end
     else
         if updateBlip.AbilityBarBg then
-            GUI.DestroyItem(updateBlip.AbilityBarBg)
-            updateBlip.AbilityBarBg = nil
-            updateBlip.AbilityBar = nil
+            updateBlip.AbilityBarBg:SetIsVisible( false )
         end
     end
 
@@ -673,34 +710,39 @@ function GUIUnitStatus:UpdateUnitStatusBlip(blipData, updateBlip, localPlayerIsC
 
     elseif not showWelderIcon and updateBlip.welderIcon then
 
-        GUI.DestroyItem(updateBlip.welderIcon)
-        updateBlip.welderIcon = nil
+        updateBlip.welderIcon:SetIsVisible(false)
 
     end
 
 end
 
-local function UpdateUnitStatusList(self, activeBlips, deltaTime)
+function GUIUnitStatus:UpdateUnitStatusList(deltaTime)
 
     PROFILE("GUIUnitStatus:UpdateUnitStatusList")
+
+    local numBlips = #self.activeStatusInfo
+
+    while numBlips > table.icount(self.activeBlipList) do
     
-    local numBlips = #activeBlips
-    
-    while numBlips > table.count(self.activeBlipList) do
-    
-        local newBlipItem = CreateBlipItem(self)
+        local newBlipItem = GetNewBlipItem(self)
         table.insert(self.activeBlipList, newBlipItem)
+
+        newBlipItem.GraphicsItem:SetIsVisible(true)
+        newBlipItem.statusBg:SetIsVisible(true)
         newBlipItem.GraphicsItem:DestroyAnimations()
         newBlipItem.GraphicsItem:FadeIn(0.3, "UNIT_STATE_ANIM_ALPHA", AnimateLinear, Pulsate)
         
     end
     
-    while numBlips < table.count(self.activeBlipList) do
+    while numBlips < table.icount(self.activeBlipList) do
     
-        -- fade out and destroy
-        self.activeBlipList[1].GraphicsItem:Destroy()
-        GUI.DestroyItem(self.activeBlipList[1].statusBg)
-        table.remove(self.activeBlipList, 1)
+        -- hide unused blips
+        local blip = table.remove(self.activeBlipList, 1)
+        blip.GraphicsItem:DestroyAnimations()
+        blip.GraphicsItem:SetIsVisible(false)
+        blip.statusBg:SetIsVisible(false)
+
+        table.insert(self.dirtyBlipList, blip)
         
     end
     
@@ -712,17 +754,18 @@ local function UpdateUnitStatusList(self, activeBlips, deltaTime)
     -- Update current blip state.
     local currentIndex = 1
     for i = 1, #self.activeBlipList do
-        
-        self:UpdateUnitStatusBlip(activeBlips[i], self.activeBlipList[i], localPlayerIsCommander, baseResearchRot, showHints, playerTeamNumber )
-        
+    
+        self:UpdateUnitStatusBlip( i, localPlayerIsCommander, baseResearchRot, showHints, playerTeamNumber )
+
     end
 
 end
 
 
-local function UpdatePerFrameInfo(self) 
+function GUIUnitStatus:UpdatePerFrameInfo()
         
     PROFILE("GUIUnitStatus:UpdatePerFrameInfo")
+
     local player = Client.GetLocalPlayer()
     
     if not player then
@@ -744,13 +787,13 @@ local function UpdatePerFrameInfo(self)
             local unit = Shared.GetEntity(blipData.UnitId)
             
             if unit and not unit:GetIsDestroyed() then
-              
-                self.activeStatusInfo[i] = PlayerUI_GetStatusInfoForUnit(player, unit)
-                blipData = self.activeStatusInfo[i]
+
+                blipData = PlayerUI_GetStatusInfoForUnit(player, unit)
+                self.activeStatusInfo[i] = blipData
                     
                 if blipData then
                     
-                    self:UpdateUnitStatusBlip( blipData, self.activeBlipList[i], localPlayerIsCommander, baseResearchRot, showHints, playerTeamNumber )
+                    self:UpdateUnitStatusBlip( i, localPlayerIsCommander, baseResearchRot, showHints, playerTeamNumber )
             
                 end
               
@@ -763,6 +806,8 @@ local function UpdatePerFrameInfo(self)
 end
 
 local function FindUnitsToDisplayStatusFor(player)
+
+    PROFILE("GUIUnitStatus:FindUnitsToDisplayStatusFor")
     
     local teamNumber = player:GetTeamNumber()    
     -- commanders will show entities that are selected
@@ -854,7 +899,7 @@ function GUIUnitStatus:Update(deltaTime)
             table.insert(self.activeStatusInfo, PlayerUI_GetStatusInfoForUnit(player, unit))
         end
         
-        UpdateUnitStatusList(self, self.activeStatusInfo, deltaTime)
+        self:UpdateUnitStatusList(deltaTime)
 
     else
     
@@ -862,7 +907,7 @@ function GUIUnitStatus:Update(deltaTime)
         -- This will make the game appear to be very responsive with the crosshair target's status, because it makes it hide it and show it very quickly
         -- but there can be a 80ms delay for it showing up when you first aim at an enemy, making the game feel unresponsive / laggy.
         -- The crosshair target MUST be run at at least 60fps
-        UpdatePerFrameInfo(self)
+        self:UpdatePerFrameInfo()
         
     end
     

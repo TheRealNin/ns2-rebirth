@@ -6,9 +6,16 @@ function MarineBuy_GetWeaponDescription(techId)
         return oldMarineBuy_GetWeaponDescription(techId)
     end
     
-    
-    local description = "Replace your armor with an auto-recharging, 100% effective energy shield. Additionally, it will absorb 50% of incoming Railgun and Grenade Launcher damage. WARNING: Will be permanently disabled if you enter an Exosuit!"
+    local description = "Replace your armor with an auto-recharging, 95% effective energy shield, giving you extra armor. Additionally, it will reduce 50% of incoming Railgun, Minigun, and Grenade Launcher damage."
 
+    --[[
+    if GetHasTech(self, kTechId.ShieldGeneratorTech3, true) then
+        description = description .. " (level 3)"
+    elseif GetHasTech(self, kTechId.ShieldGeneratorTech2, true) then
+        description = description .. " (level 2)"
+    end
+    ]]--
+    
     local techTree = GetTechTree()
     local requieres = techTree:GetRequiresText(techId)
 

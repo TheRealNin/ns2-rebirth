@@ -27,9 +27,17 @@ function Armory:GetTechButtons(techId)
 
    -- techButtons = { kTechId.ShotgunTech, kTechId.MinesTech, kTechId.GrenadeTech, kTechId.None,
    --                 kTechId.None, kTechId.None, kTechId.None, kTechId.None }
+   
+    if GetHasTech(self, kTechId.ShieldGeneratorTech2, true) then
+        techButtons[4] = kTechId.ShieldGeneratorTech3
+    elseif GetHasTech(self, kTechId.ShieldGeneratorTech, true) then
+        techButtons[4] = kTechId.ShieldGeneratorTech2
+    else
+        techButtons[4] = kTechId.ShieldGeneratorTech
+    end
+    --techButtons[6] = kTechId.ShieldGeneratorTech
+    --techButtons[7] = kTechId.AdvancedShieldGeneratorTech
     
-    techButtons[4] = kTechId.ShieldGeneratorTech
-
     return techButtons
     
 end
@@ -42,8 +50,16 @@ function AdvancedArmory:GetTechButtons(techId)
    -- techButtons = { kTechId.ShotgunTech, kTechId.MinesTech, kTechId.GrenadeTech, kTechId.None,
    --                 kTechId.None, kTechId.None, kTechId.None, kTechId.None }
     
-    techButtons[4] = kTechId.ShieldGeneratorTech
-
+    if GetHasTech(self, kTechId.ShieldGeneratorTech2, true) then
+        techButtons[4] = kTechId.ShieldGeneratorTech3
+    elseif GetHasTech(self, kTechId.ShieldGeneratorTech, true) then
+        techButtons[4] = kTechId.ShieldGeneratorTech2
+    else
+        techButtons[4] = kTechId.ShieldGeneratorTech
+    end
+    --techButtons[6] = kTechId.ShieldGeneratorTech
+    --techButtons[7] = kTechId.AdvancedShieldGeneratorTech
+    
     return techButtons
     
 end

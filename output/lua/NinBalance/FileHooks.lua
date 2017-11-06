@@ -9,6 +9,8 @@ ModLoader.SetupFileHook( "lua/Player.lua", "lua/NinBalance/Player.lua", "post" )
 ModLoader.SetupFileHook( "lua/Weapons/BulletsMixin.lua", "lua/NinBalance/Weapons/BulletsMixin.lua", "post" )
 ModLoader.SetupFileHook( "lua/Weapons/Marine/Grenade.lua", "lua/NinBalance/Weapons/Marine/Grenade.lua", "post" )
 
+-- this is incompatible with alienatmos :(
+ModLoader.SetupFileHook( "lua/Weapons/Marine/Railgun.lua", "lua/NinBalance/Weapons/Marine/Railgun.lua", "post" )
 
 ModLoader.SetupFileHook( "lua/Armory_Server.lua", "lua/NinBalance/Armory_Server.lua", "post" )
 ModLoader.SetupFileHook( "lua/Babbler.lua", "lua/NinBalance/Babbler.lua", "post" )
@@ -19,3 +21,4 @@ ModLoader.SetupFileHook( "lua/GUIAlienBuyMenu.lua", "lua/NinBalance/GUIAlienBuyM
 
 -- shamelessly stole Ghoul's autoselect upgrades
 ModLoader.SetupFileHook( "lua/Egg.lua", "lua/NinBalance/Egg.lua", "post" )
+

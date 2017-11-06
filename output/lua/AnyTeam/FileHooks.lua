@@ -3,7 +3,6 @@ ModLoader.SetupFileHook( "lua/Server.lua", "lua/AnyTeam/Server.lua", "post" )
 
 --- CORE CHANGES
 ModLoader.SetupFileHook( "lua/Mixins/BaseModelMixin.lua", "lua/AnyTeam/Mixins/BaseModelMixin.lua", "replace" )
-ModLoader.SetupFileHook( "lua/MapCycle.lua", "lua/AnyTeam/MapCycle.lua", "post" )
 
 -- NS2+ fixes
 ModLoader.SetupFileHook( "lua/NS2Plus/Client/CHUD_Outlines.lua", "lua/AnyTeam/NS2Plus/CHUD_Disabled.lua", "replace" )
@@ -76,6 +75,7 @@ ModLoader.SetupFileHook( "lua/Player.lua", "lua/AnyTeam/Player.lua", "post" )
 ModLoader.SetupFileHook( "lua/WallMovementMixin.lua", "lua/AnyTeam/WallMovementMixin.lua", "post" )
 ModLoader.SetupFileHook( "lua/DropPack.lua", "lua/AnyTeam/DropPack.lua", "post" )
 ModLoader.SetupFileHook( "lua/SelectableMixin.lua", "lua/AnyTeam/SelectableMixin.lua", "post" )
+ModLoader.SetupFileHook( "lua/AchievementGiverMixin.lua", "lua/AnyTeam/AchievementGiverMixin.lua", "post" )
 --ModLoader.SetupFileHook( "lua/GUISelectionPanel.lua", "lua/AnyTeam/GUISelectionPanel.lua", "post" )
 
 -- relevancymask fixes

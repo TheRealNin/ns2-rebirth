@@ -24,3 +24,5 @@ end
 
 AppendToEnum(kTechId, "ShieldGenerator")
 AppendToEnum(kTechId, "ShieldGeneratorTech")
+AppendToEnum(kTechId, "ShieldGeneratorTech2")
+AppendToEnum(kTechId, "ShieldGeneratorTech3")

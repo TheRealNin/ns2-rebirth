@@ -41,8 +41,8 @@ local function GetRelativImpactPoint(origin, hitEntity)
 
     PROFILE("GetRelativImpactPoint")
 
-    local impactPoint = nil
-    local worldImpactPoint = nil
+    local impactPoint
+    local worldImpactPoint
 
     local targetOrigin = hitEntity:GetOrigin() + Vector(0, 0.2, 0)
 
@@ -94,7 +94,7 @@ local function ConstructTargetEntry(origin, hitEntity, damage, radius, ignoreLos
         return nil
     end    
 
-    local worldImpactPoint = nil
+    local worldImpactPoint
     entry.impactPoint, worldImpactPoint = GetRelativImpactPoint(origin, hitEntity)
     
     if entry.impactPoint or ignoreLos or customImpactPoint then
@@ -305,6 +305,7 @@ function DotMarker:SetDestroyCondition(func)
 end
 
 function DotMarker:OnUpdate(deltaTime)
+    
     if Server then
 
         if self.timeLastUpdate + self.damageIntervall < Shared.GetTime() then
@@ -341,6 +342,7 @@ function DotMarker:OnUpdate(deltaTime)
                 targetList = ConstructCachedTargetList(self:GetOrigin(), GetEnemyTeamNumber(self:GetTeamNumber()), self.damage, self.radius, self.fallOffFunc)
                 
             elseif self.dotMarkerType == DotMarker.kType.Static then
+            
                 -- calculate the target list once and reuse it later (used for bilebomb)
                 if not targetList then
                     self.targetList, self.targetIds = ConstructCachedTargetList(self:GetOrigin(), GetEnemyTeamNumber(self:GetTeamNumber()), self.damage, self.radius, self.fallOffFunc, true)

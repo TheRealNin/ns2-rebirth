@@ -5,7 +5,7 @@ function Exo:OnCreate()
   originalOnCreate(self)
   if Client then
       self.flashlight:SetColor(Color(.8, .8, 1))
-      self.flashlight:SetInnerCone(math.rad(45))
+      self.flashlight:SetInnerCone(math.rad(25))
       self.flashlight:SetOuterCone(math.rad(55))
       self.flashlight:SetIntensity(10)
       self.flashlight:SetRadius(35)

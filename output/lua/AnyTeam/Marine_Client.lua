@@ -1,6 +1,11 @@
 
 local kHighlightMaterial = PrecacheAsset("cinematics/vfx_materials/marine_enemy_highlight.material")
 
+function Marine:GetHealthbarOffset()
+    return 0.8 -- uses GetEngagementPointOverride as the base, was 1.2
+end
+
+
 local origOnUpdateRender = Marine.OnUpdateRender
 function Marine:OnUpdateRender()
     origOnUpdateRender(self)

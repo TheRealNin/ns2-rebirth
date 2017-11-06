@@ -262,7 +262,7 @@ function NoPowerLightWorker:Run()
     local time = Shared.GetTime()
     local timePassed = time - timeOfChange    
     
-    local startAuxLightTime = kPowerDownTime + kOffTime
+    local startAuxLightTime = kPowerDownTime
     local fullAuxLightTime = startAuxLightTime + PowerPoint.kAuxPowerCycleTime
     local startAuxLightFailTime = fullAuxLightTime + PowerPoint.kAuxLightSafeTime
     local totalAuxLightFailTime = startAuxLightFailTime + PowerPoint.kAuxLightDyingTime
@@ -445,15 +445,13 @@ function PowerPointLightHandler:Reset()
     for _, light in ipairs(GetLightsForLocation(self.powerPoint:GetLocationName())) do
     
         if not light.ignorePowergrid then
-            self.lightTable[light] = true
+            table.insert(self.lightTable, light)
         end
         
     end
     
-    for _, probe in ipairs(GetReflectionProbesForLocation(self.powerPoint:GetLocationName())) do
-        self.probeTable[probe] = true
-    end
-    
+    self.probeTable = GetReflectionProbesForLocation(self.powerPoint:GetLocationName())
+
     self.workerTable = {
         [kLightMode.Normal] = NormalLightWorker():Init(self, "normal"),
         [kLightMode.NoPower] = NoPowerLightWorker():Init(self, "nopower"),

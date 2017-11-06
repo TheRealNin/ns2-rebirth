@@ -21,6 +21,7 @@ local kNanoLoopSound = PrecacheAsset("sound/NS2.fev/marine/commander/nano_loop")
 local kNanoDamageSound = PrecacheAsset("sound/NS2.fev/marine/commander/nano_damage")
 
 local kpersonalShieldMaterial = PrecacheAsset("cinematics/vfx_materials/personalshield.material")
+local kpersonalEnemyShieldMaterial = PrecacheAsset("cinematics/vfx_materials/personalshieldenemy.material")
 local kNanoshieldViewMaterial = PrecacheAsset("cinematics/vfx_materials/personalshield_view.material")
 local kNanoshieldExoViewMaterial = PrecacheAsset("cinematics/vfx_materials/personalshield_view.material")
 
@@ -46,10 +47,10 @@ function PersonalShieldMixin:__initmixin()
         
         self.timePersonalShieldInit = 0
         self.personalShielded = false
+        self.deservesShield = false
         self.timeOfLastRepair = 0
         
     end
-    
 end
 
 local function ClearPersonalShield(self, destroySound)
@@ -88,7 +89,8 @@ function PersonalShieldMixin:ActivatePersonalShield()
         self.personalShielded = true
         
         if Server then
-        
+            
+            self.deservesShield = true
             
         end
         
@@ -100,6 +102,9 @@ local function ActivatePersonalShieldOn(self)
     return false
 end
 
+function PersonalShieldMixin:GetIsArmored()
+    return self:GetArmor() > 0.01
+end
 function PersonalShieldMixin:ActivatePersonalShieldDelayed()
 
     self:AddTimedCallback(ActivatePersonalShieldOn, 1)
@@ -110,6 +115,7 @@ function PersonalShieldMixin:GetIsPersonalShielded()
     return self.personalShielded
 end
 
+--[[
 if Server then
 
 
@@ -131,6 +137,7 @@ if Server then
     end
     
 end
+]]--
 
 function PersonalShieldMixin:GetCanBePersonalShielded()
 
@@ -148,7 +155,7 @@ local function UpdateClientPersonalShieldEffects(self)
 
     assert(Client)
     
-    if self:GetIsPersonalShielded() and self:GetIsAlive() then
+    if self:GetIsPersonalShielded() and self:GetIsAlive() and self:GetIsArmored() then
         self:_CreateShieldEffect()
     else
         self:_RemoveShieldEffect() 
@@ -168,7 +175,14 @@ local function SharedUpdate(self)
         --if self.timePersonalShieldInit + kPersonalShieldDuration < Shared.GetTime() then
         --    ClearPersonalShield(self, true)
         --end
-        if self.timeLastCombatAction < Shared.GetTime() - kPersonalShieldRepairDelay then
+        local delay = kPersonalShieldRepairDelay
+        if GetHasTech(self, kTechId.ShieldGeneratorTech2, true) then
+            delay = kPersonalShield2RepairDelay
+        end
+        if GetHasTech(self, kTechId.ShieldGeneratorTech3, true) then
+            delay = kPersonalShield3RepairDelay
+        end
+        if self.timeLastCombatAction < Shared.GetTime() - delay then
             if (self:GetArmor() < self:GetMaxArmor()) then
                 if (self.timeOfLastRepair < Shared.GetTime() - kPersonalShieldRepairInterval) then
                     
@@ -189,8 +203,8 @@ end
 
 function PersonalShieldMixin:ModifyDamageTaken(damageTable, attacker, doer, damageType)
     
-    if self:GetIsPersonalShielded() then
-        if (doer and doer:isa("Railgun")) or damageType == kDamageType.GrenadeLauncher then
+    if self:GetIsPersonalShielded() and self:GetIsArmored() then
+        if (doer and (doer:isa("Railgun") or doer:isa("Minigun"))) or damageType == kDamageType.GrenadeLauncher then
             damageTable.damage = damageTable.damage * kPersonalShieldDamageSpecialReductionDamage
         --else
         --    damageTable.damage = damageTable.damage * kPersonalShieldDamageReductionDamage
@@ -256,7 +270,12 @@ if Client then
         if not self.personalShieldMaterial then
         
             local material = Client.CreateRenderMaterial()
-            material:SetMaterial(kpersonalShieldMaterial)
+            if Client.GetLocalPlayer() and GetAreFriends(self, Client.GetLocalPlayer()) 
+                or (Client.GetLocalClientTeamNumber() == kSpectatorIndex and self:GetTeamNumber() == kTeam1Index) then
+                material:SetMaterial(kpersonalShieldMaterial)
+            else
+                material:SetMaterial(kpersonalEnemyShieldMaterial)
+            end
 
             local viewMaterial = Client.CreateRenderMaterial()
             
