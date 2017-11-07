@@ -5,11 +5,11 @@ Nin's MvM is powered by the Rebirth project, which includes many mods beyond wha
 Below are only the changes that affect the Marine vs Marine gameplay.
 
 
-## Update for Nov 7
+## Update for Nov 6
 
 * Grenade launcher change reverted to vanilla NS2. You can can skid grenade launcher shots along the ground and they will explode on impact. Note that the minimum arming from vanilla NS2 time is still enabled.
 
-## Update for Nov 6
+## Update for Nov 5
 
 * New mod: Machine Gun Rebalance
 * Machine gun now reloads twice as fast, but firing it lowers your move speed by 20%. All other values remain the same as vanilla.
