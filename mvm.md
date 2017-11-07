@@ -9,6 +9,8 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 
 * Grenade launcher change reverted to vanilla NS2. You can can skid grenade launcher shots along the ground and they will explode on impact. Note that the minimum arming from vanilla NS2 time is still enabled.
 * Shotgun damage increased slightly so you should be able to one-shot a marine with no upgrades when you have no upgrades from close range. 
+* Shield generator research cost reduced from 10/20/30 to 10/15/20. 
+* Shield generator research time reduced from 90/120/120 to 45/45/45. 
 
 ## Update for Nov 5
 
@@ -61,7 +63,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 * Healing fields cannot overlap. If the commander places them too close, the older one will be destroyed.
 
 ### New armory GUI and tech
-* Shield generator boosts armor utility, giving +10 armor and auto-welding after a 10 second delay. Costs 10 res and 90 seconds to research.
+* Shield generator boosts armor utility, giving +10 armor and auto-welding after a 10 second delay. Costs 10 res and 45 seconds to research.
 * It also better protects against GL, Miniguns, and Railgun, giving 50% reduction to damage from those sources as long as you have armor.
 * Shield generator can be upgraded to provide +10 armor per level (max +30), and can have the regeneration delay reduced to 5 and then 3 seconds at max level
 
