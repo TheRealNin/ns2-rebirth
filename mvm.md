@@ -7,7 +7,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 
 ## Update for Nov 6
 
-* Grenade launcher change reverted to vanilla NS2. You can can skid grenade launcher shots along the ground and they will explode on impact. Note that the minimum arming from vanilla NS2 time is still enabled.
+* Grenade launcher change reverted to vanilla NS2. You can can skid grenade launcher shots along the ground and they will explode on impact. Note that the minimum arming time from vanilla NS2 is still enabled.
 * Shotgun damage increased slightly so you should be able to one-shot a marine with no upgrades when you have no upgrades from close range. 
 * Shield generator research cost reduced from 10/20/30 to 10/15/20. 
 * Shield generator research time reduced from 90/120/120 to 45/45/45. 
