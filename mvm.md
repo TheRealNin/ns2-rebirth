@@ -4,6 +4,11 @@ title: Nin's Marine vs Marine
 Nin's MvM is powered by the Rebirth project, which includes many mods beyond what you see in the MvM-only part of the mod. 
 Below are only the changes that affect the Marine vs Marine gameplay.
 
+
+## Update for Nov 7
+
+* Grenade launcher change reverted to vanilla NS2. You can can skid grenade launcher shots along the ground and they will explode on impact. Note that the minimum arming from vanilla NS2 time is still enabled.
+
 ## Update for Nov 6
 
 * New mod: Machine Gun Rebalance
@@ -39,7 +44,6 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 * Exosuits takes 25% less damage from all sources, and an additional 50% less damage from bullets
 * Railguns now deal Normal damage (instead of Structural) and have a smaller projectile (making it harder to hit players)
 * Pulse grenades slow exosuits
-* Grenades from the Grenade Launcher lose their ability to explode on impact after bouncing off a surface (prevents spam around corners and skidding along the ground).
 * Cluster grenades do 40% extra damage
 * Shotguns have a much smaller spread, but deal less damage per pellet
 * Nanoshield reduces all damage by 50% (up from 32%)
