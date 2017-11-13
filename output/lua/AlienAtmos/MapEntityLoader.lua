@@ -279,6 +279,11 @@ local function LoadLight(className, groupName, values)
         renderLight.originalIntensity = values.intensity
         renderLight.originalColor = values.color
         renderLight.originalCoords = Coords(coords)
+        
+        -- added by creepier atmos
+        renderLight.originalRadius = values.distance
+        renderLight.originalSpecular = values.specular
+        
         renderLight.originalAtmosphericDensity = atmosphericDensity
         
         if (className == "light_ambient") then
@@ -346,6 +351,52 @@ local function LoadDecal(className, groupName, values)
         
 end
 
+local lightProps = set {
+    "models/props/eclipse/eclipse_main_area_a_light.model",
+    "models/props/eclipse/eclipse_gate_area_screen.model",
+    "models/props/eclipse/eclipse_hallway_03_corner_up.model",
+    "models/props/eclipse/eclipse_hallway_02_corner_up.model",
+    "models/props/eclipse/eclipse_hallway_01_corner_up.model",
+    "models/props/eclipse/eclipse_ceilingmods_D_05_lamp.model",
+    "models/props/eclipse/eclipse_ceilingmods_d_05_lamp.model",
+    "models/props/eclipse/eclipse_ceilingmods01_03_lamp.model",
+    "models/props/eclipse/eclipse_hallway_04_lamp.model",
+    "models/props/eclipse/eclipse_details01_04.model",
+    "models/props/eclipse/eclipse_modular_section_n_02.model",
+    "models/props/descent/descent_energytower_ring.model",
+    "models/props/descent/descent_ceilinglight_01.model",
+    "models/props/descent/descent_hallway_01_light.model",
+    "models/props/descent/descent_doorway_01_var.model",
+    "models/props/descent/descent_doorway_02_open.model",
+    "models/props/descent/descent_doorway_03_double_closed.model",
+    "models/props/descent/descent_doorway_03_double_open.model",
+    "models/props/descent/descent_ceilingpanels_02_tile2.model",
+    "models/props/descent/descent_energyflow_ring_01.model",
+    "models/props/descent/descent_lightpanels_01a.model",
+    "models/props/descent/descent_lightpanels_01b.model",
+    "models/props/descent/descent_hallway_01_light.model",
+    "models/props/descent/descent_tram_ceiling_light_01.model",
+    "models/props/descent/descent_pillar_04.model",
+    "models/props/descent/descent_doorway_01.model",
+    "models/props/descent/descent_ribwalls_01_str1.model",
+    "models/props/descent/descent_ribwalls_01_str2.model",
+    "models/props/descent/descent_ribwalls_01_str3.model",
+    "models/props/descent/descent_ribwalls_01_str4.model",
+    "models/props/descent/descent_ribwalls_01_str5.model",
+    "models/props/descent/descent_ribwalls_01_crn_in.model",
+    "models/props/descent/descent_ribwalls_01_crn_out.model",
+    "models/props/discovery/discovery_light_01.model",
+    "models/props/refinery/refinery_small_light_01.model",
+    "models/props/refinery/refinery_elevator1_platform.model",
+    "models/props/refinery/mining_light_01.model",
+    "models/props/refinery/refinery_floodlight_01.model",
+    "models/props/refinery/docking_clerical_light.model",
+    "models/props/summit/summit_container_01_top.model",
+    "models/props/veil/veil_archwall.model",
+    "models/props/biodome/biodome_pillar_04_pillar1.model"
+
+}
+
 local function LoadStaticProp(className, groupName, values)
 
     if values.model == "" or values.model == nil then
@@ -397,14 +448,35 @@ local function LoadStaticProp(className, groupName, values)
             renderModel:SetCastsShadows(values.castsShadows)
         end
         renderModel:SetCoords(coords)
-        renderModel:SetIsStatic(true)
-        renderModel:SetIsInstanced(true)
         renderModel:SetGroup(groupName)
         
         renderModel.commAlpha = renderModelCommAlpha
         renderModel.model = values.model
         
         table.insert(Client.propList, {renderModel, physicsModel})
+        
+        if string.find(values.model, "models/props/generic/lights/") or
+           string.find(values.model, "models/props/biodome/biodome_lights") or 
+           string.find(values.model, "models/props/descent/descent_wallmods") or 
+           string.find(values.model, "models/props/eclipse/eclipse_wallmod") or
+           lightProps[values.model] then
+        
+            renderModel:InstanceMaterials()
+            renderModel:SetMaterialParameter("emissiveMod", 1)
+            renderModel:SetIsStatic(true)
+            renderModel:SetIsInstanced(true)
+            
+            if not Client.lightPropList then
+                Client.lightPropList = { }
+            end
+            table.insert(Client.lightPropList, renderModel)
+            
+        else
+        
+            renderModel:SetIsStatic(true)
+            renderModel:SetIsInstanced(true)
+            
+        end
         
     end
     

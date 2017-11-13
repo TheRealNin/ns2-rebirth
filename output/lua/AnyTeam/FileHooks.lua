@@ -38,7 +38,6 @@ ModLoader.SetupFileHook( "lua/TechTree_Server.lua", "lua/AnyTeam/TechTree_Server
 ModLoader.SetupFileHook( "lua/MarineOutlineMixin.lua", "lua/AnyTeam/MarineOutlineMixin.lua", "post" )
 ModLoader.SetupFileHook( "lua/EquipmentOutline.lua", "lua/AnyTeam/EquipmentOutline.lua", "post" )
 ModLoader.SetupFileHook( "lua/MarineSpectator.lua", "lua/AnyTeam/MarineSpectator.lua", "post" )
-ModLoader.SetupFileHook( "lua/ServerSponitor.lua", "lua/AnyTeam/ServerSponitor.lua", "post" )
 ModLoader.SetupFileHook( "lua/CommanderGlowMixin.lua", "lua/AnyTeam/CommanderGlowMixin.lua", "post" )
 ModLoader.SetupFileHook( "lua/MarineTeam.lua", "lua/AnyTeam/MarineTeam.lua", "post" )
 ModLoader.SetupFileHook( "lua/Player_Client.lua", "lua/AnyTeam/Player_Client.lua", "post" )

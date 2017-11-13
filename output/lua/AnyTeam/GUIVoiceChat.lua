@@ -32,7 +32,7 @@ local kWorldSpeakerIcon = kGlobalSpeakerIcon
 
 GUIVoiceChat.kCommanderFontColor = Color(1, 1, 0, 1)
 GUIVoiceChat.kMarineFontColor = Color(147/255, 206/255, 1, 1)
-GUIVoiceChat.kAlienFontColor = Color(207/255, 139/255, 41/255, 1)
+GUIVoiceChat.kAlienFontColor = Color(207/255, 60/255, 41/255, 1)
 GUIVoiceChat.kSpectatorFontColor = Color(1, 1, 1, 1)
 
 local loggedIn = false
@@ -169,7 +169,7 @@ function GUIVoiceChat:Update(deltaTime)
     
     local allPlayers = ScoreboardUI_GetAllScores()
     -- How many items per player.
-    local numPlayers = table.count(allPlayers)
+    local numPlayers = table.icount(allPlayers)
     local currentBar = 0
     
     for i = 1, numPlayers do

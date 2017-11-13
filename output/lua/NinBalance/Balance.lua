@@ -17,7 +17,7 @@ kClusterGrenadeDamage = 55 * 1.4
 kClusterFragmentDamage = 20 * 1.4
 
 
-kShotgunDamage = 7.4 -- was 10
+kShotgunDamage = 8 -- was 10
 kShotgunBulletsPerShot = 17
 kShotgunSpreadDistance = 25 -- was 8.5 --Gets used as z-axis value for spread vectors before normalization
 

@@ -12,6 +12,7 @@ local kAuxPowerMinIntensity = 0
 local kAuxPowerMinCommanderIntensity = 3
 local kNoPowerIntensity = 0.05 -- 0.02
 local kNoPowerMinIntensity = 0.4
+local kSmallLightRadius = 1.0
 
 local function hue2rgb(p, q, t)
   if t < 0   then t = t + 1 end
@@ -161,6 +162,7 @@ function NormalLightWorker:RestoreColor(renderLight)
 
 end
 
+
 -- Turning on full power.
 -- When turn on full power, the lights are never decreased in intensity.
 --
@@ -241,7 +243,22 @@ function NormalLightWorker:Run()
         
         -- color are only changed once during the full-power-on
         SetLight(renderLight, intensity, nil)
-
+        if renderLight.originalSpecular then
+            renderLight:SetSpecular(renderLight.originalSpecular)
+        end
+        
+    end
+    
+    local startFullTime = PowerPoint.kMinFullLightDelay
+    local fullFullTime = startFullTime + PowerPoint.kFullPowerOnTime
+    if timePassed > startFullTime then
+        local timeRatio = 1
+        if timePassed < fullFullTime then
+            timeRatio = Clamp((timePassed - startFullTime) / PowerPoint.kFullPowerOnTime, 0, 1)
+        end
+        for _, prop in ipairs(self.handler.propLightTable) do
+            prop:SetMaterialParameter("emissiveMod", 2.0 * timeRatio)
+        end
     end
 
 end
@@ -262,7 +279,7 @@ function NoPowerLightWorker:Run()
     local time = Shared.GetTime()
     local timePassed = time - timeOfChange    
     
-    local startAuxLightTime = kPowerDownTime
+    local startAuxLightTime = kPowerDownTime + kOffTime
     local fullAuxLightTime = startAuxLightTime + PowerPoint.kAuxPowerCycleTime
     local startAuxLightFailTime = fullAuxLightTime + PowerPoint.kAuxLightSafeTime
     local totalAuxLightFailTime = startAuxLightFailTime + PowerPoint.kAuxLightDyingTime
@@ -331,17 +348,8 @@ function NoPowerLightWorker:Run()
             end
             intensity = renderLight.originalIntensity * (1 - scalar)
 
-        elseif timePassed < startAuxLightTime then
-        
-            if showCommanderLight then
-                intensity = renderLight.originalIntensity * kMinCommanderLightIntensityScalar
-            else
-                intensity = 0  
-            end     
-            
         elseif timePassed < fullAuxLightTime then
         
-            -- Fade red in smoothly. t will stay at zero during the individual delay time
             local t = timePassed - startAuxLightTime
             -- angle goes from zero to 90 degres in one kAuxPowerCycleTime
             local angleRad = (t / PowerPoint.kAuxPowerCycleTime) * math.pi / 2
@@ -353,6 +361,11 @@ function NoPowerLightWorker:Run()
             end
             
             intensity = math.max(scalar * renderLight.originalIntensity, kNoPowerMinIntensity)
+            
+            -- disable really really small lights
+            if renderLight.originalRadius < kSmallLightRadius then
+                intensity = 0.01
+            end
             
             if showCommanderLight then
                 color = PowerPoint.kDisabledCommanderColor
@@ -372,7 +385,8 @@ function NoPowerLightWorker:Run()
             
         end
         if intensity then
-          SetLight(renderLight, intensity, color)
+            SetLight(renderLight, intensity, color)
+            renderLight:SetSpecular(false)
         end
         
     end
@@ -384,6 +398,14 @@ function NoPowerLightWorker:Run()
     -- handle the light-cycling groups.
     for _,lightGroup in ipairs(self.lightGroups) do
         lightGroup:Run(timePassed)
+    end
+    
+    if timePassed > kPowerDownTime then
+        for _, prop in ipairs(self.handler.propLightTable) do
+            
+            prop:SetMaterialParameter("emissiveMod", 100)
+            
+        end
     end
 
 end
@@ -434,10 +456,18 @@ function LightGroup:RunCycle( time)
     
 end
 
+function PowerPointLightHandler:Init(powerPoint)
+
+    self.powerPoint = powerPoint
+    self:Reset()
+    return self
+
+end
 
 function PowerPointLightHandler:Reset()
 
     self.lightTable = { }
+    self.propLightTable = { }
     self.probeTable = { }
     
     -- all lights for this powerPoint, and filter away those that
@@ -447,6 +477,12 @@ function PowerPointLightHandler:Reset()
         if not light.ignorePowergrid then
             table.insert(self.lightTable, light)
         end
+        
+    end
+    
+    for _, prop in ipairs(GetPropLightsForLocation(self.powerPoint:GetLocationName())) do
+    
+        table.insert(self.propLightTable, prop)
         
     end
     
@@ -461,4 +497,16 @@ function PowerPointLightHandler:Reset()
     
     self:Run(kLightMode.NoPower)
 
+end
+
+local noPowerActivate = NoPowerLightWorker.Activate
+function NoPowerLightWorker:Activate()
+    noPowerActivate(self)
+    
+end
+
+local normalActivate = NormalLightWorker.Activate
+function NormalLightWorker:Activate()
+    normalActivate(self)
+    
 end

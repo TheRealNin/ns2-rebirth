@@ -762,6 +762,19 @@ function BaseModelMixin:OnUpdate(deltaTime)
         if self.previousModelIndex ~= self.modelIndex then
             self:MarkPhysicsDirty()
         end
+        
+        local localPlayer = Client.GetLocalPlayer()
+        local showHighlight = localPlayer ~= nil and GetAreEnemies(localPlayer, self)
+        
+        local model = self:GetRenderModel()
+
+        if model then
+            if showHighlight then
+                model:SetMaterialParameter("tint", 1)
+            else
+                model:SetMaterialParameter("tint", 0)
+            end
+        end
     end
 
     UpdateAnimationState(self, self.fullyUpdated, true)

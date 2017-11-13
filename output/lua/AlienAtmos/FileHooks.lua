@@ -25,6 +25,7 @@ ModLoader.SetupFileHook( "lua/RagdollMixin.lua", "lua/AlienAtmos/RagdollMixin.lu
 
 ModLoader.SetupFileHook( "lua/Globals.lua", "lua/AlienAtmos/Globals.lua", "post" )
 
+ModLoader.SetupFileHook( "lua/NS2Utility.lua", "lua/AlienAtmos/NS2Utility.lua", "post" )
 
 local build = Shared.GetBuildNumber()
 if build <= 318 then

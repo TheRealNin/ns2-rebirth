@@ -8,6 +8,7 @@ local kAnimationGraph = PrecacheAsset("models/alien/fade/fade_view.animation_gra
 PrecacheAsset("cinematics/vfx_materials/vortex.surface_shader")
 
 local kVortexCinematic = PrecacheAsset("cinematics/alien/fade/vortex_fast.cinematic")
+local kLandingCinematic = PrecacheAsset("cinematics/alien/fade/vortex_landing.cinematic")
 local kCreateVortex = PrecacheAsset("cinematics/alien/fade/use_vortex.cinematic")
 
 
@@ -153,11 +154,21 @@ function Blink:OnSecondaryAttack(player)
                 self.vortexCinematic = nil
                 
             end
+            if self.landingCinematic then
+            
+                Client.DestroyCinematic(self.landingCinematic)
+                self.landingCinematic = nil
+                
+            end
             if Client and Client.GetLocalPlayer() == player then
                 
               self.vortexCinematic = Client.CreateCinematic(RenderScene.Zone_Default)    
               self.vortexCinematic:SetCinematic(kVortexCinematic)
               self.vortexCinematic:SetRepeatStyle(Cinematic.Repeat_Endless)
+              
+              self.landingCinematic = Client.CreateCinematic(RenderScene.Zone_Default)    
+              self.landingCinematic:SetCinematic(kLandingCinematic)
+              self.landingCinematic:SetRepeatStyle(Cinematic.Repeat_Endless)
               
                 
             end
@@ -180,6 +191,12 @@ function Blink:OnSecondaryAttackEnd(player)
     
         Client.DestroyCinematic(self.vortexCinematic)
         self.vortexCinematic = nil
+        
+    end
+    if self.landingCinematic then
+    
+        Client.DestroyCinematic(self.landingCinematic)
+        self.landingCinematic = nil
         
     end
 
@@ -249,8 +266,41 @@ function Blink:OnUpdateAnimationInput(modelMixin)
     end
     
     if self.vortexCinematic then
-      player.blinkAmount = 0.25
-      self.vortexCinematic:SetCoords(BlinkEndTarget(self))
+        player.blinkAmount = 0.25
+        local endTarget = BlinkEndTarget(self)
+        self.vortexCinematic:SetCoords(endTarget)
+        local player = self:GetParent()
+        
+        local tooClose = not (player:GetEyePos():GetDistanceTo(endTarget.origin) < 1)
+        self.vortexCinematic:SetIsVisible(tooClose)
+        
+        if self.landingCinematic then
+                
+            local capsuleHeight, capsuleRadius = player:GetTraceCapsule()
+
+            if not player.crouching then
+                capsuleHeight = capsuleHeight * player:GetExtentsCrouchShrinkAmount()
+            end
+
+            -- use a sphere capsule
+            local sphereCenter = Vector(0,  capsuleRadius * 1.0, 0)
+            local center = Vector(0, capsuleHeight * 0.5 + capsuleRadius, 0)
+
+            local traceStart = endTarget.origin + Vector(0,1,0)
+            local traceEnd = endTarget.origin + Vector(0,-20,0)
+            
+            local trace = Shared.TraceCapsule( traceStart, traceEnd, capsuleRadius * 1.0, 0, CollisionRep.Move, PhysicsMask.All, EntityFilterOneAndIsa(player, "Babbler"))
+            
+            local coords = self:GetCoords()
+            coords.origin = trace.endPoint + Vector(0,-capsuleHeight * 0.5,0)
+            
+            
+            self.landingCinematic:SetCoords(coords)
+            
+            local landingVisible = (trace.fraction > 0.05)
+            self.landingCinematic:SetIsVisible(landingVisible)
+        
+        end
     end
     
     

@@ -69,14 +69,14 @@ local kSkillBarPadding = 4
 local lastScoreboardVisState = false
 
 local kSteamProfileURL = "http://steamcommunity.com/profiles/"
-local kHiveProfileURL = "http://hive.naturalselection2.com/profile/"
+local kHiveProfileURL = "https://observatory.morrolan.ch/players?filter="
 local kMinTruncatedNameLength = 8
 
 -- Color constants.
 GUIScoreboard.kBlueColor = kBlueColor
 GUIScoreboard.kBlueHighlightColor = Color(0.30, 0.69, 1, 1)
 GUIScoreboard.kRedColor = kRedColor--ColorIntToColor(kAlienTeamColor)
-GUIScoreboard.kRedHighlightColor = Color(1, 0.79, 0.23, 1)
+GUIScoreboard.kRedHighlightColor = Color(1, 0.33, 0.23, 1)
 GUIScoreboard.kSpectatorColor = ColorIntToColor(kNeutralTeamColor)
 GUIScoreboard.kSpectatorHighlightColor = Color(0.8, 0.8, 0.8, 1)
 
@@ -256,7 +256,7 @@ local function CreateTeamBackground(self, teamNumber)
     local resItem = GUIManager:CreateGraphicItem()
     resItem:SetPosition((Vector(currentColumnX, playerDataRowY, 0) + kIconOffset) * GUIScoreboard.kScalingFactor)
     resItem:SetTexture("ui/buildmenu.dds")
-    resItem:SetTexturePixelCoordinates(unpack(GetTextureCoordinatesForIcon(kTechId.CollectResources)))
+    resItem:SetTexturePixelCoordinates(GUIUnpackCoords(GetTextureCoordinatesForIcon(kTechId.CollectResources)))
     resItem:SetSize(kIconSize * GUIScoreboard.kScalingFactor)
     resItem:SetStencilFunc(GUIItem.NotEqual)
     teamItem:AddChild(resItem)
@@ -286,6 +286,8 @@ function GUIScoreboard:Initialize()
     self.updateInterval = 0.2
     
     self.visible = false
+    
+    self.localTeamNumber = Client.GetLocalPlayer():GetTeamNumber()
     
     self.teams = { }
     self.reusePlayerItems = { }
@@ -348,6 +350,19 @@ function GUIScoreboard:Initialize()
     self.gameTime:SetText("")
     self.gameTimeBackground:AddChild(self.gameTime)
     
+    local team1Color = GUIScoreboard.kBlueColor
+    local team1HighlightColor = GUIScoreboard.kBlueHighlightColor
+    local team2Color = GUIScoreboard.kRedColor
+    local team2HighlightColor = GUIScoreboard.kRedHighlightColor
+    
+    if self.localTeamNumber == kTeam2Index then
+        team2Color = GUIScoreboard.kBlueColor
+        team2HighlightColor = GUIScoreboard.kBlueHighlightColor
+        team1Color = GUIScoreboard.kRedColor
+        team1HighlightColor = GUIScoreboard.kRedHighlightColor
+    end
+    
+    
     -- Teams table format: Team GUIItems, color, player GUIItem list, get scores function.
     -- Spectator team.
     table.insert(self.teams, { GUIs = CreateTeamBackground(self, kTeamReadyRoom), TeamName = ScoreboardUI_GetSpectatorTeamName(),
@@ -356,12 +371,12 @@ function GUIScoreboard:Initialize()
                                
     -- Blue team.
     table.insert(self.teams, { GUIs = CreateTeamBackground(self, kTeam1Index), TeamName = ScoreboardUI_GetBlueTeamName(),
-                               Color = GUIScoreboard.kBlueColor, PlayerList = { }, HighlightColor = GUIScoreboard.kBlueHighlightColor,
+                               Color = team1Color, PlayerList = { }, HighlightColor = team1HighlightColor,
                                GetScores = ScoreboardUI_GetBlueScores, TeamNumber = kTeam1Index})                              
                        
     -- Red team.
     table.insert(self.teams, { GUIs = CreateTeamBackground(self, kTeam2Index), TeamName = ScoreboardUI_GetRedTeamName(),
-                               Color = GUIScoreboard.kRedColor, PlayerList = { }, HighlightColor = GUIScoreboard.kRedHighlightColor,
+                               Color = team2Color, PlayerList = { }, HighlightColor = team2HighlightColor,
                                GetScores = ScoreboardUI_GetRedScores, TeamNumber = kTeam2Index })
 
     self.background:AddChild(self.teams[1].GUIs.Background)
@@ -401,6 +416,11 @@ function GUIScoreboard:Initialize()
     self.hoverMenu:Hide()
     
     self.hoverPlayerClientIndex = 0
+    
+    self.mouseVisible = false
+    
+    self.hiddenOverride = HelpScreen_GetHelpScreen():GetIsBeingDisplayed() -- if true, forces scoreboard to be hidden
+    
 end
 
 
@@ -505,11 +525,17 @@ function GUIScoreboard:Update(deltaTime)
 
     PROFILE("GUIScoreboard:Update")
     
+    local teamNumber = Client.GetLocalPlayer():GetTeamNumber()
+    if self.localTeamNumber ~= teamNumber then
+        self:Uninitialize()
+        self:Initialize()
+    end
+    
     local vis = self.visible and not self.hiddenOverride
     
     -- Show all the elements the frame after sorting them
     -- so it doesn't appear to shift when we open
-    local displayScoreboard = self.slidePercentage > -1
+    local displayScoreboard = self.slidePercentage > -1 and not self.hiddenOverride
     self.gameTimeBackground:SetIsVisible(displayScoreboard)
     self.gameTime:SetIsVisible(displayScoreboard)
     self.background:SetIsVisible(displayScoreboard)
@@ -791,7 +817,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         local playerSkill = playerRecord.Skill
         local commanderColor = GUIScoreboard.kCommanderFontColor
         
-        if isVisibleTeam and teamNumber == kTeam1Index then
+        if isVisibleTeam then
             local currentTech = GetTechIdsFromBitMask(playerRecord.Tech)
             if table.contains(currentTech, kTechId.Jetpack) then
                 if playerStatus ~= "" and playerStatus ~= " " then
@@ -1278,6 +1304,19 @@ local function HandlePlayerTextClicked(self)
         end
     end
 end
+function GUIScoreboard:SetIsVisible(state)
+
+    self.hiddenOverride = not state
+    self:Update(0)
+
+end
+
+function GUIScoreboard:GetIsVisible()
+
+    return not self.hiddenOverride
+
+end
+
 
 function GUIScoreboard:SendKeyEvent(key, down)
 
@@ -1286,8 +1325,8 @@ function GUIScoreboard:SendKeyEvent(key, down)
     end
     
     if GetIsBinding(key, "Scoreboard") then
-        self.visible = down
-        if not down then
+        self.visible = down and not self.hiddenOverride
+        if not self.visible then
             self.hoverMenu:Hide()
         else
             self.updateInterval = 0

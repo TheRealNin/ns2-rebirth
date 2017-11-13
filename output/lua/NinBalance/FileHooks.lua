@@ -7,7 +7,9 @@ ModLoader.SetupFileHook( "lua/Hydra_Server.lua", "lua/NinBalance/Hydra_Server.lu
 ModLoader.SetupFileHook( "lua/Marine.lua", "lua/NinBalance/Marine.lua", "post" )
 ModLoader.SetupFileHook( "lua/Player.lua", "lua/NinBalance/Player.lua", "post" )
 ModLoader.SetupFileHook( "lua/Weapons/BulletsMixin.lua", "lua/NinBalance/Weapons/BulletsMixin.lua", "post" )
-ModLoader.SetupFileHook( "lua/Weapons/Marine/Grenade.lua", "lua/NinBalance/Weapons/Marine/Grenade.lua", "post" )
+
+
+--ModLoader.SetupFileHook( "lua/Weapons/Marine/Grenade.lua", "lua/NinBalance/Weapons/Marine/Grenade.lua", "post" )
 
 -- this is incompatible with alienatmos :(
 ModLoader.SetupFileHook( "lua/Weapons/Marine/Railgun.lua", "lua/NinBalance/Weapons/Marine/Railgun.lua", "post" )

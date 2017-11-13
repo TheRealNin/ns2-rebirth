@@ -14,3 +14,4 @@ ModLoader.SetupFileHook( "lua/Weapons/Alien/SwipeBlink.lua", "lua/FadeBlink/Swip
 ModLoader.SetupFileHook( "lua/GUIAlienBuyMenu.lua", "lua/FadeBlink/GUIAlienBuyMenu.lua", "post" )
 ModLoader.SetupFileHook( "lua/GUIAlienHUD.lua", "lua/FadeBlink/GUIAlienHUD.lua", "post" )
 ModLoader.SetupFileHook( "lua/Alien_Client.lua", "lua/FadeBlink/Alien_Client.lua", "post" )
+ModLoader.SetupFileHook( "lua/TechData.lua", "lua/FadeBlink/TechData.lua", "post" )

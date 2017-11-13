@@ -6,6 +6,7 @@ function Marine:GetHealthbarOffset()
 end
 
 
+        --[[
 local origOnUpdateRender = Marine.OnUpdateRender
 function Marine:OnUpdateRender()
     origOnUpdateRender(self)
@@ -17,21 +18,11 @@ function Marine:OnUpdateRender()
     local model = self:GetRenderModel()
 
     if model then
-    
-        if showHighlight and not self.marineHighlightMaterial then
-            
-            self.marineHighlightMaterial = AddMaterial(model, kHighlightMaterial)
-            
-        elseif not showHighlight and self.marineHighlightMaterial then
-        
-            RemoveMaterial(model, self.marineHighlightMaterial)
-            self.marineHighlightMaterial = nil
-        
+        if showHighlight then
+            model:SetMaterialParameter("tint", 1)
+        else
+            model:SetMaterialParameter("tint", 0)
         end
-        
-        if self.marineHighlightMaterial then
-            self.marineHighlightMaterial:SetParameter("distance", (localPlayer:GetEyePos() - self:GetOrigin()):GetLength())
-        end
-    
     end
 end
+]]--

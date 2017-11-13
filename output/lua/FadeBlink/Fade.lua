@@ -7,7 +7,7 @@ local kMinEnterEtherealTime = 0.35
 local kFadeScanDuration = 4
 
 
-local kFadeShadowDanceHealthRegen = 10
+local kFadeShadowDanceHealthRegen = 6
 local kFadeShadowDanceDelay = 1.0
 
 local kViewOffsetHeight = 1.4

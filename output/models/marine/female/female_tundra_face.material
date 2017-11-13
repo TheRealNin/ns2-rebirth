@@ -1,0 +1,6 @@
+shader = "models/marine/marine_face.surface_shader"
+albedoMap = "models/marine/female/female_tundra_face.dds"
+normalMap = "models/marine/female/female_v2_face_normal.dds"
+specularMap = "models/marine/female/female_tundra_face_spec.dds"
+emissiveMap = "models/marine/female/female_tundra_face_illum.dds"
+
