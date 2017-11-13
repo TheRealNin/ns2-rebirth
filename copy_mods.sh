@@ -18,4 +18,5 @@ cp -R /c/Users/Adam/Documents/FadeAcidRocket/output/* $dest
 cp -R /c/Users/Adam/Documents/ArmoryGUI/output/* $dest
 cp -R /c/Users/Adam/Documents/MinimapBuildings/output/* $dest
 cp -R /c/Users/Adam/Documents/ShieldGenerator/output/* $dest
+cp -R /c/Users/Adam/Documents/FasterHMGReload/output/* $dest
 cp -R /c/Users/Adam/Documents/SgShine/output/* $dest
