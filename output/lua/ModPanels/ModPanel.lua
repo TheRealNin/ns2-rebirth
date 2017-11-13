@@ -1,5 +1,6 @@
 Script.Load("lua/DynamicMeshUtility.lua")
 
+if ModPanel then return end
 
 class 'ModPanel' (Entity)
 ModPanel.kMapName = "modpanel"

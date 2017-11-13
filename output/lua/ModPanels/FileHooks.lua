@@ -1,6 +1,10 @@
+
+-- workaround because Las is lazy
+if AddModPanel then return end
+
+
 kModPanels = {}
 kModPanelsLoaded = false
-
 function AddModPanel(material, url)
     if not kModPanelsLoaded then
         local panel = {["material"]= material,[ "url"]= url}
