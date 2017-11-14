@@ -13,13 +13,17 @@ kBulletDamageFalloffStart = 6
 kBulletDamageFalloffEnd = 25
 kBulletDamageFalloffFraction = 0.5
 
+kShotgunDamageFalloffStart = 2
+kShotgunDamageFalloffEnd = 15
+kShotgunDamageFalloffFraction = 0.25
+
 kClusterGrenadeDamage = 55 * 1.4
 kClusterFragmentDamage = 20 * 1.4
 
 
-kShotgunDamage = 8 -- was 10
+kShotgunDamage = 9 -- was 10
 kShotgunBulletsPerShot = 17
-kShotgunSpreadDistance = 25 -- was 8.5 --Gets used as z-axis value for spread vectors before normalization
+kShotgunSpreadDistance = 20 -- was 8.5 --Gets used as z-axis value for spread vectors before normalization
 
 
 kRailgunDamageType = kDamageType.Normal -- was kDamageType.Structural
