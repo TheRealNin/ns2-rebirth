@@ -80,9 +80,14 @@
 			}
             
             if (tintTeam > 0.5){
-                material.albedo.r = pow(material.albedo.r, 0.9);
-                material.albedo.g = pow(material.albedo.g, 1.3);
-                material.albedo.b = pow(material.albedo.b, 1.4);
+                material.albedo.r = pow(material.albedo.r, 0.95);
+                material.albedo.g = pow(material.albedo.g, 1.1);
+                material.albedo.b = pow(material.albedo.b, 1.1);
+                
+                // note that it swaps blue and red channels
+                material.emissive.r = pow(material.emissive.b, 0.5);
+                material.emissive.g = pow(material.emissive.g, 10.0);
+                material.emissive.b = pow(material.emissive.g, 10.0);
             }
             
             
