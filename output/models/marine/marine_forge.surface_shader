@@ -1,0 +1,136 @@
+<shader>
+	
+	<inputs>
+		<input name="albedoMap" type="texture" address="wrap" />
+		<input name="normalMap" type="texture" address="wrap" />
+		<input name="specularMap" type="texture" address="wrap" />
+		<input name="emissiveMap" type="texture" address="wrap" srgb="true"/>
+		<input name="blendMap" type="texture" address="wrap">materials/effects/mesh_effects/skulk_view_blood.dds</input>
+		<input name="overlayMap" type="texture" address="wrap">materials/effects/mesh_effects/nanoshield_circuit.dds</input>
+		<input name="hiddenAmount" type="float">0.0</input>
+		<input name="highlight" type="float">0.0</input>
+		<input name="outline" type="float">0.0</input>
+		<input name="tint" type="float">0.0</input>
+	</inputs>
+	
+	<params>
+		<param name="alphaTest">true</param>
+	</params>
+	
+	<code>
+	<![CDATA[
+        float Epsilon = 1e-10;
+        
+        float3 HUEtoRGB(in float H)
+        {
+            float R = abs(H * 6 - 3) - 1;
+            float G = 2 - abs(H * 6 - 2);
+            float B = 2 - abs(H * 6 - 4);
+            return saturate(float3(R,G,B));
+        }
+        float3 RGBtoHCV(in float3 RGB)
+        {
+            // Based on work by Sam Hocevar and Emil Persson
+            float4 P = (RGB.g < RGB.b) ? float4(RGB.bg, -1.0, 2.0/3.0) : float4(RGB.gb, 0.0, -1.0/3.0);
+            float4 Q = (RGB.r < P.x) ? float4(P.xyw, RGB.r) : float4(RGB.r, P.yzx);
+            float C = Q.x - min(Q.w, Q.y);
+            float H = abs((Q.w - Q.y) / (6 * C + Epsilon) + Q.z);
+            return float3(H, C, Q.x);
+        }
+        
+        float3 HSLtoRGB(in float3 HSL)
+        {
+            float3 RGB = HUEtoRGB(HSL.x);
+            float C = (1 - abs(2 * HSL.z - 1)) * HSL.y;
+            return (RGB - 0.5) * C + HSL.z;
+        }
+        float3 RGBtoHSL(in float3 RGB)
+        {
+            float3 HCV = RGBtoHCV(RGB);
+            float L = HCV.z - HCV.y * 0.5;
+            float S = HCV.y / (1 - abs(L * 2 - 1) + Epsilon);
+            return float3(HCV.x, S, L);
+        }
+		float paramQuick(float x, float p) {
+			return pow(x,p);
+		}
+		
+		float paramSlow(float x, float p) {
+			return 1 - pow(abs(x),p);
+		}
+		
+		float3 DecodeNormal(const float4 texNormal)
+		{
+			float4 n = texNormal * 2 - 1;
+			//return float3(n.a, n.g, sqrt(1 - dot(n.ag, n.ag)) );
+            return n.xyz;
+		}
+		
+		void MaterialShader(in Material_Input input, inout Material material)
+		{
+			float f             = 1 - hiddenAmount;
+			float tintTeam      = tint;
+			
+			float param         = tex2D(blendMap, input.texCoord * 2.5).a; // speading parameter
+			float textureSpeed  = 2;
+			float destroySpeed  = 0.5;
+		
+			float4 specularGloss = tex2D(specularMap, input.texCoord);
+			material.tsNormal 	= DecodeNormal( tex2D(normalMap, input.texCoord) );	
+			material.specular	= specularGloss.rgb;
+			material.gloss		= specularGloss.a;
+			
+			float opacity       = paramSlow(param,destroySpeed);
+			float blend         = paramQuick(param,textureSpeed);
+	
+			// Blending
+			if (blend + f > 0.9)
+			{
+				material.albedo    = tex2D(albedoMap, input.texCoord).rgb;				
+				material.emissive  = tex2D(emissiveMap, input.texCoord).rgb;
+			}
+			else
+			{
+				material.albedo    = tex2D(albedoMap, input.texCoord).rgb;
+				material.emissive = (1 - (blend + f)) * tex2D(overlayMap, input.texCoord * float2(10, 9)).rgb * float3(2, 3, 6) * 50;
+			}
+            float3 hsl = RGBtoHSL(material.albedo);
+            hsl.y *= 1.5;
+            hsl.z *= 0.7;
+            material.albedo = HSLtoRGB(hsl);
+            
+            if (tintTeam > 0.5){
+                material.albedo.r = pow(material.albedo.r, 0.95);
+                material.albedo.g = pow(material.albedo.g, 1.1);
+                material.albedo.b = pow(material.albedo.b, 1.1);
+                
+                // note that it swaps blue and red channels
+                material.emissive.r = pow(material.emissive.b, 0.5);
+                material.emissive.g = pow(material.emissive.g, 10.0);
+                material.emissive.b = pow(material.emissive.g, 10.0);
+                
+            }else{  // this is ONLY for forge
+                float oldRed = material.albedo.r;
+                material.albedo.r = material.albedo.b;
+                material.albedo.b = oldRed;
+                float oldRedEmissive = material.emissive.r;
+                material.emissive.r = material.emissive.b;
+                material.emissive.b = oldRedEmissive;
+            }
+            
+            material.emissive  *= 1.5;
+            
+			// Opacity
+			material.opacity = opacity + f - 0.5;
+			if (material.opacity < 0.5) {
+				material.emissive   = 0;
+			}
+			
+			material.id = highlight;
+			material.outline = outline;
+			
+		}
+	]]>
+	</code>
+
+</shader>

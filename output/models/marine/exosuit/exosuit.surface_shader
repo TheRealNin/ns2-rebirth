@@ -88,6 +88,15 @@
                 material.emissive.r = pow(material.emissive.b, 0.5);
                 material.emissive.g = pow(material.emissive.g, 10.0);
                 material.emissive.b = pow(material.emissive.g, 10.0);
+            }else{
+                if (textureIndex >= 2.9){ // forge skin fix for same team
+                    float oldRed = material.albedo.r;
+                    material.albedo.r = material.albedo.b;
+                    material.albedo.b = oldRed;
+                    float oldRedEmissive = material.emissive.r;
+                    material.emissive.r = material.emissive.b;
+                    material.emissive.b = oldRedEmissive;
+                }
             }
             
             

@@ -765,6 +765,9 @@ function BaseModelMixin:OnUpdate(deltaTime)
         
         local localPlayer = Client.GetLocalPlayer()
         local showHighlight = localPlayer ~= nil and GetAreEnemies(localPlayer, self)
+        if localPlayer ~= nil and HasMixin(localPlayer, "Team") and HasMixin(self, "Team") and (localPlayer:GetTeamNumber() == kTeamReadyRoom or localPlayer:GetTeamNumber() == kSpectatorIndex) then
+            showHighlight = self:GetTeamNumber() == kTeam2Index
+        end
         
         local model = self:GetRenderModel()
 
