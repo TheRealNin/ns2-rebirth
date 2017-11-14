@@ -51,7 +51,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 * Railguns now deal Normal damage (instead of Structural) and have a smaller projectile (making it harder to hit players)
 * Pulse grenades slow exosuits
 * Cluster grenades do 40% extra damage
-* Shotguns have a much smaller spread, but deal less damage per pellet
+* Shotguns have a much smaller spread, but deal less damage per pellet. Their bullets also drop in damage very quickly.
 * Nanoshield reduces all damage by 50% (up from 32%)
 * Axe damage increased
 * ARCs cannot target or damage ARCs, MACs, or power nodes (maps are not designed properly for ARCing power nodes)
