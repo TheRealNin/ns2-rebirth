@@ -1,10 +1,18 @@
 ---
 title: Nin's Marine vs Marine
 ---
-Nin's MvM is powered by the Rebirth project, which includes many mods beyond what you see in the MvM-only part of the mod. 
+Nin's MvM is powered by the Rebirth project, which includes many changes beyond what you see in the MvM-only part of the mod. 
 Below are only the changes that affect the Marine vs Marine gameplay.
 
+
 ## Update for Nov 6
+
+* Grenade launcher change reverted to vanilla NS2. You can now skid grenade launcher shots along the ground and they will explode on impact. Note that the minimum arming time from vanilla NS2 is still enabled.
+* Shotgun damage increased slightly so you should be able to one-shot a marine with no upgrades when you have no upgrades from close range. 
+* Shield generator research cost reduced from 10/20/30 to 10/15/20. 
+* Shield generator research time reduced from 90/120/120 to 45/45/45. 
+
+## Update for Nov 5
 
 * New mod: Machine Gun Rebalance
 * Machine gun now reloads twice as fast, but firing it lowers your move speed by 20%. All other values remain the same as vanilla.
@@ -39,7 +47,6 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 * Exosuits takes 25% less damage from all sources, and an additional 50% less damage from bullets
 * Railguns now deal Normal damage (instead of Structural) and have a smaller projectile (making it harder to hit players)
 * Pulse grenades slow exosuits
-* Grenades from the Grenade Launcher lose their ability to explode on impact after bouncing off a surface (prevents spam around corners and skidding along the ground).
 * Cluster grenades do 40% extra damage
 * Shotguns have a much smaller spread, but deal less damage per pellet
 * Nanoshield reduces all damage by 50% (up from 32%)
@@ -56,7 +63,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 * Healing fields cannot overlap. If the commander places them too close, the older one will be destroyed.
 
 ### New armory GUI and tech
-* Shield generator boosts armor utility, giving +10 armor and auto-welding after a 10 second delay. Costs 10 res and 90 seconds to research.
+* Shield generator boosts armor utility, giving +10 armor and auto-welding after a 10 second delay. Costs 10 res and 45 seconds to research.
 * It also better protects against GL, Miniguns, and Railgun, giving 50% reduction to damage from those sources as long as you have armor.
 * Shield generator can be upgraded to provide +10 armor per level (max +30), and can have the regeneration delay reduced to 5 and then 3 seconds at max level
 
