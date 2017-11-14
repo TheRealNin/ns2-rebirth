@@ -15,32 +15,6 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 * Shield generator research cost reduced from 10/20/30 to 10/15/20. 
 * Shield generator research time reduced from 90/120/120 to 45/45/45. 
 
-## Update for Nov 5
-
-* New mod: Machine Gun Rebalance
-* Machine gun now reloads twice as fast, but firing it lowers your move speed by 20%. All other values remain the same as vanilla.
-
-## Update for Nov 2
-
-* The shield generator can now be stored (inactive) when using an exosuit. There is a 1 second delay when exiting where it is not enabled.
-
-## Update for Nov 1
-
-* Shield Generator has been rebalanced to 3 levels. The levels cost 10,20,30 tres to research, take 90 seconds each, and give +10 armor for each level. Regeneration delay also scales down (10,5,3 seconds)
-
-## Update for Oct 30
-
-* Advanced Shield Generator research now costs 30 resources
-* Shield generator now reduces damage from Miniguns
-
-## Update for Oct 28
-
-* Railguns now deal Normal damage (instead of Structural.) This effectively reduces their damage against structures to half that of vanilla.
-* Railgun projectile size reduced from 0.3 meters to 0.05 meters.
-* New Tech: Advanced Shield Generator. Costs 20 res and takes 120 seconds. It changes the shield generator to give +40 armor and dramatically reduces recharge delay (from 10 seconds to 3 seconds).
-* Shield Generator armor fraction is now 95% (advanced and regular versions). Vanilla armor fraction is still 70%.
-
-
 ## All Changes
 * Power nodes are neutral, and can only be damaged if your team isn't using it.
 * Marines can socket power nodes by walking up and pressing E
