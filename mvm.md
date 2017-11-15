@@ -51,7 +51,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 ### Hades Device
 * Blueprint placed by commander
 * Costs 10 res, can only be armed by a marine (not a MAC)
-* Detonates after 30 seconds, and does massive damage to all units in a radius (including allies)
+* Detonates after 25 seconds, and does massive damage to all units in a radius (including allies)
 
 ### Creepier Atmosphere mod
 * Rooms start dark, but flashlights are boosted
