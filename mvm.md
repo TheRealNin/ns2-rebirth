@@ -4,6 +4,11 @@ title: Nin's Marine vs Marine
 Nin's MvM is powered by the Rebirth project, which includes many changes beyond what you see in the MvM-only part of the mod. 
 Below are only the changes that affect the Marine vs Marine gameplay.
 
+## Update for Nov 16
+
+* Sentries no longer require a Sentry Battery. They are still limited to 3 per room and they still require a Robotics Factory to be constructed.
+* Sentries will now prioritize shooting players over nearby structures
+
 ## Update for Nov 14
 
 * Shotgun rebalanced again: damage at a distance has been heavily decreased starting at 2 meters, with damage falling off to only 25% at 15 meters. To compensate, damage has been increased from 8 to 9 damage per pellet. Spread has also been increased very slightly to help do chip damage at medium range.
