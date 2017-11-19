@@ -25,3 +25,10 @@ ModLoader.SetupFileHook( "lua/GUIAlienBuyMenu.lua", "lua/NinBalance/GUIAlienBuyM
 -- shamelessly stole Ghoul's autoselect upgrades
 ModLoader.SetupFileHook( "lua/Egg.lua", "lua/NinBalance/Egg.lua", "post" )
 
+-- remove sentry battery requirement
+ModLoader.SetupFileHook( "lua/TechData.lua", "lua/NinBalance/TechData.lua", "post" )
+ModLoader.SetupFileHook( "lua/MarineCommander.lua", "lua/NinBalance/MarineCommander.lua", "post" )
+ModLoader.SetupFileHook( "lua/Sentry.lua", "lua/NinBalance/Sentry.lua", "post" )
+
+-- jetpack rebalance
+ModLoader.SetupFileHook( "lua/JetpackMarine.lua", "lua/NinBalance/JetpackMarine.lua", "post" )

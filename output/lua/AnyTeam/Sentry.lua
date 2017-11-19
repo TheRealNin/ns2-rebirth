@@ -1,4 +1,6 @@
 
+local kAnimationGraph = PrecacheAsset("models/marine/sentry/sentry.animation_graph")
+
 function Sentry:OnInitialized()
 
     ScriptActor.OnInitialized(self)

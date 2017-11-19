@@ -28,7 +28,7 @@
 		
 			float3 scan = tex2D( scanMap, input.wsPosition.y * float2(8, 8) + float2(animationTime * 1, animationTime * -1) ).rgb;
 
-			material.emissive = scan * alpha * 0.5;
+			material.emissive = scan * alpha * 1.25;
 			
 		}
 	]]>

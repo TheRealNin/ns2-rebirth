@@ -119,6 +119,7 @@ ModLoader.SetupFileHook( "lua/Weapons/Alien/SpikesMixin.lua", "lua/AnyTeam/Weapo
 ModLoader.SetupFileHook( "lua/Weapons/Alien/Web.lua", "lua/AnyTeam/Weapons/Alien/Web.lua", "post" )
 ModLoader.SetupFileHook( "lua/Weapons/Marine/Welder.lua", "lua/AnyTeam/Weapons/Marine/Welder.lua", "post" )
 ModLoader.SetupFileHook( "lua/Weapons/Marine/Railgun.lua", "lua/AnyTeam/Weapons/Marine/Railgun.lua", "post" )
+ModLoader.SetupFileHook( "lua/Weapons/Marine/PulseGrenade.lua", "lua/AnyTeam/Weapons/Marine/PulseGrenade.lua", "post" )
 
 -- needed for target fixes
 ModLoader.SetupFileHook( "lua/Whip.lua", "lua/AnyTeam/Whip.lua", "post" )

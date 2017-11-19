@@ -42,5 +42,5 @@ local function SetUpValues( func, source )
 end
 
 local upValues = GetUpValues(MarineCommander.GetButtonTable)
-upValues.gMarineMenuButtons[kTechId.AdvancedMenu][6] = kTechId.HadesDevice
+upValues.gMarineMenuButtons[kTechId.AdvancedMenu][5] = kTechId.None
 SetUpValues(MarineCommander.GetButtonTable, upValues)

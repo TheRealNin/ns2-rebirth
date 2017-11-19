@@ -7,7 +7,7 @@ if Server then
 
         for _, player in ipairs(GetEntitiesForTeamWithinRange("Player", GetEnemyTeamNumber(self:GetTeamNumber()), self:GetOrigin(), kPowerSurgeDamageRadius)) do
             self:DoDamage(kPowerSurgeDamage, player, player:GetOrigin(), GetNormalizedVector(player:GetOrigin() - self:GetOrigin()), "none")
-            if player.SetElectrified then
+            if GetAreEnemies(player, self) and player.SetElectrified then
                 player:SetElectrified(kPowerSurgeElectrifiedDuration)
             end
             player:TriggerEffects("emp_blasted")

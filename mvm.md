@@ -4,6 +4,10 @@ title: Nin's Marine vs Marine
 Nin's MvM is powered by the Rebirth project, which includes many changes beyond what you see in the MvM-only part of the mod. 
 Below are only the changes that affect the Marine vs Marine gameplay.
 
+## Update for Nov 19
+
+* Marine jetpack fuel use no longer depends on your inventory weight. Instead, jetpack acceleration is scaled to your inventory weight
+
 ## Update for Nov 16
 
 * Sentries no longer require a Sentry Battery. They are still limited to 3 per room and they still require a Robotics Factory to be constructed.

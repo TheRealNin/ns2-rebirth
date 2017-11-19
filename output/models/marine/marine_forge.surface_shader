@@ -116,6 +116,8 @@
                 float oldRedEmissive = material.emissive.r;
                 material.emissive.r = material.emissive.b;
                 material.emissive.b = oldRedEmissive;
+                material.specular = material.specular * 3;
+                material.gloss = material.gloss * 3;
             }
             
             material.emissive  *= 1.5;
