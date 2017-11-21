@@ -15,6 +15,7 @@ HadesDevice.kExplosionCinematic = PrecacheAsset("cinematics/hades_explosion.cine
 HadesDevice.kSirenSound     = PrecacheAsset("sound/hades_sounds.fev/hades/siren")
 HadesDevice.kSirenArmedSound= PrecacheAsset("sound/hades_sounds.fev/hades/siren_armed")
 HadesDevice.kExplosionSound = PrecacheAsset("sound/hades_sounds.fev/hades/explosion")
+HadesDevice.kDetectedSound = PrecacheAsset("sound/hades_sounds.fev/hades/device_detected")
 local kHadesExplosionTime = 6.5 -- used so the sound continues to play
 
 local kHadesCameraShakeDistance = 25
@@ -76,6 +77,13 @@ function HadesDevice:OnCreate()
     if Client then
         InitMixin(self, CommanderGlowMixin)
         self.lastSirenTime = Shared.GetTime()
+    end
+    if Server then
+    
+        self.hadesDetectedSound = Server.CreateEntity(SoundEffect.kMapName)
+        self.hadesDetectedSound:SetAsset(HadesDevice.kDetectedSound)
+        self.hadesDetectedSound:SetRelevancyDistance(Math.infinity)
+        
     end
     self.creationTime = Shared.GetTime()
     self.detonateTime = 0
@@ -168,6 +176,11 @@ end
 
 function HadesDevice:SetIsDetonating()
     self.detonateTime = Shared.GetTime()
+    if Server then
+        
+        self.hadesDetectedSound:Start()
+
+    end
 end
 
 function HadesDevice:GetIsArmed()
@@ -406,10 +419,18 @@ if Server then
             end
         end
     end
-    function HadesDevice:OnKill()
+    function HadesDevice:OnKill(killer, doer, point, direction)
         self:TriggerEffects("death")
         DestroyEntity(self)
+        ScriptActor.OnKill(self, killer, doer, point, direction)
 
+    end
+    
+    function HadesDevice:OnDestroy()
+    
+        ScriptActor.OnDestroy(self)
+        
+        
     end
 
 end

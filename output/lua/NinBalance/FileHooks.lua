@@ -32,3 +32,7 @@ ModLoader.SetupFileHook( "lua/Sentry.lua", "lua/NinBalance/Sentry.lua", "post" )
 
 -- jetpack rebalance
 ModLoader.SetupFileHook( "lua/JetpackMarine.lua", "lua/NinBalance/JetpackMarine.lua", "post" )
+
+-- animation fixes
+ModLoader.SetupFileHook( "lua/Mixins/BaseMoveMixin.lua", "lua/NinBalance/BaseMoveMixin.lua", "replace" )
+ModLoader.SetupFileHook( "lua/NS2Utility.lua", "lua/NinBalance/NS2Utility.lua", "post" )

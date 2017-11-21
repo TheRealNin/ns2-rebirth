@@ -1,7 +1,7 @@
 
 function Marine:DropAllWeapons()
 
-    local weaponSpawnCoords = self:GetAttachPointCoords(Weapon.kHumanAttachPoint)
+    --local weaponSpawnCoords = self:GetAttachPointCoords(Weapon.kHumanAttachPoint)
     local weaponList = self:GetHUDOrderedWeaponList()
     for w = 1, #weaponList do
     

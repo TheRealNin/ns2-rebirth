@@ -689,12 +689,12 @@ function GUIMarineBuyMenu:_UpdateItemButtons(deltaTime)
             -- set grey if not researched
             elseif not MarineBuy_IsResearched(item.TechId) then
                 useColor = Color(0.25, 0.25, 0.25, 0.9)
-            -- set red if can't afford
-            elseif PlayerUI_GetPlayerResources() < MarineBuy_GetCosts(item.TechId) then
-               useColor = Color(1, 0, 0, 1)
             -- set normal visible
             elseif MarineBuy_GetHas( item.TechId ) then
                 useColor = Color(0.6, 0.6, 0.6, 0.5)
+            -- set red if can't afford
+            elseif PlayerUI_GetPlayerResources() < MarineBuy_GetCosts(item.TechId) then
+               useColor = Color(1, 0, 0, 1)
             else
 
                 local newResearchedId = GetItemTechId( PlayerUI_GetRecentPurchaseable() )
