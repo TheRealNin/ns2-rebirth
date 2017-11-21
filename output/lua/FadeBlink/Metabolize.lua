@@ -169,6 +169,7 @@ function Metabolize:OnTag(tagName)
                 
                 player.crouching = state.crouching
 
+                --[[
                 --if player:GetCanMetabolizeHealth() then
                   local oldHealth = player:GetHealthFraction()
                   local oldArmor = player:GetArmorScalar()
@@ -190,6 +191,7 @@ function Metabolize:OnTag(tagName)
                     player:SetHealth(newHealth * player:GetMaxHealth())
                   end
                 --end 
+                ]]--
             end
             
             self.lastPrimaryAttackTime = Shared.GetTime()

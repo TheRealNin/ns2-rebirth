@@ -10,7 +10,7 @@ function BuildTechData()
         if(currentField == kTechId.MetabolizeEnergy) then
           
             record[kTechDataDisplayName] = "Backtrack"
-            record[kTechDataTooltipInfo] = "The fade can teleport back to where they were 4 seconds ago, and returns their health to what it was at that time. Has a long cooldown."
+            record[kTechDataTooltipInfo] = "The fade can teleport back to where they were 4 seconds ago. Has a long cooldown."
         end
 
         if(currentField == kTechId.MetabolizeHealth) then
