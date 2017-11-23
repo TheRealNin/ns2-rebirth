@@ -4,6 +4,10 @@ title: Nin's Marine vs Marine
 Nin's MvM is powered by the Rebirth project, which includes many changes beyond what you see in the MvM-only part of the mod. 
 Below are only the changes that affect the Marine vs Marine gameplay.
 
+## Update for Nov 23
+
+* Grenade Launcher blast radius reduced by 25% from 4.8 meters to 3.6 meters
+
 ## Update for Nov 19
 
 * Marine jetpack fuel use no longer depends on your inventory weight. Instead, jetpack acceleration is scaled to your inventory weight
@@ -16,13 +20,6 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 ## Update for Nov 14
 
 * Shotgun rebalanced again: damage at a distance has been heavily decreased starting at 2 meters, with damage falling off to only 25% at 15 meters. To compensate, damage has been increased from 8 to 9 damage per pellet. Spread has also been increased very slightly to help do chip damage at medium range.
-
-## Update for Nov 6
-
-* Grenade launcher change reverted to vanilla NS2. You can now skid grenade launcher shots along the ground and they will explode on impact. Note that the minimum arming time from vanilla NS2 is still enabled.
-* Shotgun damage increased slightly so you should be able to one-shot a marine with no upgrades when you have no upgrades from close range. 
-* Shield generator research cost reduced from 10/20/30 to 10/15/20. 
-* Shield generator research time reduced from 90/120/120 to 45/45/45. 
 
 ## All Changes
 * Power nodes are neutral, and can only be damaged if your team isn't using it.
@@ -41,6 +38,8 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 * Nerve gas grenades damage armor, just like against aliens. (It's kind of more like an acid grenade)
 * Bullets have a slight damage falloff starting at 6 metres (20 feet)
 * Flamethrowers cannot ignite marine buildings, but they can ignite marines! Afterburn damage increased slightly. 
+* Grenade Launcher blast radius reduced by 25% from 4.8 meters to 3.6 meters
+* Marine jetpack fuel use no longer depends on your inventory weight. Instead, jetpack acceleration is scaled to your inventory weight
 
 ## Extra Mods
 ### Healing field
