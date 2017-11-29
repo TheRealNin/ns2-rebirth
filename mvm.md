@@ -6,6 +6,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 
 ## Update for Nov 29
 
+* Power nodes now always show their status on the minimap (unbuilt, building, under attack)
 * Railgun projectile width changed to 50% of vanilla (changed to 0.15 from  0.3)
 
 ## Update for Nov 23
