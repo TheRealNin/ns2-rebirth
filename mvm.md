@@ -4,6 +4,10 @@ title: Nin's Marine vs Marine
 Nin's MvM is powered by the Rebirth project, which includes many changes beyond what you see in the MvM-only part of the mod. 
 Below are only the changes that affect the Marine vs Marine gameplay.
 
+## Update for Nov 29
+
+* Railgun projectile width changed to 50% of vanilla (changed to 0.15 from  0.3)
+
 ## Update for Nov 23
 
 * Grenade Launcher blast radius reduced by 25% from 4.8 meters to 3.6 meters
