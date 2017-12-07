@@ -4,6 +4,11 @@ title: Nin's Marine vs Marine
 Nin's MvM is powered by the Rebirth project, which includes many changes beyond what you see in the MvM-only part of the mod. 
 Below are only the changes that affect the Marine vs Marine gameplay.
 
+## Update for Dec 6
+
+* Shotgun has been rebalanced from 17 pellets down to 9. The damage each pellet does has been scaled so the total damage remains the same. 
+* Shotgun damage falloff minimum distance has been increased slightly.
+
 ## Update for Nov 29
 
 * Power nodes now always show their status on the minimap (unbuilt, building, under attack)
