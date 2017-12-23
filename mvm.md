@@ -4,6 +4,10 @@ title: Nin's Marine vs Marine
 Nin's MvM is powered by the Rebirth project, which includes many changes beyond what you see in the MvM-only part of the mod. 
 Below are only the changes that affect the Marine vs Marine gameplay.
 
+## Update for Dec 23
+
+* Due to vanilla's exos price increase from 45 to 55 res and the railgun's damage and fire rate reduction, shield generator exo damage resistance has been reduced from 50% to 25%.
+
 ## Update for Dec 19
 
 * Yet again, shotgun has been changed. Now an even tighter spread and increased damage, but faster damage falloff. It'll be useful and fun someday, I swear!
