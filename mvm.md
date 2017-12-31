@@ -6,7 +6,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 
 ## Update for Dec 23
 
-* Due to vanilla's exos price increase from 45 to 55 res and the railgun's damage and fire rate reduction, shield generator exo damage resistance has been reduced from 50% to 25%.
+* Shield generator exo damage resistance has been reduced from 50% to 25%.
 
 ## Update for Dec 19
 
