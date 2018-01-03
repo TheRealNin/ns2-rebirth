@@ -4,6 +4,10 @@ title: Nin's Marine vs Marine
 Nin's MvM is powered by the Rebirth project, which includes many changes beyond what you see in the MvM-only part of the mod. 
 Below are only the changes that affect the Marine vs Marine gameplay.
 
+## Update for Jan 3
+
+* Rooms will start with powernodes destroyed! If a room starts the game with a marine building or a dynamic prop (like a fan or robot arm), it will start powered.
+
 ## Update for Dec 23
 
 * Shield generator exo damage resistance has been reduced from 50% to 25%.
@@ -37,6 +41,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 
 ## All Changes
 * Power nodes are neutral, and can only be damaged if your team isn't using it.
+* Unused rooms will start with powernodes destroyed
 * Marines can socket power nodes by walking up and pressing E
 * All friendly structures, players, and equipment have a blue outline. Enemies have no outlines.
 * All marine to marine damage is increased by 33%
