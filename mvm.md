@@ -6,7 +6,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 
 ## Update for Jan 3
 
-* Rooms will start with powernodes destroyed! If a room starts the game with a marine building or a dynamic prop (like a fan or robot arm), it will start powered.
+* Except for each team's initial spawns, rooms will start with powernodes destroyed
 
 ## Update for Dec 23
 
