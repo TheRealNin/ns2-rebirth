@@ -4,6 +4,12 @@ title: Nin's Marine vs Marine
 Nin's MvM is powered by the Rebirth project, which includes many changes beyond what you see in the MvM-only part of the mod. 
 Below are only the changes that affect the Marine vs Marine gameplay.
 
+## Update for Jan 38
+
+* Railguns are now back to Structural damage and bullet size changed to 2/3 that of vanilla
+* Shotgun total damage returned to vanilla values
+* Axe range increased slightly so it's easier to hit those extractors
+
 ## Update for Jan 3
 
 * Except for each team's initial spawns, rooms will start with powernodes destroyed
@@ -30,15 +36,6 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 
 * Grenade Launcher blast radius reduced by 25% from 4.8 meters to 3.6 meters
 
-## Update for Nov 19
-
-* Marine jetpack fuel use no longer depends on your inventory weight. Instead, jetpack acceleration is scaled to your inventory weight
-
-## Update for Nov 16
-
-* Sentries no longer require a Sentry Battery. They are still limited to 3 per room and they still require a Robotics Factory to be constructed.
-* Sentries will now prioritize shooting players over nearby structures
-
 ## All Changes
 * Power nodes are neutral, and can only be damaged if your team isn't using it.
 * Unused rooms will start with powernodes destroyed
@@ -47,12 +44,12 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 * All marine to marine damage is increased by 33%
 * Marine backwards walk speed increased
 * Exosuits takes 25% less damage from all sources, and an additional 50% less damage from bullets
-* Railguns now deal Normal damage (instead of Structural) and have a smaller projectile (making it harder to hit players)
+* Railguns now have a smaller projectile (making it harder to hit players)
 * Pulse grenades slow exosuits
 * Cluster grenades do 40% extra damage
 * Shotguns have a much smaller spread, but deal less damage per pellet. Their bullets also drop in damage very quickly.
 * Nanoshield reduces all damage by 50% (up from 32%)
-* Axe damage increased
+* Axe damage increased and range increased slightly
 * ARCs cannot target or damage ARCs, MACs, or power nodes (maps are not designed properly for ARCing power nodes)
 * Nerve gas grenades damage armor, just like against aliens. (It's kind of more like an acid grenade)
 * Bullets have a slight damage falloff starting at 6 metres (20 feet)
