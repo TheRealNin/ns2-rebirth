@@ -4,7 +4,7 @@ title: Nin's Marine vs Marine
 Nin's MvM is powered by the Rebirth project, which includes many changes beyond what you see in the MvM-only part of the mod. 
 Below are only the changes that affect the Marine vs Marine gameplay.
 
-## Update for Jan 38
+## Update for Jan 9
 
 * Railguns are now back to Structural damage and bullet size changed to 2/3 that of vanilla
 * Exosuit now take even less damage from non-bullet sources.
