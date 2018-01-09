@@ -7,6 +7,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 ## Update for Jan 38
 
 * Railguns are now back to Structural damage and bullet size changed to 2/3 that of vanilla
+* Exosuit now take even less damage from non-bullet sources.
 * Shotgun total damage returned to vanilla values
 * Axe range increased slightly so it's easier to hit those extractors
 
@@ -43,7 +44,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 * All friendly structures, players, and equipment have a blue outline. Enemies have no outlines.
 * All marine to marine damage is increased by 33%
 * Marine backwards walk speed increased
-* Exosuits takes 25% less damage from all sources, and an additional 50% less damage from bullets
+* Exosuits takes 33% less damage from all sources, and an additional 45% less damage from bullets
 * Railguns now have a smaller projectile (making it harder to hit players)
 * Pulse grenades slow exosuits
 * Cluster grenades do 40% extra damage
