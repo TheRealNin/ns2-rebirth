@@ -7,6 +7,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 ## Update for Jan 16
 
 * The fire rate of the Pistol is now set at a fixed rate, and no longer requires pressing the fire button for each bullet. Scripts and custom mouse software ruined this for everyone.
+* Marines with rifles now drop rifle ammo on death
 
 ## Update for Jan 9
 
@@ -62,6 +63,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 * Grenade Launcher blast radius reduced by 25% from 4.8 meters to 3.6 meters
 * Marine jetpack fuel use no longer depends on your inventory weight. Instead, jetpack acceleration is scaled to your inventory weight
 * The fire rate of the Pistol is now set at a fixed rate, and no longer requires pressing the fire button for each bullet.
+* Marines with rifles drop rifle ammo on death
 
 ## Extra Mods
 ### Healing field
