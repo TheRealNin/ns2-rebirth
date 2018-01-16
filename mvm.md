@@ -4,6 +4,10 @@ title: Nin's Marine vs Marine
 Nin's MvM is powered by the Rebirth project, which includes many changes beyond what you see in the MvM-only part of the mod. 
 Below are only the changes that affect the Marine vs Marine gameplay.
 
+## Update for Jan 16
+
+* The fire rate of the Pistol is now set at a fixed rate, and no longer requires pressing the fire button for each bullet. Scripts and custom mouse software ruined this for everyone.
+
 ## Update for Jan 9
 
 * Railguns are now back to Structural damage and bullet size changed to 2/3 that of vanilla
@@ -57,6 +61,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 * Flamethrowers cannot ignite marine buildings, but they can ignite marines! Afterburn damage increased slightly. 
 * Grenade Launcher blast radius reduced by 25% from 4.8 meters to 3.6 meters
 * Marine jetpack fuel use no longer depends on your inventory weight. Instead, jetpack acceleration is scaled to your inventory weight
+* The fire rate of the Pistol is now set at a fixed rate, and no longer requires pressing the fire button for each bullet.
 
 ## Extra Mods
 ### Healing field
