@@ -20,15 +20,17 @@ Script.Load("lua/RailgunTargetMixin.lua")
 Script.Load("lua/IdleMixin.lua")
 --Script.Load("lua/SkulkVariantMixin.lua")
 
-class 'Prowler' (Skulk)
+class 'Prowler' (Alien)
 
 Prowler.kMapName = "prowler"
 
 Prowler.kMaxSpeed = 7.25 -- skulk is 7.25
 Prowler.kWallJumpForce = 3.1 -- skulk was 6.4 -- scales down the faster you are
 Prowler.kWallJumpMaxSpeed = 11 -- skulk is 11
+Prowler.kMinWallJumpForce = 0.1
 Prowler.kWallJumpMaxSpeedCelerityBonus = 1.2 -- skulk is 1.2
-Prowler.kWallJumpInterval = 0.8
+Prowler.kWallJumpInterval = 0.4
+Prowler.kHorizontalJumpForce = 4.3
 
 Prowler.kHealth = kProwlerHealth
 Prowler.kArmor  = kProwlerArmor
@@ -140,6 +142,7 @@ function Prowler:OnInitialized()
     -- the Skulk is initialized on the client.
     self.currentWallWalkingAngles = Angles(0.0, 0.0, 0.0)
     
+    
     self:SetModel(Prowler.kModelName, Prowler.kAnimationGraph)
     
     if Client then
@@ -240,7 +243,7 @@ function Prowler:ModifyJump(input, velocity, jumpVelocity)
 
     if not self:GetRecentlyWallJumped() then
     
-        self.bonusVec.y = viewCoords.zAxis.y * Prowler.kVerticalWallJumpForce
+        self.bonusVec.y = viewCoords.zAxis.y * Prowler.kHorizontalJumpForce
         jumpVelocity:Add(self.bonusVec)
 
     end
@@ -248,6 +251,9 @@ function Prowler:ModifyJump(input, velocity, jumpVelocity)
     self.timeLastWallJump = Shared.GetTime()
         
     
+end
+function Prowler:GetRecentlyWallJumped()
+    return self.timeLastWallJump + Prowler.kWallJumpInterval > Shared.GetTime()
 end
 function Prowler:ModifyCelerityBonus(celerityBonus)
     
@@ -276,9 +282,9 @@ function Prowler:GetMaxWallJumpSpeed()
     return Prowler.kWallJumpMaxSpeed + celerityMod
 end
 
-local oldOnAdjustModelCoords = Prowler.OnAdjustModelCoords
+--local oldOnAdjustModelCoords = Prowler.OnAdjustModelCoords
 function Prowler:OnAdjustModelCoords(modelCoords)
-    modelCoords = oldOnAdjustModelCoords(self, modelCoords)
+    --modelCoords = oldOnAdjustModelCoords(self, modelCoords)
     modelCoords.xAxis = modelCoords.xAxis * kProwlerScale
     modelCoords.yAxis = modelCoords.yAxis * kProwlerScale
     modelCoords.zAxis = modelCoords.zAxis * kProwlerScale
@@ -396,7 +402,27 @@ function Prowler:OnHowl()
         shotWeb = true
     end
     if GetHasTech(self, kTechId.ShadeHive, true) then
-        self:SpawnCloud(kTechId.Hallucinate)
+        if Server then
+            local newAlienExtents = LookupTechData(self:GetTechId(), kTechDataMaxExtents)
+            local capsuleHeight, capsuleRadius = GetTraceCapsuleFromExtents(newAlienExtents) 
+            
+            local spawnPoint = GetRandomSpawnForCapsule(newAlienExtents.y, capsuleRadius, self:GetModelOrigin(), 0.5, 5)
+            
+            if spawnPoint then
+
+                local hallucinatedPlayer = CreateEntity(self:GetMapName(), spawnPoint, self:GetTeamNumber())
+                
+                hallucinatedPlayer:SetVariant(self:GetVariant())
+                hallucinatedPlayer.isHallucination = true
+                InitMixin(hallucinatedPlayer, PlayerHallucinationMixin)                
+                InitMixin(hallucinatedPlayer, SoftTargetMixin)                
+                InitMixin(hallucinatedPlayer, OrdersMixin, { kMoveOrderCompleteDistance = kPlayerMoveOrderCompleteDistance }) 
+
+                hallucinatedPlayer:SetName(self:GetName())
+                hallucinatedPlayer:SetHallucinatedClientIndex(self:GetClientIndex())
+            
+            end 
+        end
         shotWeb = true
     end
     if GetHasTech(self, kTechId.CragHive, true) then
@@ -411,5 +437,9 @@ function Prowler:OnHowl()
     
 end
 
+
+function Prowler:GetArmorFullyUpgradedAmount()
+    return kSkulkArmorFullyUpgradedAmount
+end
 
 Shared.LinkClassToMap("Prowler", Prowler.kMapName, networkVars, true)

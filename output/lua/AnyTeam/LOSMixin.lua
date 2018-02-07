@@ -1,12 +1,11 @@
---[[
-// ======= Copyright (c) 2003-2011, Unknown Worlds Entertainment, Inc. All rights reserved. =======
-//    
-// lua\LOSMixin.lua    
-//    
-//    Created by:   Andrew Spiering (andrew@unknownworlds.com)    
-//    
-// ========= For more information, visit us at http://www.unknownworlds.com =====================    
-]]
+-- ======= Copyright (c) 2003-2011, Unknown Worlds Entertainment, Inc. All rights reserved. =======
+--    
+-- lua\LOSMixin.lua    
+--    
+--    Created by:   Andrew Spiering (andrew@unknownworlds.com)    
+--    
+-- ========= For more information, visit us at http://www.unknownworlds.com =====================    
+
 
 LOSMixin = CreateMixin(LOSMixin)
 
@@ -48,7 +47,7 @@ local function UpdateLOS(self)
     elseif self:GetTeamNumber() == 2 then
         mask = bit.bor(mask, kRelevantToTeam2Commander)
     end
-    if self:GetTeamNumber() == 0 then -- powerpoint
+    if self:GetTeamNumber() == kNeutralTeamNumber then -- powerpoint
         mask = bit.bor(mask, kRelevantToTeam1Commander, kRelevantToTeam2Commander)
     end
 
@@ -176,7 +175,7 @@ if Server then
         end
         
         local entities = Shared.GetEntitiesWithTagInRange("LOS", self:GetOrigin(), self:GetVisionRadius())
-        
+
         for e = 1, #entities do
         
             local otherEntity = entities[e]
@@ -225,7 +224,7 @@ if Server then
         for _, entity in ipairs(GetEntitiesWithMixinForTeamWithinRange("LOS", GetEnemyTeamNumber(self:GetTeamNumber()), self:GetOrigin(), kUnitMaxLOSDistance)) do
             entity.updateLOS = true
         end
-        for _, entity in ipairs(GetEntitiesWithMixinForTeamWithinRange("LOS", 0, self:GetOrigin(), kUnitMaxLOSDistance)) do
+        for _, entity in ipairs(GetEntitiesWithMixinForTeamWithinRange("LOS", kNeutralTeamNumber, self:GetOrigin(), kUnitMaxLOSDistance)) do
             entity.updateLOS = true
         end
         
@@ -234,11 +233,6 @@ if Server then
     local function SharedUpdate(self)
     
         PROFILE("LOSMixin:SharedUpdate")
-        
-        -- Prevent entities from being sighted before the game starts.
-        if not GetGamerules():GetGameStarted() then
-            return
-        end
         
         local now = Shared.GetTime()
         if self.dirtyLOS and self.timeLastLOSDirty + 0.2 < now then

@@ -24,7 +24,7 @@ function Hive:OnUpdate(deltaTime)
     
     if self:GetIsBuilt() then
         -- was previously capped at 3, but now we vary it from 0.25 to 4.25 based on biomass level and health
-        local glowIntensity = (self:GetHealthScalar() * self:GetBioMassLevel()) * 1.25 + 0.25
+        local glowIntensity = (self:GetHealthScalar() * self:GetBioMassLevel()) * 0.75 + 0.25
         self.glowIntensity = math.min(glowIntensity, self.glowIntensity + deltaTime)
         
         -- Attach mist effect if we don't have one already

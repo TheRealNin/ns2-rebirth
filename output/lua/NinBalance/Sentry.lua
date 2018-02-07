@@ -179,6 +179,10 @@ if Server then
                 -- Disable friendly fire.
                 trace.entity = (not trace.entity or GetAreEnemies(trace.entity, self)) and trace.entity or nil
                 
+                if trace.entity and trace.entity.SetIsSighted then 
+                    trace.entity:SetIsSighted(true)
+                end
+                
                 local blockedByUmbra = trace.entity and GetBlockedByUmbra(trace.entity) or false
                 
                 if blockedByUmbra then
@@ -223,7 +227,8 @@ if Server then
             if self.target then
             
                 local previousTargetDirection = self.targetDirection
-                self.targetDirection = GetNormalizedVector(self.target:GetEngagementPoint() - self:GetAttachPointOrigin(Sentry.kMuzzleNode))
+                local targetPos = (self.target:isa("Player") and self.target.GetEyePos) and self.target:GetEyePos() or self.target:GetEngagementPoint() 
+                self.targetDirection = GetNormalizedVector(targetPos - self:GetAttachPointOrigin(Sentry.kMuzzleNode))
                 
                 -- Reset damage ramp up if we moved barrel at all
                 if previousTargetDirection then
@@ -270,13 +275,13 @@ if Server then
             
             if not GetIsUnitActive() or self.confused or not self.attacking or not self.attachedToBattery then
             
-                if self.attackSound:GetIsPlaying() then
+                if self.attackSound and self.attackSound:GetIsPlaying() then
                     self.attackSound:Stop()
                 end
                 
             elseif self.attacking then
             
-                if not self.attackSound:GetIsPlaying() then
+                if self.attackSound and not self.attackSound:GetIsPlaying() then
                     self.attackSound:Start()
                 end
 

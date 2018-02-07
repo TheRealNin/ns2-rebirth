@@ -389,6 +389,7 @@ local lightProps = set {
     "models/props/refinery/refinery_small_light_01.model",
     "models/props/refinery/refinery_elevator1_platform.model",
     "models/props/refinery/mining_light_01.model",
+    "models/props/refinery/mining_light_02.model",
     "models/props/refinery/refinery_floodlight_01.model",
     "models/props/refinery/docking_clerical_light.model",
     "models/props/summit/summit_container_01_top.model",

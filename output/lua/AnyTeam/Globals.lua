@@ -23,8 +23,11 @@ kEnemyTeamType = 6
 
 kNeutralTeamNumber = 0
 
-kTeam1Type = kMarineTeamType --kPrecursorTeamType
-kTeam2Type = kMarineTeamType --kPrecursorTeamType
+kTeam1Type = kMarineTeamType
+kTeam2Type = kAlienTeamType
+
+--kTeam1Type = kPrecursorTeamType
+--kTeam2Type = kPrecursorTeamType
 
 kAnyTeamForcedMode = false
 

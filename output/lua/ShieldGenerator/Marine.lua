@@ -29,5 +29,14 @@ function Marine:GetArmorAmount(armorLevels)
     return oldGetArmorAmount(self, armorLevels) + armorBonus
 end
 
+--[[
+local oldGetCanBeWeldedOverride = Marine.GetCanBeWeldedOverride
+function Marine:GetCanBeWeldedOverride()
+    if self:GetIsPersonalShielded() then
+        return false
+    end
+    return oldGetCanBeWeldedOverride(self)
+end
+]]--
 
 Shared.LinkClassToMap("Marine", Marine.kMapName, networkVars, true)

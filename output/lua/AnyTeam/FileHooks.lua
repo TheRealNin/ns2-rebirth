@@ -3,11 +3,12 @@ ModLoader.SetupFileHook( "lua/Server.lua", "lua/AnyTeam/Server.lua", "post" )
 
 --- CORE CHANGES
 ModLoader.SetupFileHook( "lua/Mixins/BaseModelMixin.lua", "lua/AnyTeam/Mixins/BaseModelMixin.lua", "replace" )
+ModLoader.SetupFileHook( "lua/Mixins/CameraHolderMixin.lua", "lua/AnyTeam/Mixins/CameraHolderMixin.lua", "post" )
 
 -- NS2+ fixes
 ModLoader.SetupFileHook( "lua/NS2Plus/Client/CHUD_Outlines.lua", "lua/AnyTeam/NS2Plus/CHUD_Disabled.lua", "replace" )
 ModLoader.SetupFileHook( "lua/NS2Plus/Client/CHUD_GoldenMode.lua", "lua/AnyTeam/NS2Plus/CHUD_Disabled.lua", "replace" ) -- wtf is this??
-ModLoader.SetupFileHook( "lua/NS2Plus/GUIScripts/GUIAlienHUD.lua", "lua/AnyTeam/NS2Plus/CHUD_Disabled.lua", "replace" )
+--ModLoader.SetupFileHook( "lua/NS2Plus/GUIScripts/GUIAlienHUD.lua", "lua/AnyTeam/NS2Plus/CHUD_Disabled.lua", "replace" )
 ModLoader.SetupFileHook( "lua/NS2Plus/Client/CHUDGUI_EndStats.lua", "lua/AnyTeam/NS2Plus/CHUDGUI_EndStats.lua", "replace" )
 
 -- GAMEPLAY CHANGES
@@ -53,9 +54,12 @@ ModLoader.SetupFileHook( "lua/Order.lua", "lua/AnyTeam/Order.lua", "post" )
 ModLoader.SetupFileHook( "lua/MinimapMappableMixin.lua", "lua/AnyTeam/MinimapMappableMixin.lua", "post" )
 ModLoader.SetupFileHook( "lua/AlienCommander.lua", "lua/AnyTeam/AlienCommander.lua", "post" )
 ModLoader.SetupFileHook( "lua/Cyst_Server.lua", "lua/AnyTeam/Cyst_Server.lua", "post" )
+ModLoader.SetupFileHook( "lua/Commander.lua", "lua/AnyTeam/Commander.lua", "post" )
 ModLoader.SetupFileHook( "lua/Commander_Client.lua", "lua/AnyTeam/Commander_Client.lua", "post" )
 ModLoader.SetupFileHook( "lua/Commander_Server.lua", "lua/AnyTeam/Commander_Server.lua", "post" )
 ModLoader.SetupFileHook( "lua/Commander_Buttons.lua", "lua/AnyTeam/Commander_Buttons.lua", "post" )
+ModLoader.SetupFileHook( "lua/CommandStation_Server.lua", "lua/AnyTeam/CommandStation_Server.lua", "post" )
+ModLoader.SetupFileHook( "lua/CommandStructure_Server.lua", "lua/AnyTeam/CommandStructure_Server.lua", "post" )
 ModLoader.SetupFileHook( "lua/NS2ConsoleCommands_Server.lua", "lua/AnyTeam/NS2ConsoleCommands_Server.lua", "post" )
 ModLoader.SetupFileHook( "lua/NetworkMessages.lua", "lua/AnyTeam/NetworkMessages.lua", "post" )
 ModLoader.SetupFileHook( "lua/NetworkMessages_Client.lua", "lua/AnyTeam/NetworkMessages_Client.lua", "post" )
@@ -76,6 +80,7 @@ ModLoader.SetupFileHook( "lua/WallMovementMixin.lua", "lua/AnyTeam/WallMovementM
 ModLoader.SetupFileHook( "lua/DropPack.lua", "lua/AnyTeam/DropPack.lua", "post" )
 ModLoader.SetupFileHook( "lua/SelectableMixin.lua", "lua/AnyTeam/SelectableMixin.lua", "post" )
 ModLoader.SetupFileHook( "lua/AchievementGiverMixin.lua", "lua/AnyTeam/AchievementGiverMixin.lua", "post" )
+ModLoader.SetupFileHook( "lua/ServerSponitor.lua", "lua/AnyTeam/ServerSponitor.lua", "post" )
 --ModLoader.SetupFileHook( "lua/GUISelectionPanel.lua", "lua/AnyTeam/GUISelectionPanel.lua", "post" )
 
 -- relevancymask fixes
@@ -87,10 +92,20 @@ ModLoader.SetupFileHook( "lua/EvolutionChamber.lua", "lua/AnyTeam/EvolutionChamb
 ModLoader.SetupFileHook( "lua/Babbler.lua", "lua/AnyTeam/Babbler.lua", "post" )
 
 -- bot fixes
+ModLoader.SetupFileHook( "lua/bots/PlayerBot.lua", "lua/AnyTeam/bots/PlayerBot.lua", "post" )
 ModLoader.SetupFileHook( "lua/VotingAddCommanderBots.lua", "lua/AnyTeam/VotingAddCommanderBots.lua", "post" )
 ModLoader.SetupFileHook( "lua/bots/PlayerBrain.lua", "lua/AnyTeam/bots/PlayerBrain.lua", "post" )
---ModLoader.SetupFileHook( "lua/bots/Bot.lua", "lua/AnyTeam/bots/Bot.lua", "post" )
+ModLoader.SetupFileHook( "lua/bots/MarineBrain.lua", "lua/AnyTeam/bots/MarineBrain.lua", "post" )
+ModLoader.SetupFileHook( "lua/bots/CommanderBrain.lua", "lua/AnyTeam/bots/CommanderBrain.lua", "post" )
+ModLoader.SetupFileHook( "lua/bots/Bot.lua", "lua/AnyTeam/bots/Bot.lua", "post" )
+ModLoader.SetupFileHook( "lua/bots/CommonActions.lua", "lua/AnyTeam/bots/CommonActions.lua", "post" )
+ModLoader.SetupFileHook( "lua/bots/BotMotion.lua", "lua/AnyTeam/bots/BotMotion.lua", "post" )
+ModLoader.SetupFileHook( "lua/bots/PlayerBot.lua", "lua/AnyTeam/bots/PlayerBot.lua", "post" )
+ModLoader.SetupFileHook( "lua/bots/BotAim.lua", "lua/AnyTeam/bots/BotAim.lua", "post" )
+ModLoader.SetupFileHook( "lua/bots/BotUtils.lua", "lua/AnyTeam/bots/BotUtils.lua", "post" )
+
 -- bot REPLACEMENTS
+ModLoader.SetupFileHook( "lua/bots/MarineCommanderBrain_Data.lua", "lua/AnyTeam/bots/MarineCommanderBrain_Data.lua", "replace" )
 ModLoader.SetupFileHook( "lua/bots/TeamBrain.lua", "lua/AnyTeam/bots/TeamBrain.lua", "replace" )
 ModLoader.SetupFileHook( "lua/bots/CommanderBot.lua", "lua/AnyTeam/bots/CommanderBot.lua", "replace" )
 ModLoader.SetupFileHook( "lua/bots/FadeBrain_Data.lua", "lua/AnyTeam/bots/FadeBrain_Data.lua", "replace" )
@@ -108,6 +123,7 @@ ModLoader.SetupFileHook( "lua/Alien_Client.lua", "lua/AnyTeam/Alien_Client.lua",
 ModLoader.SetupFileHook( "lua/GUIAuraDisplay.lua", "lua/AnyTeam/GUIAuraDisplay.lua", "post" )
 ModLoader.SetupFileHook( "lua/PowerUtility.lua", "lua/AnyTeam/PowerUtility.lua", "post" )
 ModLoader.SetupFileHook( "lua/GUIDeathScreen.lua", "lua/AnyTeam/GUIDeathScreen.lua", "post" )
+ModLoader.SetupFileHook( "lua/GUIMinimapConnection.lua", "lua/AnyTeam/GUIMinimapConnection.lua", "post" )
 -- this is just to change the color (it's in a bad spot)
 ModLoader.SetupFileHook( "lua/Insight.lua", "lua/AnyTeam/Insight.lua", "post" )
 

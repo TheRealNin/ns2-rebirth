@@ -233,7 +233,7 @@ kDamageType = enum(
     'Normal', 'Light', 'Heavy', 'Puncture', 
     'Structural', 'StructuralHeavy', 'Splash', 
     'Gas', 'NerveGas', 'StructuresOnly', 
-    'Falling', 'Door', 'Flame', 'Infestation', 
+    'Falling', 'Door', 'Flame', 'Flamethrower',
     'Corrode', 'ArmorOnly', 'Biological', 'StructuresOnlyLight', 
     'Spreading', 'GrenadeLauncher', 'MachineGun'
 })
@@ -241,23 +241,25 @@ kDamageType = enum(
 -- Describe damage types for tooltips
 kDamageTypeDesc = {
     "",
-    "Light damage: reduced vs. armor",
-    "Heavy damage: extra vs. armor",
-    "Puncture damage: extra vs. players",
-    "Structural damage: Double vs. structures",
-    "StructuralHeavy damage: Double vs. structures and double vs. armor",
+    "Light: reduced vs. armor",
+    "Heavy: extra vs. armor",
+    "Puncture: extra vs. players",
+    "Structural: Double vs. structures",
+    "StructuralHeavy: Double vs. structures and double vs. armor",
     "Gas damage: affects breathing targets only",
-    "NerveGas damage: affects biological units, player will take only armor damage",
+    "NerveGas: affects biological units, player will take only armor damage",
     "Structures only: Doesn't damage players or AI units",
-    "Falling damage: Ignores armor for humans, no damage for aliens",
+    "Falling: Ignores armor for humans, no damage for aliens",
     "Door: Can also affect Doors",
+    "Flame: Deals 4.5x damage vs. flammable structures and double vs. all other structures",
+    "Flamethrower: Reduced vs. armor, 4.5x damage vs. flammable structures and double vs. all other structures",
     "Corrode damage: Damage structures or armor only for non structures",
     "Armor damage: Will never reduce health",
-    "StructuresOnlyLight: Damages structures only, light damage.",
-    "Splash: same as structures only but always affects ARCs (friendly fire).",
+    "Biological: Will only damage biological targets.",
+    "StructuresOnlyLight: reduced vs. structures with armor",
     "Spreading: Does less damage against small targets.",
     "GrenadeLauncher: Double structure damage, 20% reduction in player damage",
-    "MachineGun: Deals 1.5x amount of base damage against players"
+    "MachineGun: Deals 1.5x amount of base damage vs. players"
 }
 
 kSpreadingDamageScalar = 0.75
@@ -267,7 +269,6 @@ kExosuitArmorUseFraction = 1 -- exos have no health
 kStructuralDamageScalar = 2
 kPuncturePlayerDamageScalar = 2
 kGLPlayerDamageReduction = 0.8
-kFTStructureDamage = 1.125
 
 kLightHealthPerArmor = 4
 kHealthPointsPerArmor = 2
@@ -403,11 +404,7 @@ end
 local function MultiplyForStructures(target, attacker, doer, damage, armorFractionUsed, healthPerArmor, damageType, hitPoint)
 
     if target.GetReceivesStructuralDamage and target:GetReceivesStructuralDamage(damageType) then
-        if doer:isa("Flamethrower") then
-            damage = damage * kFTStructureDamage
-        else
-            damage = damage * kStructuralDamageScalar
-        end
+        damage = damage * kStructuralDamageScalar
     end
     
     return damage, armorFractionUsed, healthPerArmor
@@ -543,6 +540,13 @@ local function DoubleHealthPerArmorForStructures(target, attacker, doer, damage,
     return damage, armorFractionUsed, healthPerArmor
 end
 
+local function DoubleHealthPerArmorForPlayers(target, attacker, doer, damage, armorFractionUsed, healthPerArmor, damageType, hitPoint)
+    if target:isa("Player") then
+        healthPerArmor = healthPerArmor * (kLightHealthPerArmor / kHealthPointsPerArmor)
+    end
+    return damage, armorFractionUsed, healthPerArmor
+end
+
 local kMachineGunPlayerDamageScalar = 1.5
 local function MultiplyForMachineGun(target, attacker, doer, damage, armorFractionUsed, healthPerArmor, damageType, hitPoint)
     return ConditionalValue(target:isa("Player") or target:isa("Exosuit"), damage * kMachineGunPlayerDamageScalar, damage), armorFractionUsed, healthPerArmor
@@ -645,6 +649,13 @@ local function BuildDamageTypeRules()
     kDamageTypeRules[kDamageType.Flame] = {}
     table.insert(kDamageTypeRules[kDamageType.Flame], MultiplyFlameAble)
     table.insert(kDamageTypeRules[kDamageType.Flame], MultiplyForStructures)
+    -- ------------------------------
+    
+    -- Flamethrower damage rules
+    kDamageTypeRules[kDamageType.Flamethrower] = {}
+    table.insert(kDamageTypeRules[kDamageType.Flame], MultiplyFlameAble)
+    table.insert(kDamageTypeRules[kDamageType.Flame], MultiplyForStructures)
+    table.insert(kDamageTypeRules[kDamageType.Flame], DoubleHealthPerArmorForPlayers)
     -- ------------------------------
     
     -- Corrode damage rules

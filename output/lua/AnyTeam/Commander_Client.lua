@@ -26,3 +26,7 @@ end
 function Commander:SwitchTeamType()
     Shared.ConsoleCommand("switchteamtype")
 end
+
+function Commander:SetCommanderReady(teamType)
+    Shared.ConsoleCommand("commanderready " .. teamType)
+end

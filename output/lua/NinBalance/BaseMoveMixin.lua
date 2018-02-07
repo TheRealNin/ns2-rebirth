@@ -32,12 +32,12 @@ BaseMoveMixin.networkVars =
     velocity = "private compensated interpolated vector(" .. kNetRangeStep .. " [ 8 10 13 ], " .. kNetRangeStep .. " [ 1 1 13 ] )",
     
     -- the velocity is expensive to propagate, but others need to know how fast we are moving, so we expose that with less resolution
-    velocityLength = "interpolated float (0 to " .. kNetMaxV .. " by 0.4 [ 2 ])", -- 125 steps, -> 7 bits
+    velocityLength = "compensated interpolated float (0 to " .. kNetMaxV .. " by 0.4 [ 2 ])", -- 125 steps, -> 7 bits
     
-    velocityLengthSmoothed = "interpolated float (0 to " .. kNetMaxV .. " by 0.4 [ 2 ])", -- 125 steps, -> 7 bits
+    velocityLengthSmoothed = "compensated interpolated float (0 to " .. kNetMaxV .. " by 0.4 [ 2 ])", -- 125 steps, -> 7 bits
     
     -- velocity yaw
-    velocityYaw = "interpolated angle ( 7 bits )", 
+    velocityYaw = "compensated angle ( 7 bits )", 
     -- velocity pitch
     velocityPitch = "compensated interpolated angle ( 7 bits)",
 }
@@ -119,7 +119,7 @@ function BaseMoveMixin:GetGravityForce(input)
     return self:GetMixinConstants().kGravity    
 end
 
-local kSmoothRate = 15
+local kSmoothRate = 12
 function BaseMoveMixin:OnProcessMove(input)
     
     -- update the low-resolution polar coordinates

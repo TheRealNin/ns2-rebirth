@@ -5,8 +5,8 @@ function BuildTechData()
     local techDataTable = oldBuildTechData()
     table.insert(techDataTable, 
         { [kTechDataId] = kTechId.HadesDevice,
-        [kTechDataBuildRequiresMethod] = GetRoomHasNoHadesDevice,
-        [kTechDataBuildMethodFailedMessage] = "Only one Hades Device allowed per room",
+        [kTechDataBuildRequiresMethod] = GetRoomIsValidForHadesDevice,
+        [kTechDataBuildMethodFailedMessage] = "Only one Hades Device allowed per room, and not near a friendly command station.",
         [kTechDataHint] = "Explodes after a short delay",
         [kTechDataGhostModelClass] = "MarineGhostModel",
         [kTechDataMapName] = HadesDevice.kMapName,

@@ -1,6 +1,4 @@
 
---not sure doing this has any performance impact
-local dot
 
 -- slerping between two vectors is moving one to the other along the shortest path along a sphere by rate <rate>
 -- You can't slerp between two vectors by a third vector. This function is performing a Lerp on the components of
@@ -11,7 +9,7 @@ function SlerpVector(current, target, rate)
 
     if type(rate) == "number" then
     
-        dot = current:DotProduct(target)
+        local dot = current:DotProduct(target)
         
         -- close enough
         if dot > 0.99999 or dot < -0.99999 then
@@ -69,57 +67,4 @@ function SlerpAngles(current, target, rate)
     
     return Angles.Lerp(current, target, rate)
 
-end
-
-
-function GetInstalledMapList()
-
-    local matchingFiles = { }
-    Shared.GetMatchingFileNames("maps/*.level", false, matchingFiles)
-    
-    local mapNames = { }
-    local mapFiles = { }
-    
-    for _, mapFile in pairs(matchingFiles) do
-    
-        local _, _, filename = string.find(mapFile, "maps/(.*).level")
-        local mapname = string.gsub(filename, 'ns2_', '', 1):gsub("^%l", string.upper)
-        local tagged,_ = string.match(filename, "ns2_", 1)
-        if tagged ~= nil then
-        
-            table.insert(mapNames, mapname)
-            table.insert(mapFiles, {["name"] = mapname, ["fileName"] = filename})
-            
-        end
-        
-    end
-    
-    return mapNames, mapFiles
-    
-end
-
-function GetCachedMapList()
-
-    local matchingFiles = { }
-    Shared.GetMatchingFileNames("Workshop/*/maps/*.level", false, matchingFiles)
-    
-    local mapNames = { }
-    local mapFiles = { }
-    
-    for _, mapFile in pairs(matchingFiles) do
-    
-        local _, _, filename = string.find(mapFile, "maps/(.*).level")
-        local mapname = string.gsub(filename, 'ns2_', '', 1):gsub("^%l", string.upper)
-        local tagged,_ = string.match(filename, "ns2_", 1)
-        if tagged ~= nil then
-        
-            table.insert(mapNames, mapname)
-            table.insert(mapFiles, {["name"] = mapname, ["fileName"] = filename})
-            
-        end
-        
-    end
-    
-    return mapNames, mapFiles
-    
 end

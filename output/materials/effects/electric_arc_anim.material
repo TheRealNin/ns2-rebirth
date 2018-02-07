@@ -1,0 +1,4 @@
+shader = "materials/effects/electric_arc_anim.surface_shader"
+numFrames = 6
+frameRate = 24
+emissiveMap = "materials/effects/electric_arc_anim.dds"

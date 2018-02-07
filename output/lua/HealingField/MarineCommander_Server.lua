@@ -1,7 +1,7 @@
 
 function MarineCommander:TriggerHealingField(position, trace)
 
-    if trace.fraction ~= 1 then
+    if not trace or trace.fraction ~= 1 then
 
         CreateEntity(HealingField.kMapName, position, self:GetTeamNumber())        
         -- create custom sound for marine commander

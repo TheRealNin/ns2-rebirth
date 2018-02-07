@@ -11,8 +11,8 @@ local kBiteHowlTracer = PrecacheAsset("cinematics/prowler/1p_tracer_residue.cine
 local kAttackDuration = Shared.GetAnimationLength("models/alien/skulk/skulk_view.model", "bite_attack")
 
 -- higher numbers reduces the spread
-local kSpreadDistance = 3.5
-local kSpreadVertMult = 0.2
+local kSpreadDistance = 5.5
+local kSpreadVertMult = 0.3
 BiteHowl.kSpreadVectors =
 {
     GetNormalizedVector(Vector(-0.01, 0.01, kSpreadDistance)),
@@ -63,7 +63,7 @@ function BiteHowl:GetBulletsPerShot()
 end
 
 function BiteHowl:GetEnergyCost(player)
-    return kBiteEnergyCost * 1.5
+    return kBiteEnergyCost
 end
 function BiteHowl:GetRange()
     return 100
@@ -71,12 +71,18 @@ end
 function BiteHowl:GetBulletDamage()
     return kProwlerDamagePerPellet
 end
+
 function BiteHowl:GetBarrelPoint()
     local player = self:GetParent()
     return player:GetEyePos() + Vector(0, -0.25, 0)
 end
+
 function BiteHowl:GetDeathIconIndex()
     return kDeathMessageIcon.Spit
+end
+
+function BiteHowl:GetDamageType()
+    return kBiteHowlDamageType
 end
 
 function BiteHowl:OnUpdateAnimationInput(modelMixin)

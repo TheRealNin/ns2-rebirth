@@ -77,7 +77,7 @@
             }
             else
             {
-                material.emissive += 3 * ((1 - (blend + f)) * tex2D(scanlinesMap, input.texCoord * float2(1, 70)+ float2(0, time * -.75)).rgb * float3(2.2, 4.2, 6) );
+                //material.emissive += 3 * ((1 - (blend + f)) * tex2D(scanlinesMap, input.texCoord * float2(1, 70)+ float2(0, time * -.75)).rgb * float3(2.2, 4.2, 6) );
             }
             
             // Opacity
@@ -86,8 +86,8 @@
             {
                 material.opacity = 0.2;
                 material.albedo.rgb = 0;
-				float4 scanlines = tex2D(scanlinesMap, input.osPosition.xy * 50 + float2(time * 251.2, time * - .25));
-				material.emissive = scanlines.rgb * scanlines.a * 0.1;
+				//float4 scanlines = tex2D(scanlinesMap, input.osPosition.xy * 50 + float2(time * 251.2, time * - .25));
+				material.emissive = 0;
 				
             }
             

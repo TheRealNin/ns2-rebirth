@@ -1,12 +1,13 @@
 
 kProwlerCost = 3
-kProwlerHealth = kSkulkHealth + 15 -- 75 -- 15 more than skulk
+kProwlerHealth = kSkulkHealth + 20 -- 75 -- 15 more than skulk
 kProwlerArmor  = 10 -- skulk is 10
 kProwlerEggCost = 6
 kProwlerGestateTime = 5
 kProwlerPointValue = 10
 kProwlerUpgradeCost = 1
-kProwlerDamagePerPellet = 5
+kProwlerDamagePerPellet = 4 -- if set to 5, it deals as much damage as a skulk
+kBiteHowlDamageType = kDamageType.Normal
 
 kProwlerHealthPerBioMass = kSkulkHealthPerBioMass * 2
 

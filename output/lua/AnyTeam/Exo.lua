@@ -7,6 +7,8 @@ kExoModifier["Pistol"] = kExoBulletModifier
 kExoModifier["Sentry"] = kExoBulletModifier
 kExoModifier["Minigun"] = kExoBulletModifier
 kExoModifier["Railgun"] = kExoBulletModifier
+kExoModifier["ClusterGrenade"] = kExoBulletModifier
+kExoModifier["ClusterFragment"] = kExoBulletModifier
 
 local networkVars = 
 {
@@ -37,7 +39,7 @@ function Exo:ModifyDamageTaken(damageTable, attacker, doer, damageType)
             modifier = kExoModifier[doer:GetClassName()] or 1        
         end
     
-        damageTable.damage = damageTable.damage * modifier * 0.75
+        damageTable.damage = damageTable.damage * modifier * kExoAllMarineDmagmageModifier
         
     end
     

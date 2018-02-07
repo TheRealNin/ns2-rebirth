@@ -14,9 +14,9 @@ function Marine:OnCreate()
     InitMixin(self, FireMixin)
 end
 
-local kMarineEngageOffset = Vector(0, 1.5, 0)
 function Marine:GetEngagementPointOverride()
-    return self:GetOrigin() + kMarineEngageOffset
+    local offset = -self:GetCrouchShrinkAmount() * self:GetCrouchAmount() * 0.2
+    return self:GetModelOrigin() + Vector(0,offset,0)
 end
 
 local MarineModifier = {}

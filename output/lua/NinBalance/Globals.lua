@@ -1,0 +1,1 @@
+kStructureLOSDistance = 0 -- was 3.5 -- it affects the "forced" minimap appearance of entities

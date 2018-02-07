@@ -57,3 +57,52 @@ function SetPlayerPoseParameters(player, viewModel, headAngles)
     end
 
 end
+
+
+
+
+
+--[[
+ * Does an attack with a melee capsule.
+--]]
+function AttackMeleeCleaveCapsule(weapon, player, damage, range, optionalCoords, altMode, filter)
+
+    local targets = {}
+    local didHit, target, endPoint, direction, surface, startPoint, trace
+
+    if not filter then
+        filter = EntityFilterTwo(player, weapon)
+    end
+
+    -- loop upto 20 times just to go through any soft targets.
+    -- Stops as soon as nothing is hit or a non-soft target is hit
+    for i = 1, 20 do
+
+        local traceFilter = function(test)
+            return EntityFilterList(targets)(test) or filter(test)
+        end
+
+        -- Enable tracing on this capsule check, last argument.
+        didHit, target, endPoint, direction, surface, startPoint, trace = CheckMeleeCapsule(weapon, player, damage, range, optionalCoords, true, 1, nil, traceFilter)
+        local alreadyHitTarget = target ~= nil and table.icontains(targets, target)
+
+        if didHit and not alreadyHitTarget then
+            weapon:DoDamage(damage, target, endPoint, direction, surface, altMode)
+        end
+
+        if target and not alreadyHitTarget then
+            table.insert(targets, target)
+        end
+
+        -- all targets are soft to a cleave!
+        if not target then
+            break
+        end
+
+    end
+
+    HandleHitregAnalysis(player, startPoint, endPoint, trace)
+
+    return didHit, targets[#targets], endPoint, surface
+
+end

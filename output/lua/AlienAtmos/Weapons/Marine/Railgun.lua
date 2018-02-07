@@ -96,7 +96,7 @@ local function ExecuteShot(self, startPoint, endPoint, player)
     
     local extents = GetDirectedExtentsForDiameter(direction, kBulletSize)
     
-    if trace.fraction < 1 then
+    if trace.fraction > 0 then
     
         -- do a max of 10 capsule traces, should be sufficient
         local hitEntities = {}

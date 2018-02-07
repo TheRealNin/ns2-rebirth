@@ -93,9 +93,10 @@ function CommanderBot:GenerateMove()
     end
 
     local player = self:GetPlayer()
-    local team = player:GetTeam()
-    local playerClass = player:GetClassName()
-    local stationClass = kTeam2StationClassName[ player:GetTeamNumber() ]
+    local team = GetGamerules():GetTeam(self.team)
+    
+    local teamType = team:GetTeamType()
+    local stationClass = kTeam2StationClassName[ teamType ]
 
     local move = Move()
 
@@ -107,15 +108,17 @@ function CommanderBot:GenerateMove()
         Print("trying to log %s into %s", player:GetName(), stationClass)
 
         -- Log into any com station
-        for index, entity in ipairs(GetEntitiesForTeam("CommandStructure", player:GetTeamNumber())) do
+        for index, entity in ipairs(GetEntitiesForTeam("CommandStructure", self.team)) do
 
-            entity:LoginPlayer(player)
+            local newPlayer = entity:LoginPlayer(player, true)
+            if newPlayer then
+                newPlayer:SetIsReady(true)
+            end
             break
             
         end
 
     else
-
         -- Brain will modify move.commands
         self:_LazilyInitBrain()
         if self.brain and GetGamerules():GetGameStarted() then

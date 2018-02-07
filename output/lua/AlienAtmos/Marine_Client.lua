@@ -30,7 +30,7 @@ function Marine:OnUpdateRender()
     origOnUpdateRender(self)
     if self.flashlightOn then
         -- Only display atmospherics for third person players.
-        local density = 0.05
+        local density = 0.01
         local radius = 30
         local intensity = 9
         local isLocal = self:GetIsLocalPlayer()
@@ -48,7 +48,9 @@ function Marine:OnUpdateRender()
         if not isLocal then
             local cameraCoords = GetRenderCameraCoords()
             local coneCoords = self.flashlight:GetCoords()
-            if IsPointInCone(cameraCoords.origin, coneCoords.origin, coneCoords.zAxis, math.rad(47)) then
+            local isInSmallCone = IsPointInCone(cameraCoords.origin, coneCoords.origin, coneCoords.zAxis, math.rad(47))
+            local isInLargeCone = IsPointInCone(cameraCoords.origin, coneCoords.origin, coneCoords.zAxis, math.rad(90))
+            if isInSmallCone then
                 self.flashlight_cinematic:SetIsVisible(true)
                 self.flashlight_cinematic:SetIsActive(true)
                 local coords = Coords(self.flashlight:GetCoords())
@@ -59,9 +61,23 @@ function Marine:OnUpdateRender()
                 self.flashlight_cinematic:SetIsVisible(false)
                 self.flashlight_cinematic:SetIsActive(false)
             end
+            
+            if isInLargeCone and not isInSmallCone then
+                self.flashlight_cinematic_small:SetIsVisible(true)
+                self.flashlight_cinematic_small:SetIsActive(true)
+                local coords = Coords(self.flashlight:GetCoords())
+                
+                coords.origin = self:GetAttachPointOrigin("Head") - coords.yAxis * 0.18 + coords.zAxis * 0.7
+                self.flashlight_cinematic_small:SetCoords(coords)
+            else
+                self.flashlight_cinematic_small:SetIsVisible(false)
+                self.flashlight_cinematic_small:SetIsActive(false)
+            end
         end
     else
         self.flashlight_cinematic:SetIsVisible(false)
         self.flashlight_cinematic:SetIsActive(false)
+        self.flashlight_cinematic_small:SetIsVisible(false)
+        self.flashlight_cinematic_small:SetIsActive(false)
     end
 end

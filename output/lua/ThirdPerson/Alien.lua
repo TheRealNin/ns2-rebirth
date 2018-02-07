@@ -116,20 +116,21 @@ function Alien:OnPostUpdateCamera(deltaTime)
 end
 
 
-
 function Alien:PlayerCameraCoordsAdjustment(cameraCoords)
     local origOrigin = cameraCoords.origin
     local newOrigin = self:GetThirdPersonViewOffset(origOrigin)
     
-    if (origOrigin - newOrigin):GetLength() < self:GetTooCloseDistance() then
-      self:SetOpacity(0,"cloak")
+    if Client and self:GetIsLocalPlayer() then
+        if (origOrigin - newOrigin):GetLength() < self:GetTooCloseDistance() then
+          self:SetOpacity(0,"cloak")
+        end
     end
+
     
     cameraCoords.origin = newOrigin
     return  cameraCoords
 
 end
-
 
 local originalOnUpdateAnimationInput = Alien.OnUpdateAnimationInput
 function Alien:OnUpdateAnimationInput(modelMixin)

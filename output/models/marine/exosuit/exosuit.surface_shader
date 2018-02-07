@@ -61,7 +61,7 @@
             // normal maps are not atlased.
 			material.tsNormal 	= DecodeNormal( tex2D(normalMap, input.texCoord) );
             
-			material.specular	= specularGloss.rgb;
+			material.specular	= specularGloss.rgb * 2.0;
 			material.gloss		= specularGloss.a;
 			
 			float opacity       = paramSlow(param,destroySpeed);

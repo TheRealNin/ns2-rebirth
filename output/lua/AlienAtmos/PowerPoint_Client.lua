@@ -7,10 +7,10 @@ Client.PrecacheLocalSound(kBuildMeSound)
 
 PowerPoint.kDisabledColor = Color(0.02, 0.18, 0.75)
 PowerPoint.kDisabledSpotlight = Color(0.02, 0.18, 1.0)
-PowerPoint.kDisabledProbeColor = Color(0.48, 0.000, 1.0)
+PowerPoint.kDisabledProbeColor = Color(0.04, 0.28, 0.75)
 
 PowerPoint.kDisabledCommanderColor = Color(0.02, 0.18, 1.0)
-PowerPoint.kAuxPowerCycleTime = 20
+PowerPoint.kAuxPowerCycleTime = 1
 -- chance of a aux light flickering when powering up
 PowerPoint.kAuxFlickerChance = 0
 -- chance of a full light flickering when powering up

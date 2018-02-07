@@ -90,7 +90,7 @@ local function ConstructTargetEntry(origin, hitEntity, damage, radius, ignoreLos
 
     local entry = {}
     
-    if not hitEntity or not hitEntity:GetIsAlive() or GetIsVortexed(hitEntity) then
+    if not hitEntity or not hitEntity:GetCanTakeDamage() or GetIsVortexed(hitEntity) then
         return nil
     end    
 
@@ -266,7 +266,7 @@ local function ApplyDamage(self, targetList)
             break
         end
    
-        if entity and self.targetIds[entity:GetId()] and entity:GetIsAlive() and (not self.immuneCondition or not self.immuneCondition(self, entity)) then
+        if entity and self.targetIds[entity:GetId()] and entity:GetCanTakeDamage() and (not self.immuneCondition or not self.immuneCondition(self, entity)) then
         
             local worldImpactPoint = entity:GetCoords():TransformPoint(targetEntry.impactPoint)
             

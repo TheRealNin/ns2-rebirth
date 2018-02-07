@@ -123,19 +123,35 @@ function MapBlip:UpdateRelevancy()
     
     local mask = 0
 
-    if self.mapBlipType == kMinimapBlipType.PowerPoint and GetGamerules():GetTeam(1):GetTeamType() == kMarineTeamType then
-        mask = bit.bor(mask, kRelevantToTeam1)
-    end
-    if self.mapBlipType == kMinimapBlipType.PowerPoint and GetGamerules():GetTeam(2):GetTeamType() == kMarineTeamType then
-        mask = bit.bor(mask, kRelevantToTeam2)
-    end
+    
     if self.mapBlipTeam == kTeam1Index or self.mapBlipTeam == kTeamInvalid or self:GetIsSighted() then
+        mask = bit.bor(mask, kRelevantToTeam1)
+    elseif self:GetIsPowerPoint() and GetGamerules():GetTeam(1):GetTeamType() == kMarineTeamType then
         mask = bit.bor(mask, kRelevantToTeam1)
     end
     if self.mapBlipTeam == kTeam2Index or self.mapBlipTeam == kTeamInvalid or self:GetIsSighted() then
+        mask = bit.bor(mask, kRelevantToTeam2)
+    elseif self:GetIsPowerPoint() and GetGamerules():GetTeam(2):GetTeamType() == kMarineTeamType then
         mask = bit.bor(mask, kRelevantToTeam2)
     end
     
     self:SetExcludeRelevancyMask( mask )
 
+end
+
+function MapBlip:GetIsPowerPoint()
+
+    local owner = Shared.GetEntity(self.ownerEntityId)
+    
+    if owner then
+    
+        if owner.GetTeamNumber and owner:GetTeamNumber() == kNeutralTeamNumber and owner:isa("PowerPoint") then
+            return true
+        end
+        
+        
+    end
+    
+    return false
+    
 end

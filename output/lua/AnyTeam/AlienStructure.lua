@@ -210,12 +210,14 @@ end
 
 
 if Server then
+    function AlienStructure:GetDestroyOnKill()
+        return true
+    end
     
     function AlienStructure:OnKill(attacker, doer, point, direction)
 
         ScriptActor.OnKill(self, attacker, doer, point, direction)
         self:TriggerEffects("death")
-        DestroyEntity(self)
     
     end
 

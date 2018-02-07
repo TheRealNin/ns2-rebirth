@@ -34,8 +34,7 @@ function CreateRagdoll(fromEntity)
         ragdoll:SetModel(useModelName, useGraphName)
         
         --if fromEntity.GetPlayInstantRagdoll and fromEntity:GetPlayInstantRagdoll() then
-            ragdoll:SetPhysicsType(PhysicsType.Dynamic)
-            ragdoll:SetPhysicsGroup(PhysicsGroup.RagdollGroup)
+        ragdoll:SetPhysicsGroup(PhysicsGroup.RagdollGroup)
         -- else    
         --    ragdoll:SetPhysicsGroup(PhysicsGroup.SmallStructuresGroup)    
         --end
@@ -58,7 +57,7 @@ function Ragdoll:OnUpdateRender()
         
         if self.dissolveAmount < 1 then
             local t = (now - self.dissolveStart) / kRagdollTime
-            self.dissolveAmount = Math.Clamp( t * 0.5 + 0.5, 0.0, 1.0 )
+            self.dissolveAmount = Clamp( t * 0.5 + 0.5, 0.0, 1.0 )
         end
         
         self:SetOpacity(1-self.dissolveAmount, "dissolveAmount")

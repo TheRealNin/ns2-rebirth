@@ -43,7 +43,9 @@ local function createTech(self, list, techId)
     tech.StartTime = Shared.GetTime()
     tech.ResearchTime = LookupTechData(techId, kTechDataResearchTimeKey, 1)
     
-    local isMarine = self.TeamIndex == kTeam1Index
+    
+    local teamInfo = GetEntitiesForTeam("TeamInfo", self.TeamIndex)[1]
+    local isMarine = teamInfo:GetTeamType() == kMarineTeamType
     
     local background = tech.Background
     if isMarine then

@@ -211,7 +211,7 @@ function TeamBrain:GetIsSoundAudible(sound)
     -- find all our players inside a 20m range
     -- we only do this call for sounds that belong to enemy players that are actually playing, so this
     -- should not be horribly expensive.
-    for _, friend in ipairs( GetEntitiesForTeamWithinRange("Player", self.teamNumber, sound:GetWorldOrigin(), 20) ) do
+    for _, friend in ipairs( GetEntitiesForTeamWithinRange("Player", self.teamNumber, sound:GetWorldOrigin(), 15) ) do
         if friend:GetIsAlive() then
             return true
         end
@@ -241,6 +241,20 @@ function TeamBrain:Update()
 
     end
 
+    
+    -- find all resource towers within range of a player
+    for _, enemyResourceTower in ipairs( GetEntitiesForTeam("ResourceTower", GetEnemyTeamNumber(self.teamNumber)) ) do
+        if #GetEntitiesForTeamWithinRange("Player", self.teamNumber, enemyResourceTower:GetOrigin(), 30) > 0 then
+            self:UpdateMemoryOfEntity(enemyResourceTower)    
+        end
+    end
+    -- find all command structures within range of a player
+    for _, enemyCommandStructure in ipairs( GetEntitiesForTeam("CommandStructure", GetEnemyTeamNumber(self.teamNumber)) ) do
+        if #GetEntitiesForTeamWithinRange("Player", self.teamNumber, enemyCommandStructure:GetOrigin(), 30) > 0 then
+            self:UpdateMemoryOfEntity(enemyCommandStructure)    
+        end
+    end
+    
     -- treat hearing an enemy the same as seeing it; a little odd but works fine
     local enemySounds = GetAudibleEnemies(
         function (sound)
@@ -265,7 +279,12 @@ function TeamBrain:Update()
         local memEntId = mem.entId
         local ent = Shared.GetEntity(memEntId)
         local removeIt = true
-        if ent then
+        
+        -- never forget hives and CCs
+        if ent and ent:isa("CommandStructure") then
+            removeIt = false
+        end
+        if ent and removeIt then
             local memAge = Shared.GetTime() - mem.lastSeenTime
             
             -- we time out very old player memories because they are

@@ -1,7 +1,7 @@
 
 local kRailgunSpread = Math.Radians(0)
 local kRailgunRange = 400
-local kBulletSize = 0.05 -- was 0.3
+local kBulletSize = 0.20 -- was 0.3
 local kPenetrationSize = 0.3
 local kChargeTime = 2
 

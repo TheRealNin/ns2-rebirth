@@ -31,7 +31,7 @@ function GUIHiveStatus:Update( deltaTime )
     PROFILE("GUIHiveStatus:Update")
     
     local fullMode = Client.GetOptionInteger("hudmode", kHUDMode.Full) == kHUDMode.Full
-    self.background:SetIsVisible( fullMode )
+    self.background:SetIsVisible( fullMode and self.visible)
     if not fullMode then
         return
     end
@@ -42,7 +42,7 @@ function GUIHiveStatus:Update( deltaTime )
             self.background:SetIsVisible( false )
             return
         else
-            self.background:SetIsVisible( true ) --faster to just set true, than check
+            self.background:SetIsVisible( self.visible ) --faster to just set true, than check
         end
     end
     
@@ -70,8 +70,9 @@ function GUIHiveStatus:Update( deltaTime )
         local locationId = self.validLocations[locIdx]
         
         if locationId then
-            local teamInfoEnt = GetTeamInfoEntity(player:GetTeamNumber())
-            if teamInfoEnt then
+        
+            if self.teamInfoEnt then
+            
                 local slotData = self.teamInfoEnt:GetLocationSlotData( locationId )
                 
                 if slotData then

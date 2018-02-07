@@ -1,2 +1,2 @@
 
-Marine.kWalkBackwardSpeedScalar = 1.0
+Marine.kWalkBackwardSpeedScalar = 0.9

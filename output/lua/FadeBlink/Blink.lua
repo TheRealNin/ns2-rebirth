@@ -316,6 +316,14 @@ function Blink:OnHolster(player)
         self.vortexCinematic = nil
         
     end
+    
+    if self.landingCinematic then
+    
+        Client.DestroyCinematic(self.landingCinematic)
+        self.landingCinematic = nil
+        
+    end
+    
     Ability.OnHolster(self, player)
     
     
@@ -339,6 +347,13 @@ function Blink:OnDestroy()
     
         Client.DestroyCinematic(self.vortexCinematic)
         self.vortexCinematic = nil
+        
+    end
+    
+    if self.landingCinematic then
+    
+        Client.DestroyCinematic(self.landingCinematic)
+        self.landingCinematic = nil
         
     end
     originalOnDestroy(self)

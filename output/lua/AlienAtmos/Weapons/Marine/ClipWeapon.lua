@@ -1,4 +1,6 @@
-
+local kLevel1Tracer = PrecacheAsset("cinematics/marine/tracer1.cinematic")
+local kLevel2Tracer = PrecacheAsset("cinematics/marine/tracer2.cinematic")
+local kLevel3Tracer = PrecacheAsset("cinematics/marine/tracer3.cinematic")
 --
 -- Fires the specified number of bullets in a cone from the player's current view.
 --
@@ -68,4 +70,21 @@ end
 function ClipWeapon:FirePrimary(player)
     self.fireTime = Shared.GetTime()
     FireBullets(self, player)
+end
+
+function ClipWeapon:GetTracerEffectName()
+    local player = self:GetParent()
+    if player and player.GetWeaponUpgradeLevel then
+        local level = player:GetWeaponUpgradeLevel()
+        if level == 3 then
+            return kLevel3Tracer
+        end
+        if level == 2 then
+            return kLevel2Tracer
+        end
+        if level == 1 then
+            return kLevel1Tracer
+        end
+    end
+    return kDefaultTracerEffectName
 end

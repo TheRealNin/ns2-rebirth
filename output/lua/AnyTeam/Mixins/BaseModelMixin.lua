@@ -91,6 +91,9 @@ BaseModelMixin.optionalCallbacks =
     GetCanSkipPhysics = "Called in OnUpdatePhysics(). If false, the OnUpdatePhysics() is skipped.",
     GetClientSideAnimationEnabled = "Return true to enable animation processing (tags) on the Client for non-local player entities."
 }
+BaseModelMixin.optionalConstants = {
+    kRenderZone = "The render zone"
+}
 
 -- Maximum number of animations we support on in a model. This is limited for
 -- the sake of reducing the size of the network field.
@@ -327,9 +330,24 @@ local function UpdatePoseParameters(self, forceUpdate)
 end
 
 function BaseModelMixin:CopyAnimationState(other)
-    for k, v in pairs(ModelMixin.networkVars) do
-        self[k] = other[k]
-    end 
+    --copy ModelMixin's network values
+    self.animationGraphNode = other.animationGraphNode
+    self.animationSequence = other.animationSequence
+    self.animationStart = other.animationStart
+    self.animationSpeed = other.animationSpeed
+    self.animationBlend = other.animationBlend
+    self.animationSequence2 = other.animationSequence2
+    self.animationStart2 = other.animationStart2
+    self.animationSpeed2 = other.animationSpeed2
+    self.layer1AnimationGraphNode = other.layer1AnimationGraphNode
+    self.layer1AnimationSequence = other.layer1AnimationSequence
+    self.layer1AnimationStart =  other.layer1AnimationStart
+    self.layer1AnimationBlend = other.layer1AnimationBlend
+    self.layer1AnimationSpeed = other.layer1AnimationSpeed
+    self.layer1AnimationSequence2 = other.layer1AnimationSequence2
+    self.layer1AnimationStart2 =  other.layer1AnimationStart2
+    self.layer1AnimationSpeed2 = other.layer1AnimationSpeed2
+
     UpdatePoseParameters(self, true)
     SynchronizeAnimation(self, true)
 end
@@ -418,19 +436,20 @@ local function SetHighlight(self)
 end
 
 local function UpdateOpacity(self, debug)
-
-    local opacity = 1
-    
-    if self._renderModel then
-    
+ 
+     local opacity = 1
+     
+     if self._renderModel then
+     
         if debug then
             Print("----- %s:SetOpacity ------ ", self:GetClassName())
         end
-        
+
         self:InstanceMaterials()
 
-        for identifier, value in pairs(self.opacityValues) do
-        
+        for _, identifier in ipairs(self.opacityValues) do
+
+            local value = self.opacityValues[identifier]
             opacity = opacity * value
             if debug then
                 Print("%s: %s", identifier, ToString(value))
@@ -552,7 +571,7 @@ local function CalculateBoneVelocities(self, velocity)
 
     local model = Shared_GetModel(self.modelIndex)
     local graph = Shared_GetAnimationGraph(self.animationGraphIndex)
-    local velocities = nil
+    local velocities
     
     if model ~= nil and graph ~= nil then
     
@@ -1014,7 +1033,7 @@ end
 function BaseModelMixin:GetAttachPointOrigin(attachPointName)
     PROFILE("BaseModelMixin:GetAttachPointOrigin")
     local attachPointIndex = self:GetAttachPointIndex(attachPointName)
-    local origin  = nil
+    local origin
     local success = false
     
     if attachPointIndex ~= -1 then
@@ -1049,16 +1068,20 @@ end
 function BaseModelMixin:GetModelOrigin()
 
     local model = Shared_GetModel(self.modelIndex)
-    
+
     if model ~= nil then
-    
+
         local c = self._modelCoords
+        if c then
         return c.origin + c:TransformVector(model:GetOrigin())
-        
+        else
+            self:GetOrigin()
+        end
+
     else
         return self:GetOrigin()
     end
-    
+
 end
 
 function BaseModelMixin:GetModelExtents()
@@ -1174,9 +1197,9 @@ local function UpdatePhysicsBoneCoords(self)
 end
 
 function BaseModelMixin:UpdateModelCoords()
-    local modelCoords = nil
+    local modelCoords
     local physicsModel = self.physicsModel
-    if physicsModel and physicsType == PhysicsType.Dynamic then
+    if physicsModel and self.physicsType == PhysicsType.Dynamic then
         modelCoords = physicsModel:GetCoords()
     else
         modelCoords = self:GetCoords()
@@ -1399,12 +1422,18 @@ end
 
 function BaseModelMixin:SetOpacity(value, identifier, debug)
 
-    assert(value)
     assert(identifier)
+
+    -- mantain a list of the identifiers at the start of the table to iterate faster over them
+    if not self.opacityValues[identifier] and value ~= nil then -- set value for the first time
+        table.insert(self.opacityValues, identifier)
+    elseif value == nil then --remove value
+        table.removevalue(self.opacityValues, identifier)
+    end
     
     self.opacityValues[identifier] = value
     UpdateOpacity(self, debug)
-    
+
 end
 
 function BaseModelMixin:InstanceMaterials()

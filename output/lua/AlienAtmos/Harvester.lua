@@ -1,6 +1,6 @@
 
 local effectName = PrecacheAsset("cinematics/alien/harvester/glow.cinematic")
-local kGlowIntensity = 4
+local kGlowIntensity = 1
 
 if Client then
     function Harvester:OnUpdate(deltaTime)

@@ -4,15 +4,15 @@ Elixer.UseVersion(1.8)
 local kMinCommanderLightIntensityScalar = 0.3
 
 local kPowerDownTime = 1
-local kOffTime = 15
+local kOffTime = 10
 local kLowPowerCycleTime = 1
 local kDamagedCycleTime = 0.2
 local kDamagedMinIntensity = 0.5
 local kAuxPowerMinIntensity = 0
 local kAuxPowerMinCommanderIntensity = 3
 local kNoPowerIntensity = 0.05 -- 0.02
-local kNoPowerMinIntensity = 0.4
-local kSmallLightRadius = 1.0
+local kNoPowerMinIntensity = 0.45
+local kSmallLightRadius = 1.5
 
 local function hue2rgb(p, q, t)
   if t < 0   then t = t + 1 end
@@ -140,7 +140,6 @@ local function SetLight(renderLight, intensity, color)
         end
         
     end
-    
 end
 
 ReplaceUpValue(NormalLightWorker.Run, "SetLight", SetLight, { LocateRecurse = true; CopyUpValues = true; } )
@@ -148,7 +147,12 @@ ReplaceUpValue(NormalLightWorker.Run, "SetLight", SetLight, { LocateRecurse = tr
 function NormalLightWorker:RestoreColor(renderLight)
     
     renderLight:SetColor((renderLight.originalColor))
-
+    
+    if renderLight:GetType() == RenderLight.Type_Spot then
+        local atmoModifier = Client.GetOptionFloat("graphics/atmospheric-density", 1.0)
+        renderLight:SetAtmosphericDensity( renderLight.originalAtmosphericDensity * atmoModifier )
+    end
+    
     if renderLight:GetType() == RenderLight.Type_AmbientVolume then
 
         renderLight:SetDirectionalColor(RenderLight.Direction_Right,   (renderLight.originalRight   ) )
@@ -197,6 +201,7 @@ function NormalLightWorker:Run()
         
     end
 
+    local removeLights = {}
     for _,renderLight in ipairs(self.activeLights) do
 
         local intensity = nil
@@ -237,16 +242,21 @@ function NormalLightWorker:Run()
             self:RestoreColor(renderLight)
             
             -- remove this light from processing
-            self.activeLights[renderLight] = nil
+            table.insert(removeLights, renderLight)
             
         end
         
         -- color are only changed once during the full-power-on
         SetLight(renderLight, intensity, nil)
+
         if renderLight.originalSpecular then
             renderLight:SetSpecular(renderLight.originalSpecular)
         end
         
+    end
+    
+    for i = 1, #removeLights do
+        table.removevalue(self.activeLights, removeLights[i])
     end
     
     local startFullTime = PowerPoint.kMinFullLightDelay
@@ -285,31 +295,21 @@ function NoPowerLightWorker:Run()
     local totalAuxLightFailTime = startAuxLightFailTime + PowerPoint.kAuxLightDyingTime
     
     local probeTint
+    local setProbe = self.activeProbes
+    self.activeProbes = true
     
     if timePassed < kPowerDownTime then
         local intensity = math.sin(Clamp(timePassed / kPowerDownTime, 0, 1) * math.pi / 2)
         probeTint = Color(intensity, intensity, intensity, 1)
-    elseif timePassed < startAuxLightTime then
-        probeTint = Color(0, 0, 0, 1)
-    elseif timePassed < fullAuxLightTime then
-    
-        -- Fade red in smoothly. t will stay at zero during the individual delay time
-        local t = timePassed - startAuxLightTime
-        -- angle goes from zero to 90 degres in one kAuxPowerCycleTime
-        local angleRad = (t / PowerPoint.kAuxPowerCycleTime) * math.pi / 2
-        -- and scalar goes 0->1
-        local scalar = kNoPowerIntensity
-
-        probeTint = Color(PowerPoint.kDisabledProbeColor.r * scalar,
-                          PowerPoint.kDisabledProbeColor.g * scalar,
-                          PowerPoint.kDisabledProbeColor.b * scalar,
-                          1)
- 
     else
+        probeTint = Color(PowerPoint.kDisabledProbeColor.r * kNoPowerIntensity,
+                          PowerPoint.kDisabledProbeColor.g * kNoPowerIntensity,
+                          PowerPoint.kDisabledProbeColor.b * kNoPowerIntensity,
+                          1)
         self.activeProbes = false
     end
 
-    if self.activeProbes then    
+    if setProbe then    
         for _, probe in ipairs(self.handler.probeTable) do
             probe:SetTint( probeTint )
         end
@@ -348,7 +348,7 @@ function NoPowerLightWorker:Run()
             end
             intensity = renderLight.originalIntensity * (1 - scalar)
 
-        elseif timePassed < fullAuxLightTime then
+        else
         
             local t = timePassed - startAuxLightTime
             -- angle goes from zero to 90 degres in one kAuxPowerCycleTime
@@ -362,10 +362,6 @@ function NoPowerLightWorker:Run()
             
             intensity = math.max(scalar * renderLight.originalIntensity, kNoPowerMinIntensity)
             
-            -- disable really really small lights
-            if renderLight.originalRadius < kSmallLightRadius then
-                intensity = 0.01
-            end
             
             if showCommanderLight then
                 color = PowerPoint.kDisabledCommanderColor
@@ -373,21 +369,23 @@ function NoPowerLightWorker:Run()
                 color = PowerPoint.kDisabledColor
             end
      
-        else
+        end
+        
+        if timePassed > fullAuxLightTime then
         
             -- Deactivate from initial state
             table.insert(removeLights, renderLight)
-
-            -- in steady state, we shift lights between a constant state and a varying state.
-            -- We assign each light to one of several groups, and then randomly start/stop cycling for each group.
-            local lightGroupIndex = math.random(1, NoPowerLightWorker.kNumGroups)
-            table.insert(self.lightGroups[lightGroupIndex].lights,renderLight)
             
         end
-        if intensity then
-            SetLight(renderLight, intensity, color)
-            renderLight:SetSpecular(false)
+        
+        -- disable really really small lights
+        if renderLight.originalRadius < kSmallLightRadius then
+            intensity = 0.001
         end
+        
+        SetLight(renderLight, intensity, color)
+        renderLight:SetSpecular(false)
+        renderLight:SetAtmosphericDensity(0)
         
     end
     
@@ -464,6 +462,27 @@ function PowerPointLightHandler:Init(powerPoint)
 
 end
 
+function PowerPointLightHandler:Run(mode)
+
+
+    local worker = self.workerTable[mode]
+    local timeOfChange = self.powerPoint:GetTimeOfLightModeChange()
+
+    if self.lastMode ~= mode or self.lastWorker ~= worker or self.lastTimeOfChange ~= timeOfChange then
+
+        worker:Activate()
+        self.lastWorker = worker
+        self.lastTimeOfChange = timeOfChange
+
+    end
+    
+    self.lastMode = mode
+    
+    worker:Run()
+
+end
+
+
 function PowerPointLightHandler:Reset()
 
     self.lightTable = { }
@@ -487,12 +506,12 @@ function PowerPointLightHandler:Reset()
     end
     
     self.probeTable = GetReflectionProbesForLocation(self.powerPoint:GetLocationName())
-
+    local normalWorker = NormalLightWorker():Init(self, "normal")
     self.workerTable = {
-        [kLightMode.Normal] = NormalLightWorker():Init(self, "normal"),
+        [kLightMode.Normal] = normalWorker,
         [kLightMode.NoPower] = NoPowerLightWorker():Init(self, "nopower"),
-        [kLightMode.LowPower] = LowPowerLightWorker():Init(self, "lowpower"),
-        [kLightMode.Damaged] = DamagedLightWorker():Init(self, "damaged"),
+        [kLightMode.LowPower] = normalWorker,
+        [kLightMode.Damaged] = normalWorker,
     }
     
     self:Run(kLightMode.NoPower)

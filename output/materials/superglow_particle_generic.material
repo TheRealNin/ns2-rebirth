@@ -1,0 +1,2 @@
+shader = "materials/superglow.surface_shader"
+emissiveMap = "cinematics/vfx_materials/vfx_Flares_01.dds"

@@ -154,16 +154,22 @@ if Server then
 				-- make up for not manually moving to CS and using it
 				commandStructure.occupied = not client:GetIsVirtual()
 				player:SetOrigin(commandStructure:GetDefaultEntryOrigin())
-				commandStructure:LoginPlayer(player,true)
+				local newPlayer = commandStructure:LoginPlayer(player,true)
+                
+                if newPlayer then
+                    --newPlayer:SetIsReady(true)
+                else
+                    --Log("Couldn't set the new commander to ready!")
+                end
+                
             end
         end
 		self.clientpres = {}
         
         self:GetTeam(teamIndex):OnInitialized()
         
-        if commanderClient then
-            LoginCommander(commandStructure, commanderClient)
-        end
+        LoginCommander(commandStructure, commanderClient)
+        
         
         -- Create living map entities fresh
         CreateLiveMapEntities()
@@ -306,7 +312,19 @@ if Server then
             local team1Commander = self.team1:GetCommander()
             local team2Commander = self.team2:GetCommander()
             
-            if ((team1Commander and team2Commander) or Shared.GetCheatsEnabled()) and (not self.tournamentMode or self.teamsReady) then
+            
+            local team1NumPlayer = self.team1:GetNumPlayers()
+            local team2NumPlayer = self.team2:GetNumPlayers()
+            --firstPregameJoin is used to trigger the vote to start the game with bots
+            if team1NumPlayer + team2NumPlayer > 0 then
+                if self.firstPregameJoin == nil then
+                    self.firstPregameJoin = Shared.GetTime()
+                end
+            else
+                self.firstPregameJoin = nil
+            end
+            
+            if ((team1Commander and team2Commander and team1Commander:GetIsReady() and team2Commander:GetIsReady()) or Shared.GetCheatsEnabled()) and (not self.tournamentMode or self.teamsReady) then
             
                 if self:GetGameState() < kGameState.PreGame then
                     --Log("Starting %s second countdown for game start", kPregameLength)
@@ -330,13 +348,26 @@ if Server then
                         SendTeamMessage(self.team2, kTeamMessageTypes.GameStartCommanders)
                         self.nextGameStartMessageTime = Shared.GetTime() + kGameStartMessageInterval
                     end
-
-                    if self:GetGameState() == kGameState.WarmUp and self.nextGameStartMessageTime and
+                    
+                    local gamestate = self:GetGameState()
+                    if gamestate == kGameState.WarmUp and self.nextGameStartMessageTime and
                             self.nextGameStartMessageTime ~= self.lastWarmUpMessageTime and
                             Shared.GetTime() > self.nextGameStartMessageTime - kGameStartMessageInterval / 2 then
                         SendTeamMessage(self.team1, kTeamMessageTypes.WarmUpActive, self:GetWarmUpPlayerLimit())
                         SendTeamMessage(self.team2, kTeamMessageTypes.WarmUpActive, self:GetWarmUpPlayerLimit())
                         self.lastWarmUpMessageTime = self.nextGameStartMessageTime
+                    end
+                    
+                    --check if it's time to start the add commander bots vote
+                    local autoVoteAddCommBots = Server.GetConfigSetting("auto_vote_add_commander_bots")
+                    if autoVoteAddCommBots and gamestate < kGameState.PreGame and self.firstPregameJoin
+                            and self.firstPregameJoin + self.kStartGameVoteDelay < Shared.GetTime() then
+
+                        local votename = "VoteAddCommanderBots"
+                        if GetStartVoteAllowed(votename) == kVoteCannotStartReason.VoteAllowedToStart then
+                            self.firstPregameJoin = false
+                            StartVote(votename, nil, {})
+                        end
                     end
                     
                 end
@@ -379,40 +410,6 @@ if Server then
         
     end
     
-    function NS2Gamerules:KillEnemiesNearCommandStructureInPreGame(timePassed)
-    
-        if self:GetGameState() < kGameState.Countdown then
-        
-            local commandStations = Shared.GetEntitiesWithClassname("CommandStructure")
-            for _, ent in ientitylist(commandStations) do
-
-                local location = GetLocationForPoint(ent:GetOrigin())
-            
-                local enemyPlayers = GetEntitiesForTeamWithinRange("Player", GetEnemyTeamNumber(ent:GetTeamNumber()),ent:GetOrigin(), 8)
-                for e = 1, #enemyPlayers do
-                
-                    local enemy = enemyPlayers[e]
-                    local enemyLocation = GetLocationForPoint(enemy:GetOrigin())
-                    if enemyLocation and location:GetName() == enemyLocation:GetName() then
-                        local health = enemy:GetMaxHealth() * 0.2 * timePassed
-                        local armor = enemy:GetMaxArmor() * 0.2 * timePassed
-                        local damage = health + armor
-                        enemy:TakeDamage(damage, nil, nil, ent:GetOrigin(), enemy:GetOrigin()-ent:GetOrigin() , armor, health, kDamageType.Normal)
-
-                        if not enemy.lastReturnToBaseSend or enemy.lastReturnToBaseSend + 5 < Shared.GetTime() then
-                            Server.SendNetworkMessage(enemy, "TeamMessage", { type = kTeamMessageTypes.ReturnToBase, data =  0 }, true)
-                            enemy.lastReturnToBaseSend = Shared.GetTime()
-                        end
-                    end
-                    
-                end
-                
-            end
-            
-        end
-        
-    end
-    
     function NS2Gamerules:GetPregameLength()
     
         local preGameTime = kPregameLength
@@ -425,58 +422,6 @@ if Server then
         end
         
         return preGameTime
-        
-    end
-    function NS2Gamerules:UpdatePregame(timePassed)
-
-   
-        if self:GetGameState() == kGameState.PreGame then
-        
-            local preGameTime = self:GetPregameLength()
-            
-            if self.timeSinceGameStateChanged > preGameTime then
-            
-                StartCountdown(self)
-                if Shared.GetCheatsEnabled() then
-                    self.countdownTime = 1
-                end
-                
-            else
-                local countDownSeconds = math.ceil(self.timeSinceGameStateChanged - preGameTime)
-                --SendTeamMessage(self.team1, kTeamMessageTypes.GameStarted)
-                --SendTeamMessage(self.team2, kTeamMessageTypes.GameStarted)
-            end
-            
-        elseif self:GetGameState() == kGameState.Countdown then
-        
-            self.countdownTime = self.countdownTime - timePassed
-            
-            -- Play count down sounds for last few seconds of count-down
-            local countDownSeconds = math.ceil(self.countdownTime)
-            if self.lastCountdownPlayed ~= countDownSeconds and (countDownSeconds < 4) then
-            
-                self.worldTeam:PlayPrivateTeamSound(NS2Gamerules.kCountdownSound)
-                self.team1:PlayPrivateTeamSound(NS2Gamerules.kCountdownSound)
-                self.team2:PlayPrivateTeamSound(NS2Gamerules.kCountdownSound)
-                self.spectatorTeam:PlayPrivateTeamSound(NS2Gamerules.kCountdownSound)
-                
-                self.lastCountdownPlayed = countDownSeconds
-                
-            end
-            
-            if self.countdownTime <= 0 then
-            
-                self.team1:PlayPrivateTeamSound(ConditionalValue(self.team1:GetTeamType() == kAlienTeamType, NS2Gamerules.kAlienStartSound, NS2Gamerules.kMarineStartSound))
-                self.team2:PlayPrivateTeamSound(ConditionalValue(self.team2:GetTeamType() == kAlienTeamType, NS2Gamerules.kAlienStartSound, NS2Gamerules.kMarineStartSound))
-                
-                self.playerRanking:StartGame()
-                self.sponitor:ListenToTeam(self.team1)
-                self.sponitor:ListenToTeam(self.team2)
-                self:SetGameState(kGameState.Started)
-                
-            end
-            
-        end
         
     end
     

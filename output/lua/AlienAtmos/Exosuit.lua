@@ -9,8 +9,8 @@ if Client then
       self.flashlight:SetColor(Color(.8, .8, 1))
       self.flashlight:SetInnerCone(math.rad(2))
       self.flashlight:SetOuterCone(math.rad(60))
-      self.flashlight:SetIntensity(11)
-      self.flashlight:SetRadius(35)
+      self.flashlight:SetIntensity(16)
+      self.flashlight:SetRadius(15)
       self.flashlight:SetAtmosphericDensity(0.03)
   end
   

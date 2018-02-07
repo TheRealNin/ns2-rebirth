@@ -632,6 +632,7 @@ function MAC:ProcessWeldOrder(deltaTime, orderTarget, orderLocation, autoWeld)
                 
                 local closeEnoughToWeld = distanceToTarget - obstacleSize < MAC.kWeldDistance
                 
+                --[[ this is just too glitchy
                 if closeEnoughToWeld then
                     local backPosition = CheckBehindBackPosition(self, orderTarget)
                     if backPosition then
@@ -639,6 +640,7 @@ function MAC:ProcessWeldOrder(deltaTime, orderTarget, orderLocation, autoWeld)
                         targetPosition = backPosition
                     end          
                 end
+                ]]--
                 
                 -- If we're close enough to weld, weld (unless we must move to behind the player)
                 if not forceMove and closeEnoughToWeld and not GetIsVortexed(self) then

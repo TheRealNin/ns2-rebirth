@@ -54,7 +54,13 @@ local kAuxPowerBackupSound = PrecacheAsset("sound/NS2.fev/marine/power_node/back
 function PowerPoint:IsPoweringFriendlyTo(entity)
 
     for _, powerUser in ipairs(GetEntitiesWithMixinForTeam("PowerConsumer", entity:GetTeamNumber())) do
-        if powerUser.GetIsAlive and powerUser:GetIsAlive() and powerUser.GetLocationId and powerUser:GetLocationId() == self:GetLocationId() then
+        if powerUser.GetIsAlive 
+        and powerUser:GetIsAlive() 
+        and powerUser.GetLocationId 
+        and powerUser:GetLocationId() == self:GetLocationId() 
+        and powerUser.GetRequiresPower
+        and powerUser:GetRequiresPower() 
+        then
             return true
         end
     end
@@ -277,10 +283,11 @@ if Server then
             return
         end
         
-        self:DoDamageLighting()
-        
         if self.powerState == PowerPoint.kPowerState.socketed and damage > 0 then
 
+        
+            self:DoDamageLighting()
+            
             self:PlaySound(kTakeDamageSound)
             
             local healthScalar = self:GetHealthScalar()

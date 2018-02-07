@@ -11,6 +11,7 @@ ModLoader.SetupFileHook( "lua/MarineTeam.lua", "lua/ShieldGenerator/MarineTeam.l
 ModLoader.SetupFileHook( "lua/NS2ConsoleCommands_Server.lua", "lua/ShieldGenerator/NS2ConsoleCommands_Server.lua", "post" )
 ModLoader.SetupFileHook( "lua/GUIMarineBuyMenu.lua", "lua/ShieldGenerator/GUIMarineBuyMenu.lua", "post" )
 ModLoader.SetupFileHook( "lua/MarineTechMap.lua", "lua/ShieldGenerator/MarineTechMap.lua", "post" )
+--ModLoader.SetupFileHook( "lua/UnitStatusMixin.lua", "lua/ShieldGenerator/UnitStatusMixin.lua", "post" )
 ModLoader.SetupFileHook( "lua/Hud/Marine/GUIMarineStatus.lua", "lua/ShieldGenerator/GUIMarineStatus.lua", "post" )
 
 ModLoader.SetupFileHook( "lua/Player_Server.lua", "lua/ShieldGenerator/Player_Server.lua", "post" )

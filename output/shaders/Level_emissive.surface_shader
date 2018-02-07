@@ -22,7 +22,7 @@
 			float shininess  = albedo.a * 10;
 			float glossiness = 10;
 		
-			material.albedo 	= albedo.rgb;
+			material.albedo 	= pow(albedo.rgb, 0.8);
 			material.tsNormal 	= DecodeNormal( tex2D(normalMap, input.texCoord) );
 			material.specular	= saturate(albedo.rgb * shininess);
 			material.gloss		= glossiness / 255.0;

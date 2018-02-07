@@ -242,43 +242,29 @@ function HadesDevice:GetIsUpgrading()
     
 end
 
-
-function GetHadesDeviceInRoom(origin)
-
-    local location = GetLocationForPoint(origin)
-    local locationName = location and location:GetName() or nil
-    
-    if locationName then
-    
-        local devices = Shared.GetEntitiesWithClassname("HadesDevice")
-        for b = 0, devices:GetSize() - 1 do
-        
-            local device = devices:GetEntityAtIndex(b)
-            if device and device:GetLocationName() == locationName then
-                return device
-            end
-            
-        end
-        
-    end
-    
-    return nil
-    
-end
-
-function GetRoomHasNoHadesDevice(techId, origin, normal, commander)
+function GetRoomIsValidForHadesDevice(techId, origin, normal, commander)
 
     local location = GetLocationForPoint(origin)
     local locationName = location and location:GetName() or nil
     local validRoom = false
+    local teamNum = commander:GetTeamNumber()
     
     if locationName then
     
         validRoom = true
     
-        for index, HadesDevice in ientitylist(Shared.GetEntitiesWithClassname("HadesDevice")) do
+        for index, HadesDevice in ipairs(GetEntitiesForTeam("HadesDevice", teamNum)) do
             
             if HadesDevice:GetLocationName() == locationName then
+                validRoom = false
+                break
+            end
+            
+        end
+        
+        for index, CommandStation in ipairs(GetEntitiesForTeam("CommandStation", teamNum)) do
+            
+            if CommandStation:GetLocationName() == locationName then
                 validRoom = false
                 break
             end

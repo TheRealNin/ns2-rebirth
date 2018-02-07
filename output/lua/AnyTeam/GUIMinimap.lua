@@ -26,6 +26,8 @@ kBlipActivityUpdateInterval[kMinimapActivity.High] = 0.001
 -- allow update rate to be controlled by console (minimap_rate). 0 = full rate
 GUIMinimap.kUpdateIntervalMultipler = 1
 
+-- the model that mappers use to configure minimap_extents has extents of +/- this number.
+local kMinimapExtentsModelScaleFactor = 0.239246666431427;
 
 -- update the "other stuff" at 25Hz 
 local kMiscUpdateInterval = 0.04
@@ -202,14 +204,27 @@ local function UpdateItemsGUIScale(self)
 end
 
 function GUIMinimap:PlotToMap(posX, posZ)
+    
+    if Client.legacyMinimap then
+        -- This map's overview was generated with the pre-build-320 overview.exe, meaning we have to use
+        -- old code for blips to continue to map correctly to the overview image.  If nil, it simply
+        -- indicates it's an old version of the level that has not been saved with a >=320 editor setup.
+        -- The author can also set this value to true if they wish to keep the old overview.
+        -- When opening an old map, the value "useLegacyOverview" will default to false if it is not found.
+        local plottedX = (posX + self.plotToMapConstX) * self.plotToMapLinX
+        local plottedZ = (posZ + self.plotToMapConstY) * self.plotToMapLinY
 
-    local plottedX = (posX + self.plotToMapConstX) * self.plotToMapLinX
-    local plottedY = (posZ + self.plotToMapConstY) * self.plotToMapLinY
+        -- The world space is oriented differently from the GUI space, adjust for that here.
+        -- Return 0 as the third parameter so the results can easily be added to a Vector.
+        return plottedZ, -plottedX, 0
+    end
     
-    -- The world space is oriented differently from the GUI space, adjust for that here.
+    local plottedX = (posX + self.plotXOffset) * self.plotXFactor
+    local plottedZ = (posZ + self.plotZOffset) * self.plotZFactor
+    
     -- Return 0 as the third parameter so the results can easily be added to a Vector.
-    return plottedY, -plottedX, 0
-    
+    return plottedZ, plottedX, 0
+
 end
 
 local gLocationItems = {}
@@ -1018,7 +1033,7 @@ function GUIMinimap:InitMinimapIcon(icon, blipType, blipTeamType)
     icon.blipSizeType = sizeType
     icon.blipSize = self.blipSizeTable[icon.blipSizeType]
     icon.blipTeam = blipTeamType
-    
+
     icon.blipColor = self.blipColorTable[icon.blipTeam][colorType]
     
     icon:SetLayer(layer)
@@ -1265,7 +1280,7 @@ local function UpdateConnections(self)
         
         -- TODO: Fix this
         -- only draw connections for your team, and your team should be blue, so marine
-        self.minimapConnections[index]:UpdateAnimation(kMarineTeamType, self.comMode == GUIMinimapFrame.kModeMini)
+        self.minimapConnections[index]:UpdateAnimation(connector:GetTeamNumber(), self.comMode == GUIMinimapFrame.kModeMini, connector:GetTeamType())
         
         numConnectors = numConnectors + 1
         
@@ -1482,31 +1497,59 @@ function GUIMinimap:SetScale(scale)
         self.scale = scale
         self:ResetAll()
         
-        -- compute map to minimap transformation matrix
-        local xFactor = 2 * self.scale
-        local mapRatio = ConditionalValue(Client.minimapExtentScale.z > Client.minimapExtentScale.x, Client.minimapExtentScale.z / Client.minimapExtentScale.x, Client.minimapExtentScale.x / Client.minimapExtentScale.z)
-        local zFactor = xFactor / mapRatio
-        self.plotToMapConstX = -Client.minimapExtentOrigin.x
-        self.plotToMapConstY = -Client.minimapExtentOrigin.z
-        self.plotToMapLinX = GUIMinimap.kBackgroundHeight / (Client.minimapExtentScale.x / xFactor)
-        self.plotToMapLinY = GUIMinimap.kBackgroundWidth / (Client.minimapExtentScale.z / zFactor)
+        if Client.legacyMinimap then
+            -- This map's overview was generated with the pre-build-320 overview.exe, meaning we have to use
+            -- old code for blips to continue to map correctly to the overview image.  If nil, it simply
+            -- indicates it's an old version of the level that has not been saved with a >=320 editor setup.
+            -- The author can also set this value to true if they wish to keep the old overview.
+            -- When opening an old map, the value "useLegacyOverview" will default to false if it is not found.
+            
+            -- compute map to minimap transformation matrix
+            local xFactor = 2 * self.scale
+            local mapRatio = ConditionalValue(Client.minimapExtentScale.z > Client.minimapExtentScale.x, Client.minimapExtentScale.z / Client.minimapExtentScale.x, Client.minimapExtentScale.x / Client.minimapExtentScale.z)
+            local zFactor = xFactor / mapRatio
+            self.plotToMapConstX = -Client.minimapExtentOrigin.x
+            self.plotToMapConstY = -Client.minimapExtentOrigin.z
+            self.plotToMapLinX = GUIMinimap.kBackgroundHeight / (Client.minimapExtentScale.x / xFactor)
+            self.plotToMapLinY = GUIMinimap.kBackgroundWidth / (Client.minimapExtentScale.z / zFactor)
+            
+        else
+            
+            -- compute map to minimap transformation
+            self.plotXOffset = -Client.minimapExtentOrigin.x
+            self.plotZOffset = -Client.minimapExtentOrigin.z
+            
+            -- Flip x axis for conversion from world space to gui-space coords.
+            local worldXHalfExtents = Client.minimapExtentScale.x * kMinimapExtentsModelScaleFactor
+            local worldZHalfExtents = Client.minimapExtentScale.z * kMinimapExtentsModelScaleFactor
+            
+            local worldHalfExtents = math.max(worldXHalfExtents, worldZHalfExtents)
+            
+            local minimapXHalfExtents = GUIMinimap.kBackgroundHeight * 0.5
+            local minimapZHalfExtents = GUIMinimap.kBackgroundWidth * 0.5
+            self.plotXFactor = (minimapXHalfExtents * scale) / -worldHalfExtents
+            self.plotZFactor = (minimapZHalfExtents * scale) / worldHalfExtents
+            
+        end
         
         -- update overview size
         if self.minimap then
-          local size = Vector(GUIMinimap.kBackgroundWidth * scale, GUIMinimap.kBackgroundHeight * scale, 0)
-          self.minimap:SetSize(size)
+            local size = Vector(GUIMinimap.kBackgroundWidth * scale, GUIMinimap.kBackgroundHeight * scale, 0)
+            self.minimap:SetSize(size)
         end
 
         -- reposition location names
         if self.locationItems then
-          for _, locationItem in ipairs(self.locationItems) do
-            local mapPos = Vector(self:PlotToMap(locationItem.origin.x, locationItem.origin.z ))
-            SetLocationTextPosition( locationItem, mapPos )
-          end
+            for _, locationItem in ipairs(self.locationItems) do
+                local mapPos = Vector(self:PlotToMap(locationItem.origin.x, locationItem.origin.z ))
+                SetLocationTextPosition( locationItem, mapPos )
+            end
         end
-      
+        
+
     end
 end
+
 
 function GUIMinimap:GetScale()
     return self.scale

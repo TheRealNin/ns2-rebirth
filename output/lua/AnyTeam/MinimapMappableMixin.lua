@@ -2,6 +2,7 @@
 if Client then
 
 local kFriendly = {}
+kFriendly[kMinimapBlipTeam.Neutral] = true
 kFriendly[kMinimapBlipTeam.Friendly] = true
 kFriendly[kMinimapBlipTeam.FriendFriendly] = true
 kFriendly[kMinimapBlipTeam.InactiveFriendly] = true
@@ -23,6 +24,9 @@ function MinimapMappableMixin:GetMapBlipTeamFixed()
     local isSteamFriend = false
     
     local playerTeamNumber = playerTeam
+    if (Client.GetLocalClientTeamNumber() == kSpectatorIndex) then
+        playerTeamNumber = kTeam1Index
+    end
     local enemyTeamNumber = GetEnemyTeamNumber(playerTeam)
     
     if self.clientIndex and self.clientIndex > 0 and blipTeamNumber ~= enemyTeamNumber then
@@ -36,7 +40,7 @@ function MinimapMappableMixin:GetMapBlipTeamFixed()
     
     if self.GetIsActive and not self:GetIsActive() then
 
-        if blipTeamNumber == playerTeamNumber then
+        if blipTeamNumber == playerTeamNumber or (Client.GetLocalClientTeamNumber() == kSpectatorIndex and blipTeamNumber == kTeam1Index) then
             blipTeam = kMinimapBlipTeam.InactiveFriendly
         else
             blipTeam = kMinimapBlipTeam.InactiveEnemy
@@ -44,7 +48,7 @@ function MinimapMappableMixin:GetMapBlipTeamFixed()
 
     elseif isSteamFriend then
     
-        if blipTeamNumber == playerTeamNumber then
+        if blipTeamNumber == playerTeamNumber or (Client.GetLocalClientTeamNumber() == kSpectatorIndex and blipTeamNumber == kTeam1Index) then
             blipTeam = kMinimapBlipTeam.FriendFriendly
         else
             blipTeam = kMinimapBlipTeam.FriendEnemy

@@ -18,6 +18,7 @@ function PlayerUI_GetStatusInfoForUnit(player, unit)
             local action = unit:GetActionName(player)
             local hint = unit:GetUnitHint(player)
            
+           -- we always want to update the most important unit status informations (hp)
             local health = 0
             local armor = 0
             local regen = 0
