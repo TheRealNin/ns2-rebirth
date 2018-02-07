@@ -4,43 +4,66 @@ title: Nin's Marine vs Marine
 Nin's MvM is powered by the Rebirth project, which includes many changes beyond what you see in the MvM-only part of the mod. 
 Below are only the changes that affect the Marine vs Marine gameplay.
 
-## Update for Nov 19
+## Update for Jan 16
 
-* Marine jetpack fuel use no longer depends on your inventory weight. Instead, jetpack acceleration is scaled to your inventory weight
+* The fire rate of the Pistol is now set at a fixed rate, and no longer requires pressing the fire button for each bullet. Scripts and custom mouse software ruined this for everyone.
+* Marines with rifles now drop rifle ammo on death
 
-## Update for Nov 16
+## Update for Jan 9
 
-* Sentries no longer require a Sentry Battery. They are still limited to 3 per room and they still require a Robotics Factory to be constructed.
-* Sentries will now prioritize shooting players over nearby structures
+* Railguns are now back to Structural damage and bullet size changed to 2/3 that of vanilla
+* Exosuit now take even less damage from non-bullet sources.
+* Shotgun total damage returned to vanilla values
+* Axe range increased slightly so it's easier to hit those extractors
 
-## Update for Nov 14
+## Update for Jan 3
 
-* Shotgun rebalanced again: damage at a distance has been heavily decreased starting at 2 meters, with damage falling off to only 25% at 15 meters. To compensate, damage has been increased from 8 to 9 damage per pellet. Spread has also been increased very slightly to help do chip damage at medium range.
+* Except for each team's initial spawns, rooms will start with powernodes destroyed
 
-## Update for Nov 6
+## Update for Dec 23
 
-* Grenade launcher change reverted to vanilla NS2. You can now skid grenade launcher shots along the ground and they will explode on impact. Note that the minimum arming time from vanilla NS2 is still enabled.
-* Shotgun damage increased slightly so you should be able to one-shot a marine with no upgrades when you have no upgrades from close range. 
-* Shield generator research cost reduced from 10/20/30 to 10/15/20. 
-* Shield generator research time reduced from 90/120/120 to 45/45/45. 
+* Shield generator exo damage resistance has been reduced from 50% to 25%.
+
+## Update for Dec 19
+
+* Yet again, shotgun has been changed. Now an even tighter spread and increased damage, but faster damage falloff. It'll be useful and fun someday, I swear!
+
+## Update for Dec 6
+
+* Shotgun has been rebalanced from 17 pellets down to 9. The damage each pellet does has been scaled so the total damage remains the same. 
+* Shotgun damage falloff minimum distance has been increased slightly.
+
+## Update for Nov 29
+
+* Power nodes now always show their status on the minimap (unbuilt, building, under attack)
+* Railgun projectile width changed to 50% of vanilla (changed to 0.15 from  0.3)
+
+## Update for Nov 23
+
+* Grenade Launcher blast radius reduced by 25% from 4.8 meters to 3.6 meters
 
 ## All Changes
 * Power nodes are neutral, and can only be damaged if your team isn't using it.
+* Unused rooms will start with powernodes destroyed
 * Marines can socket power nodes by walking up and pressing E
 * All friendly structures, players, and equipment have a blue outline. Enemies have no outlines.
 * All marine to marine damage is increased by 33%
 * Marine backwards walk speed increased
-* Exosuits takes 25% less damage from all sources, and an additional 50% less damage from bullets
-* Railguns now deal Normal damage (instead of Structural) and have a smaller projectile (making it harder to hit players)
+* Exosuits takes 33% less damage from all sources, and an additional 45% less damage from bullets
+* Railguns now have a smaller projectile (making it harder to hit players)
 * Pulse grenades slow exosuits
 * Cluster grenades do 40% extra damage
 * Shotguns have a much smaller spread, but deal less damage per pellet. Their bullets also drop in damage very quickly.
 * Nanoshield reduces all damage by 50% (up from 32%)
-* Axe damage increased
+* Axe damage increased and range increased slightly
 * ARCs cannot target or damage ARCs, MACs, or power nodes (maps are not designed properly for ARCing power nodes)
 * Nerve gas grenades damage armor, just like against aliens. (It's kind of more like an acid grenade)
 * Bullets have a slight damage falloff starting at 6 metres (20 feet)
 * Flamethrowers cannot ignite marine buildings, but they can ignite marines! Afterburn damage increased slightly. 
+* Grenade Launcher blast radius reduced by 25% from 4.8 meters to 3.6 meters
+* Marine jetpack fuel use no longer depends on your inventory weight. Instead, jetpack acceleration is scaled to your inventory weight
+* The fire rate of the Pistol is now set at a fixed rate, and no longer requires pressing the fire button for each bullet.
+* Marines with rifles drop rifle ammo on death
 
 ## Extra Mods
 ### Healing field
@@ -50,7 +73,7 @@ Below are only the changes that affect the Marine vs Marine gameplay.
 
 ### New armory GUI and tech
 * Shield generator boosts armor utility, giving +10 armor and auto-welding after a 10 second delay. Costs 10 res and 45 seconds to research.
-* It also better protects against GL, Miniguns, and Railgun, giving 50% reduction to damage from those sources as long as you have armor.
+* It also better protects against GL, Miniguns, and Railgun, giving 25% reduction to damage from those sources as long as you have armor.
 * Shield generator can be upgraded to provide +10 armor per level (max +30), and can have the regeneration delay reduced to 5 and then 3 seconds at max level
 
 ### Exosuit boombox 
