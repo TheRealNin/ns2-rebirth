@@ -101,7 +101,7 @@ if Server then
         local players = self:GetTeam(teamIndex):GetPlayers()
         local newPlayers = {}
         for index, player in ipairs(players) do
-            player:ClearConcedeSequence()
+            --player:ClearConcedeSequence()
             player:SetCameraDistance(0)
             local success, newPlayer = self:JoinTeam(player, kTeamReadyRoom, true)
             if success then
@@ -293,6 +293,14 @@ if Server then
         
     end
     
+    function NS2Gamerules:OnCommanderLogout(commandStructure, oldCommander)
+        if (self.gameInfo:GetRookieMode() or self.removeCommanderBots)and self:GetGameState() > kGameState.NotStarted and
+                self:GetGameState() < kGameState.Team1Won and
+                not self.botTeamController:GetCommanderBot(commandStructure:GetTeamNumber()) then
+            OnConsoleAddBots(nil, 1, commandStructure:GetTeamNumber(), "com")
+        end
+    end
+    
     local function StartCountdown(self)
     
         self:ResetGame()
@@ -460,6 +468,12 @@ if Server then
             self.team1Lost = nil
             self.team2Lost = nil
             self.timeDrawWindowEnds = nil
+            
+            --remove commander bots that where added via the comm bot vote
+            if self.removeCommanderBots then
+                self.botTeamController:RemoveCommanderBots()
+                self.removeCommanderBots = false
+            end
             
             -- Automatically end any performance logging when the round has ended.
             Shared.ConsoleCommand("p_endlog")

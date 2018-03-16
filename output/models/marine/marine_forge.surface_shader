@@ -77,7 +77,9 @@
 		
 			float4 specularGloss = tex2D(specularMap, input.texCoord);
 			material.tsNormal 	= DecodeNormal( tex2D(normalMap, input.texCoord) );	
-			material.specular	= specularGloss.rgb * 2.0;
+			
+            float specAmount    = (specularGloss.r + specularGloss.g + specularGloss.b) * 0.6f;
+			material.specular	= specAmount;
 			material.gloss		= specularGloss.a;
 			
 			float opacity       = paramSlow(param,destroySpeed);
@@ -116,7 +118,7 @@
                 float oldRedEmissive = material.emissive.r;
                 material.emissive.r = material.emissive.b;
                 material.emissive.b = oldRedEmissive;
-                material.specular = material.specular * 3;
+                material.specular = specularGloss * 3.0f;
                 material.gloss = material.gloss * 3;
             }
             

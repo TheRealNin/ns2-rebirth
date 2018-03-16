@@ -14,9 +14,9 @@ Script.Load("lua/bots/BotAim.lua")
 ------------------------------------------
 --  Phase gates
 ------------------------------------------
-local function FindNearestPhaseGate(fromPos, favoredGateId)
-
-    local gates = GetEntitiesForTeam( "PhaseGate", kMarineTeamType )
+local function FindNearestPhaseGate(marine, favoredGateId, fromPos)
+    
+    local gates = GetEntitiesForTeam( "PhaseGate", marine:GetTeamNumber() )
 
     return GetMinTableEntry( gates,
             function(gate)
@@ -43,10 +43,11 @@ end
 ------------------------------------------
 --  Returns the distance, maybe using phase gates.
 ------------------------------------------
-local function GetPhaseDistanceForMarine( marinePos, to, lastNearestGateId )
+local function GetPhaseDistanceForMarine(marine, to, lastNearestGateId )
 
-    local p0Dist, p0 = FindNearestPhaseGate(marinePos, lastNearestGateId)
-    local p1Dist, p1 = FindNearestPhaseGate(to, nil)
+    local marinePos = marine:GetOrigin()
+    local p0Dist, p0 = FindNearestPhaseGate(marine, lastNearestGateId, marinePos)
+    local p1Dist, p1 = FindNearestPhaseGate(marine, nil, to)
     local euclidDist = marinePos:GetDistance(to)
 
     -- Favor the euclid dist just a bit..to prevent thrashing
@@ -64,7 +65,7 @@ end
 ------------------------------------------
 local function PerformMove( marinePos, targetPos, bot, brain, move )
 
-    local dist, gate = GetPhaseDistanceForMarine( marinePos, targetPos, brain.lastGateId )
+    local dist, gate = GetPhaseDistanceForMarine( bot:GetPlayer(), targetPos, brain.lastGateId )
 
     if gate ~= nil then
 
@@ -129,7 +130,7 @@ local function GetEffectiveRangeForPrimary(marine)
     elseif marine:GetWeapon( Shotgun.kMapName ) then
         return 6.0
     elseif marine:GetWeapon( Flamethrower.kMapName ) then
-        return 10.0
+        return 8.0
     elseif marine:GetWeapon( HeavyMachineGun.kMapName ) then
         return 15.0
     elseif marine:GetWeapon( GrenadeLauncher.kMapName ) then
@@ -148,27 +149,38 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
     end
     
     local player = bot:GetPlayer()
+    local time = Shared.GetTime()
     local sighted = target:GetIsSighted()
-    local aimPos = sighted and GetBestAimPoint( target ) or lastSeenPos
+    local aimPos = sighted and GetBestAimPoint( target ) or (lastSeenPos + Vector(0,0.5,0))
     local dist = GetDistanceToTouch( eyePos, target )
     local doFire = false
+    local shouldStrafe = false
+    local shouldStrafeForward = false
 
     -- Avoid doing expensive vis check if we are too far
     local hasClearShot = dist < 45.0 and bot:GetBotCanSeeTarget( target )
-
-    if not hasClearShot or (target.GetIsGhostStructure and target:GetIsGhostStructure()) then
-
+    
+    if (target.GetIsGhostStructure and target:GetIsGhostStructure()) then
+    
         -- uses a gate
         PerformMove( eyePos, aimPos, bot, brain, move )
         doFire = false
+        
+    elseif not hasClearShot then
+        local isNotDetected =  not (player:GetIsDetected() or player:GetIsSighted())
+        if isNotDetected and bot.sneakyAbility and dist < 20.0 and dist > 4.0 and target:isa("Player") and
+            (not bot.lastSeenEnemy or bot.lastSeenEnemy + 10 < time) and not sighted then
+            
+            move.commands = AddMoveCommand( move.commands, Move.Crouch )
+        end
+        -- uses a gate
+        PerformMove( eyePos, aimPos, bot, brain, move )
+        
+        doFire = false
 
     else
-
-        if (not bot.lastHostilesTime or bot.lastHostilesTime < Shared.GetTime() - 45) and target:isa("Player") then
-            CreateVoiceMessage( player, kVoiceId.MarineHostiles )
-            bot:SendTeamMessage("Enemy contact!", 30)
-            bot.lastHostilesTime = Shared.GetTime()
-        end
+        
+        bot.lastSeenEnemy = time
         
         if dist > 45.0 then
             -- close in on it first without firing
@@ -178,13 +190,17 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
         elseif dist > GetEffectiveRangeForPrimary(player) then
             -- move towards it while firing because we're not inside the effective range
             bot:GetMotion():SetDesiredMoveTarget( aimPos )
+            shouldStrafe = true
+            shouldStrafeForward = true
             doFire = true
-        elseif dist < 10.0 and dist > 4.0 then
+        elseif dist > 4.0 then
         
             -- too close - back away while firing if health is still high
-            if target.health / target.maxHealth > 0.6 and target:isa("Player") then
+            local healthThreshold =  0.3 + bot.aggroAbility * 0.5
+            if target.health / target.maxHealth >healthThreshold and target:isa("Player") then
                 bot:GetMotion():SetDesiredMoveTarget( nil )
                 bot:GetMotion():SetDesiredMoveDirection( -( aimPos-eyePos ) )
+                shouldStrafe = true
             else
               -- or chase, since their health is low!
                 bot:GetMotion():SetDesiredMoveTarget( aimPos )
@@ -192,27 +208,45 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
 
             doFire = true
         else
-            
-            -- good distance, or panic mode
-            -- strafe with some regularity, but somewhat random
-            local myOrigin = eyePos -- bot:GetPlayer():GetOrigin()
-            local strafeTarget = (myOrigin - aimPos):CrossProduct(Vector(0,1,0))
-            strafeTarget:Normalize()
-            
-            -- numbers chosen arbitrarily to give some appearance of random juking
-            strafeTarget = strafeTarget * ConditionalValue( math.sin(Shared.GetTime() * 3.5 ) + math.sin(Shared.GetTime() * 2.2 ) > 0 , -1, 1)
-            if strafeTarget:GetLengthSquared() > 0 and target:isa("Player") then
-                bot:GetMotion():SetDesiredMoveTarget(strafeTarget + myOrigin)
-            else
-                bot:GetMotion():SetDesiredMoveTarget(nil)
-            end
-            --bot:GetMotion():SetDesiredMoveDirection(strafeTarget)
+            shouldStrafe = true
             doFire = true
         end
         
         doFire = doFire and bot.aim:UpdateAim(target, aimPos)
         
     end
+    
+    if shouldStrafe then
+        if not target:isa("Player") then
+            if shouldStrafeForward then
+                bot:GetMotion():SetDesiredMoveTarget( aimPos )
+            else
+                bot:GetMotion():SetDesiredMoveTarget( nil )
+            end
+        else
+            -- good distance, or panic mode
+            -- strafe with some regularity, but somewhat random
+            local strafeTarget = (eyePos - aimPos):CrossProduct(Vector(0,1,0))
+            strafeTarget:Normalize()
+            
+            -- numbers chosen arbitrarily to give some appearance of random juking
+            strafeTarget = strafeTarget * ConditionalValue( math.sin(time * 3.5 ) + math.sin(time * 2.2 ) > 0 , -1, 1)
+            
+            if shouldStrafeForward then
+                strafeTarget = strafeTarget + ( aimPos-eyePos ):GetUnit()
+                strafeTarget:Normalize()
+            end
+            
+            if strafeTarget:GetLengthSquared() > 0 then
+                bot:GetMotion():SetDesiredMoveDirection(strafeTarget)
+                if not bot.lastJumpDodge or (bot.lastJumpDodge + 2 > time and bot.lastJumpDodge + 15 < time) then
+                    bot.lastJumpDodge = Shared.GetTime()
+                    move.commands = AddMoveCommand(move.commands, Move.Jump)
+                end
+            end
+        end
+    end
+    
     
     local retreating = false
     local sdb = brain:GetSenses()
@@ -221,7 +255,7 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
     
     
     -- retreat! Ignore previous move order, but keep our aim
-    if armory and minFraction < 0.4 and target:isa("Player") then
+    if armory and minFraction < 0.3 and target:isa("Player") then
         local touchDist = GetDistanceToTouch( eyePos, armory )
         if touchDist > 2.0 then
             bot:GetMotion():SetDesiredMoveTarget( armory:GetEngagementPoint() )
@@ -235,21 +269,40 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
         retreating = true
     end
     
+    
+    
     if doFire then
         move.commands = AddMoveCommand( move.commands, Move.PrimaryAttack )
+        bot.lastAimPos = aimPos
+        brain.lastShootingTime = Shared.GetTime()
+        
+        if (not bot.lastHostilesTime or bot.lastHostilesTime < Shared.GetTime() - 45) and target:isa("Player") then
+            CreateVoiceMessage( player, kVoiceId.MarineHostiles )
+            bot:SendTeamMessage("Enemy contact!", 60)
+            bot.lastHostilesTime = Shared.GetTime()
+        end
+        
     else
         if (brain.lastShootingTime and brain.lastShootingTime > Shared.GetTime() - 0.5) then
             -- blindfire at same old spot
-            bot:GetMotion():SetDesiredViewTarget( bot:GetMotion().desiredViewTarget )
-            move.commands = AddMoveCommand( move.commands, Move.PrimaryAttack )
+            if bot.lastAimPos then
+                bot:GetMotion():SetDesiredViewTarget( bot.lastAimPos  )
+                move.commands = AddMoveCommand( move.commands, Move.PrimaryAttack )
+            end
+            
         elseif not retreating and dist < 15.0  then
-            bot:GetMotion():SetDesiredViewTarget( aimPos )
+            if not bot.lastAimCheatTime or bot.lastAimCheatTime + 0.5 < Shared.GetTime() then
+                bot.lastAimCheatTime = Shared.GetTime()
+                bot.lastAimPos = aimPos + Vector(math.random() * 4 - 2,math.random() * 2 - 1,math.random() * 4 - 2)
+            end
+            if bot.lastAimPos then
+                bot:GetMotion():SetDesiredViewTarget(bot.lastAimPos)
+            end
+        else
+            bot.lastAimPos = nil
         end
     end
     
-    if doFire then
-        brain.lastShootingTime = Shared.GetTime()
-    end
 
     -- Draw a red line to show what we are trying to attack
     if gBotDebug:Get("debugall") or brain.debug then
@@ -294,18 +347,18 @@ end
 local function PerformUse(marine, target, bot, brain, move)
 
     assert(target)
-    local usePos = target:GetOrigin()
+    local usePos = target:GetEngagementPoint()
     local dist = GetDistanceToTouch(marine:GetEyePos(), target)
 
     local hasClearShot = dist < 5 and bot:GetBotCanSeeTarget( target )
     
-    if not hasClearShot then
+    if not hasClearShot or math.random() < 0.01 then
         -- cannot see it yet - keep moving
         PerformMove( marine:GetOrigin(), usePos, bot, brain, move )
         move.commands = AddMoveCommand( move.commands, Move.MovementModifier )
     elseif dist < 1.4 then
         -- close enough to just use
-        bot:GetMotion():SetDesiredViewTarget( target:GetEngagementPoint() + Vector(0,-0.5,0) )
+        bot:GetMotion():SetDesiredViewTarget( usePos )
         bot:GetMotion():SetDesiredMoveTarget( nil )
         move.commands = AddMoveCommand( move.commands, Move.Use )
     else
@@ -313,10 +366,8 @@ local function PerformUse(marine, target, bot, brain, move)
         -- Robo factory still gives us issues
         move.commands = AddMoveCommand( move.commands, Move.Use )
         PerformMove( marine:GetOrigin(), usePos, bot, brain, move )
-        bot:GetMotion():SetDesiredViewTarget( target:GetEngagementPoint() + Vector(0,-0.5,0) )
+        bot:GetMotion():SetDesiredViewTarget(usePos )
     end
-
-    brain.teamBrain:AssignBotToEntity( bot, target:GetId() )
 
 end
 
@@ -353,7 +404,7 @@ local function PerformWeld(marine, target, bot, brain, move)
         move.commands = AddMoveCommand( move.commands, Move.PrimaryAttack )
         
         if target:isa("Player") then
-            bot:SendTeamMessage("Let me weld you, " .. target:GetName(), 25)
+            bot:SendTeamMessage("Let me weld you, " .. target:GetName(), 70)
         end
     end
     
@@ -365,7 +416,6 @@ local function PerformWeld(marine, target, bot, brain, move)
     -- no need not to sprint...
     move.commands = AddMoveCommand( move.commands, Move.MovementModifier )
 
-    brain.teamBrain:AssignBotToEntity( bot, target:GetId() )
     
 end
 
@@ -554,10 +604,11 @@ kMarineBrainActions =
         local weapon = marine:GetActiveWeapon()
         local s = brain:GetSenses()
         local weight = 0.0
-
+        local threat 
+        
         if weapon ~= nil and weapon:isa("ClipWeapon") and s:Get("ammoFraction") > 0.0 then
 
-            local threat = s:Get("biggestThreat")
+            threat = s:Get("biggestThreat")
 
             if threat ~= nil and threat.distance < 15 and s:Get("clipFraction") > 0.0 then
                 -- threat really close, and we have some ammo, shoot it!
@@ -574,7 +625,6 @@ kMarineBrainActions =
         return { name = name, weight = weight,
             perform = function(move)
             
-                local threat = s:Get("biggestThreat")
                 if threat then
                 
                     local target = Shared.GetEntity(threat.memory.entId)
@@ -609,6 +659,9 @@ kMarineBrainActions =
                             {10, 5} })},
                         -- Never let it drop too low - ie. keep it always above explore
                         { 50.0, 0.06 } })
+            
+
+            weight = weight + weight * bot.aggroAbility
         end
 
 
@@ -642,7 +695,7 @@ kMarineBrainActions =
               resources >= LookupTechData(kTechId.Welder, kTechDataCostKey)) 
             ) then
             
-            weight = 2.0
+            weight = 2.0 + bot.helpAbility
             
         end
         
@@ -683,25 +736,32 @@ kMarineBrainActions =
 
         if sdb:Get("welder") ~= nil and weldTarget ~= nil then
             
-            weight = EvalLPF( weldDist, {
-                    {0.0, 0.5},
-                    {5.0, 0.5},
-                    {10.0, 0.2},
-                    {25.0, 0.0}
-                    })
-                    
-            if weldTarget:isa("Exo") or weldTarget:isa("Exosuit") then
-                weight = weight * 2
+            local numOthers = brain.teamBrain:GetNumOthersAssignedToEntity( weldTarget:GetId(), bot )
+            if numOthers == nil or numOthers < 1 then
+                weight = EvalLPF( weldDist, {
+                        {0.0, 0.4},
+                        {5.0, 0.4},
+                        {10.0, 0.2},
+                        {25.0, 0.0}
+                        })
+                weight = weight + weight * bot.helpAbility
+                        
+                if weldTarget:isa("Exo") or weldTarget:isa("Exosuit") then
+                    weight = weight * 2
+                end
+                if sdb:Get("welderReady") then
+                    weight = weight * 2
+                end
             end
-            if sdb:Get("welderReady") then
-                weight = weight * 2
-            end
-            
         end
 
         return { name = name, weight = weight, 
             perform = function(move)
                 if weldTarget then
+                    
+                    brain.teamBrain:UnassignBot(bot)
+                    brain.teamBrain:AssignBotToEntity( bot, weldTarget:GetId() )
+                    
                     if not sdb:Get("welderReady") then
                         -- switch to welder
                         marine:SetActiveWeapon( Welder.kMapName, true )
@@ -734,7 +794,7 @@ kMarineBrainActions =
                 -- Because construct orders are often given by the auto-system, do not necessarily obey them
                 -- Load-balance them
                 local numOthers = teamBrain:GetNumOthersAssignedToEntity( targetId, bot )
-                if numOthers >= 2 then
+                if numOthers >= 1 then
                     weight = 0.0
                 else
                     weight = 2.0
@@ -748,21 +808,26 @@ kMarineBrainActions =
             end
 
         end
-
+        
+        weight = weight + weight * bot.helpAbility
+        
         return { name = name, weight = weight, fastUpdate = true,
             perform = function(move)
                 if order then
 
                     brain.teamBrain:UnassignBot(bot)
 
+
                     local target = Shared.GetEntity(order:GetParam())
 
                     if target ~= nil and order:GetType() == kTechId.Attack then
 
+                        brain.teamBrain:AssignBotToEntity( bot, target:GetId() )
                         PerformAttackEntity( marine:GetEyePos(), target, order:GetLocation(), bot, brain, move )
 
                     elseif target ~= nil and GetIsUseOrder(order) then
 
+                        brain.teamBrain:AssignBotToEntity( bot, target:GetId() )
                         PerformUse( marine, target, bot, brain , move )
 
                     elseif order:GetType() == kTechId.Move then
@@ -791,14 +856,25 @@ kMarineBrainActions =
 
         
         if powernode ~= nil and
-           not powernode:GetIsPowering() and
-           powernode:IsPoweringFriendlyTo(marine) then
-            weight = 3.1 -- should be higher than construct..
+            not powernode:GetIsPowering() and
+            powernode:IsPoweringFriendlyTo(marine) then
+
+            local numOthers = brain.teamBrain:GetNumOthersAssignedToEntity( powernode:GetId(), bot )
+            if numOthers >= 2 then
+                weight = 0.7
+            else
+                weight = 3.1 -- should be higher than construct..
+            end
         end
 
         return { name = name, weight = weight,
             perform = function(move)
 
+                if powernode then
+        
+                    brain.teamBrain:UnassignBot(bot)
+                    brain.teamBrain:AssignBotToEntity( bot, powernode:GetId() )
+                    
                     local touchDist = GetDistanceToTouch( marine:GetEyePos(), powernode )
                     if touchDist > 1.5 then
                         move.commands = AddMoveCommand( move.commands, Move.MovementModifier )
@@ -806,7 +882,8 @@ kMarineBrainActions =
                     else
                         PerformUse( marine, powernode, bot, brain , move )
                     end
-
+                end
+                
             end }
     end,
     
@@ -908,7 +985,7 @@ kMarineBrainActions =
         local sdb = brain:GetSenses()
         local weight = 0.0
 
-        if sdb:Get("weaponReady") and sdb:Get("attackNearestCyst") then
+        if sdb:Get("attackNearestCyst") then
             weight = 0.5
         else
             weight = 0.0
@@ -919,7 +996,8 @@ kMarineBrainActions =
                     local cyst = sdb:Get("nearestCyst")
                     assert(cyst ~= nil)
                     assert(cyst.entity ~= nil)
-                    PerformAttackEntity( marine:GetEyePos(), cyst.entity, cyst.entity:GetOrigin(), bot, brain, move )
+                    SwitchToPrimary(marine)
+                    PerformAttackEntity( marine:GetEyePos(), cyst.entity, cyst.entity:GetEngagementPoint(), bot, brain, move )
             end }
 
     end,
@@ -1160,19 +1238,20 @@ kMarineBrainActions =
             local targetId = target:GetId()
             if targetId then
                 local numOthers = brain.teamBrain:GetNumOthersAssignedToEntity( targetId, bot )
-                if not (numOthers ~= nil) or numOthers >= 1 then
+                if (numOthers == nil) or numOthers >= 1 then
                     weight = 0.0
                 else
-                    weight = 0.08 -- slighty above explore
+                    weight = 0.06 -- slighty above explore
                 end
             end
         end
+        
+        weight = weight + weight * bot.helpAbility
 
         return { name = name, weight = weight,
             perform = function(move)
                 if target then 
                     brain.teamBrain:UnassignBot(bot)
-                    brain.teamBrain:AssignBotToEntity( bot, target:GetId() )
                     PerformUse( marine, target, bot, brain , move )
                     bot:SendTeamMessage("I'll build the " .. target:GetMapName() .. " in " .. target:GetLocationName(), 120)
                     move.commands = AddMoveCommand( move.commands, Move.MovementModifier )
@@ -1397,7 +1476,7 @@ function CreateMarineBrainSenses()
                 end
                 --dist = marine:GetEyePos():GetDistance(maxMem.lastSeenPos)
                 
-                local dist, gate = GetPhaseDistanceForMarine( marine:GetOrigin(), maxMem.lastSeenPos, db.bot.brain.lastGateId )
+                local dist, gate = GetPhaseDistanceForMarine( marine, maxMem.lastSeenPos, db.bot.brain.lastGateId )
                 return {urgency = maxUrgency, memory = maxMem, distance = dist}
             else
                 return nil
@@ -1413,7 +1492,7 @@ function CreateMarineBrainSenses()
                 function(armory)
                     assert( armory ~= nil )
                     if armory:GetIsBuilt() and armory:GetIsPowered() then
-                        local dist,_ = GetPhaseDistanceForMarine( marine:GetOrigin(), armory:GetOrigin(), db.bot.brain.lastGateId )
+                        local dist,_ = GetPhaseDistanceForMarine( marine, armory:GetOrigin(), db.bot.brain.lastGateId )
 
                         -- Weigh our previous nearest a bit better, to prevent thrashing
                         if armory:GetId() == db.lastNearestArmoryId then
@@ -1438,7 +1517,7 @@ function CreateMarineBrainSenses()
                 function(proto)
                     assert( proto ~= nil )
                     if proto:GetIsBuilt() and proto:GetIsPowered() then
-                        local dist,_ = GetPhaseDistanceForMarine( marine:GetOrigin(), proto:GetOrigin(), db.bot.brain.lastGateId )
+                        local dist,_ = GetPhaseDistanceForMarine( marine, proto:GetOrigin(), db.bot.brain.lastGateId )
 
                         -- Weigh our previous nearest a bit better, to prevent thrashing
                         if proto:GetId() == db.lastNearestProtoId then
@@ -1462,7 +1541,7 @@ function CreateMarineBrainSenses()
                 function(exo)
                     assert( exo ~= nil )
                     if exo:GetIsValidRecipient(marine) and exo:GetHealthScalar() > 0.8 then
-                        local dist,_ = GetPhaseDistanceForMarine( marine:GetOrigin(), exo:GetOrigin(), db.bot.brain.lastGateId )
+                        local dist,_ = GetPhaseDistanceForMarine( marine, exo:GetOrigin(), db.bot.brain.lastGateId )
 
                         -- Weigh our previous nearest a bit better, to prevent thrashing
                         if exo:GetId() == db.lastNearestExoId then
@@ -1521,7 +1600,7 @@ function CreateMarineBrainSenses()
                 function(target)
                     assert( target ~= nil )
                     if not target:GetIsBuilt() then
-                        local dist,_ = GetPhaseDistanceForMarine( marine:GetOrigin(), target:GetOrigin(), db.bot.brain.lastGateId )
+                        local dist,_ = GetPhaseDistanceForMarine( marine, target:GetOrigin(), db.bot.brain.lastGateId )
                         return dist
                     end
                 end)
@@ -1555,7 +1634,7 @@ function CreateMarineBrainSenses()
                 local cystPos = cyst.entity:GetOrigin()
                 local powerPos = power.entity:GetOrigin()
                 --DebugLine( cystPos, powerPos, 0.0, 1,1,0,1,  true )
-                return cystPos:GetDistance(powerPos) < 15 or cystPos:GetDistance(marine:GetOrigin()) < 10
+                return cystPos:GetDistance(powerPos) < 25 or cystPos:GetDistance(marine:GetOrigin()) < 10
             else
                 return false
             end

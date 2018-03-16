@@ -82,7 +82,7 @@ function ConstructMixin:Construct(elapsedTime, builder)
             local techTeam = self:GetTeam()
             local techTree = techTeam and techTeam.GetTechTree and techTeam:GetTechTree()
 
-            local modifier = (self:GetTeamType() == kMarineTeamType and GetIsPointOnInfestation(self:GetOrigin())) and kInfestationBuildModifier or 1
+            local modifier = (self:GetTeamType() == kMarineTeamType and GetIsPointOnInfestation(self:GetOrigin(), self:GetTeamNumber())) and kInfestationBuildModifier or 1
             local startBuildFraction = self.buildFraction
             local newBuildTime = self.buildTime + elapsedTime * modifier
             local timeToComplete = self:GetTotalConstructionTime()           

@@ -1,4 +1,7 @@
 
+ModLoader.SetupFileHook( "lua/PowerPointLightHandler.lua", "lua/AlienAtmos/PowerPointLightHandler.lua", "post" )
+
+
 ModLoader.SetupFileHook( "lua/MapEntityLoader.lua", "lua/AlienAtmos/MapEntityLoader.lua", "post" )
 
 -- barrel fixes
@@ -37,9 +40,3 @@ ModLoader.SetupFileHook( "lua/Globals.lua", "lua/AlienAtmos/Globals.lua", "post"
 
 ModLoader.SetupFileHook( "lua/NS2Utility.lua", "lua/AlienAtmos/NS2Utility.lua", "post" )
 
-local build = Shared.GetBuildNumber()
-if build <= 318 then
-    ModLoader.SetupFileHook( "lua/PowerPointLightHandler.lua", "lua/AlienAtmos/PowerPointLightHandler_old.lua", "post" )
-else
-    ModLoader.SetupFileHook( "lua/PowerPointLightHandler.lua", "lua/AlienAtmos/PowerPointLightHandler.lua", "post" )
-end

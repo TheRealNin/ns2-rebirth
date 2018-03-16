@@ -45,6 +45,9 @@ kTeam2Name = "Team Bravo"
 kPrecursorTeamColor = 0xA9007F
 kPrecursorTeamColorFloat = Color(0.663, 0, 0.498)
 
+
+kMaxNameLength = 30
+
 -- Friendly IDs
 -- 0 = friendly
 -- 1 = enemy

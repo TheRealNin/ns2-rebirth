@@ -1,7 +1,6 @@
 
 local oldDropAllWeapons = Marine.DropAllWeapons
 function Marine:DropAllWeapons()
-    oldDropAllWeapons(self) -- this will drop everything that can be dropped
     
     local weaponList = self:GetHUDOrderedWeaponList()
     for w = 1, #weaponList do
@@ -12,7 +11,7 @@ function Marine:DropAllWeapons()
             
             if ammopackMapName and weapon.ammo ~= 0 then
             
-                local ammoPack = CreateEntity(ammopackMapName, weapon:GetOrigin(), weapon:GetTeamNumber())
+                local ammoPack = CreateEntity(ammopackMapName, self:GetOrigin()+Vector(0,0.5,0), weapon:GetTeamNumber())
                 ammoPack:SetAmmoPackSize(weapon.ammo)
                 weapon.ammo = 0
                 
@@ -20,4 +19,5 @@ function Marine:DropAllWeapons()
         end
     end
     
+    oldDropAllWeapons(self) -- this will drop everything that can be dropped
 end

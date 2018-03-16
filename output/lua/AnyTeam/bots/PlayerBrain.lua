@@ -11,6 +11,7 @@ function PlayerBrain:Update(bot, move)
 
     if not bot:GetPlayer():isa( self:GetExpectedPlayerClass() )
     or bot:GetPlayer():GetTeamNumber() <= 0 then
+        Log("WARNING: Bot isn't on the right team OR the right player class. Deleting brain.")
         bot.brain = nil
         return false
     end
@@ -50,7 +51,7 @@ function PlayerBrain:Update(bot, move)
         local action = actionEval(bot, self)
         assert( action.weight ~= nil )
 
-        if self.debug then
+        if true or self.debug then
             DebugPrint("weight(%s) = %0.2f. trace = %s",
                     action.name, action.weight, self:GetSenses():GetDebugTrace())
         end

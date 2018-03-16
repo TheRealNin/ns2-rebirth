@@ -3,20 +3,23 @@ dest="/c/Users/Adam/Documents/Rebirth/output/"
 
 rm -r $dest*
 
-cp -R /c/Users/Adam/Documents/AlienAtmos/output/* $dest
-cp -R /c/Users/Adam/Documents/AnyTeam/output/* $dest
-cp -R /c/Users/Adam/Documents/EggSpawn/output/* $dest
-cp -R /c/Users/Adam/Documents/FadeBlink/output/* $dest
-cp -R /c/Users/Adam/Documents/HadesDevice/output/* $dest
-cp -R /c/Users/Adam/Documents/HealingField/output/* $dest
-cp -R /c/Users/Adam/Documents/ModPanels/output/* $dest
-cp -R /c/Users/Adam/Documents/Prowler/output/* $dest
-cp -R /c/Users/Adam/Documents/ThirdPerson/output/* $dest
-cp -R /c/Users/Adam/Documents/WhipRebalance/output/* $dest
-cp -R /c/Users/Adam/Documents/NinBalance/output/* $dest
-cp -R /c/Users/Adam/Documents/FadeAcidRocket/output/* $dest
-cp -R /c/Users/Adam/Documents/ArmoryGUI/output/* $dest
-cp -R /c/Users/Adam/Documents/MinimapBuildings/output/* $dest
-cp -R /c/Users/Adam/Documents/ShieldGenerator/output/* $dest
-cp -R /c/Users/Adam/Documents/FasterHMGReload/output/* $dest
-cp -R /c/Users/Adam/Documents/SgShine/output/* $dest
+cp -R ../AlienAtmos/output/* $dest
+cp -R ../AnyTeam/output/* $dest
+cp -R ../EggSpawn/output/* $dest
+cp -R ../FadeBlink/output/* $dest
+cp -R ../HadesDevice/output/* $dest
+cp -R ../HealingField/output/* $dest
+cp -R ../ModPanels/output/* $dest
+cp -R ../Prowler/output/* $dest
+cp -R ../ThirdPerson/output/* $dest
+cp -R ../WhipRebalance/output/* $dest
+cp -R ../NinBalance/output/* $dest
+cp -R ../FadeAcidRocket/output/* $dest
+cp -R ../ArmoryGUI/output/* $dest
+cp -R ../MinimapBuildings/output/* $dest
+cp -R ../ShieldGenerator/output/* $dest
+cp -R ../FasterHMGReload/output/* $dest
+cp -R ../SgShine/output/* $dest
+
+# finally, call this mod rebirth
+cp game_setup.xml $dest

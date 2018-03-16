@@ -117,7 +117,7 @@ end
 ------------------------------------------
 --  Helper function for subclasses
 ------------------------------------------
-function CommanderBrain:ExecuteTechId( commander, techId, position, hostEntity, targetId )
+function CommanderBrain:ExecuteTechId( commander, techId, position, hostEntity, targetId, trace)
     PROFILE("CommanderBrain:ExecuteTechId")
 
     --DebugPrint("Combrain executing %s at %s on %s", EnumToString(kTechId, techId),
@@ -138,7 +138,7 @@ function CommanderBrain:ExecuteTechId( commander, techId, position, hostEntity, 
             true,   -- isCommanderPicked
             0,  -- orientation
             hostEntity,
-            nil, -- trace
+            trace, -- trace
             targetId
             )
 

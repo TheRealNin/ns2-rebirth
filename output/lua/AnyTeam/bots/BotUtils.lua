@@ -9,12 +9,15 @@ function GetBotCanSeeTarget(attacker, target)
 
     local p0 = attacker:GetEyePos()
     local p1 = target:GetEngagementPoint()
-    local bias = 0.5 -- allow trace entity to be this much closer and still call a hit
+    local bias = 0.75 -- allow trace entity to be this much closer and still call a hit
 
-    local trace = Shared.TraceCapsule( p0, p1, 0.2, 0,
+    local trace = Shared.TraceCapsule( p0, p1, 0.15, 0,
             CollisionRep.Damage, PhysicsMask.Bullets,
             EntityFilterTwo(attacker, attacker:GetActiveWeapon()) )
     --return trace.entity == target
-    return (trace.entity == target) or (((trace.endPoint - p0):GetLengthSquared()) >= ((p0-p1):GetLengthSquared() - bias))
+    return trace.fraction == 1 or
+        (trace.entity == target) or 
+        (((trace.endPoint - p0):GetLengthSquared()) >= ((p0-p1):GetLengthSquared() - bias)) or
+        (trace.entity and trace.entity.GetTeamNumber and target.GetTeamNumber and (trace.entity:GetTeamNumber() == target:GetTeamNumber()))
 
 end

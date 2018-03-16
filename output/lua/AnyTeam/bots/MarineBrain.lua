@@ -63,7 +63,7 @@ function MarineBrain:Update( bot, move )
         if powerPoint then
             lightMode = powerPoint:GetLightMode()
         end
-        if not lightMode or lightMode == kLightMode.NoPower then
+        if not lightMode or lightMode == kLightMode.NoPower and not marine:GetCrouching() then
             if not marine:GetFlashlightOn() then
                 marine:SetFlashlightOn(true)
             end

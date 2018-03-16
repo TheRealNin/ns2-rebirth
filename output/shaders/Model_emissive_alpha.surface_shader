@@ -12,6 +12,8 @@
 
 	<params>
 		<param name="alphaTest">true</param>
+		<param name="vsPosition">true</param>
+		<param name="vsNormal">true</param>
 	</params>
 	
 	<code>
@@ -32,15 +34,23 @@
             }
             
 			float4 specularGloss = tex2D(specularMap, input.texCoord);
+            float specularColor = saturate((specularGloss.r + specularGloss.g + specularGloss.b) * 0.1+0.1);
 			
 			material.albedo 	= pow(tex2D(albedoMap, input.texCoord).rgb, 0.7);
-			material.tsNormal 	= DecodeNormal( tex2D(normalMap, input.texCoord) );;
-			material.specular	= specularGloss.rgb;
-			material.gloss		= specularGloss.a;
+			material.tsNormal 	= DecodeNormal( tex2D(normalMap, input.texCoord) );
+			material.specular	= (float3)specularColor;
+			material.gloss		= specularGloss.a * 0.5;
 			material.emissive   = tex2D(emissiveMap, input.texCoord).rgb * editEmissive;
 			material.opacity    = tex2D(opacityMap, input.texCoord).r;
 			material.id         = showDecals;
             
+			float3 ssDir = normalize(input.vsPosition);
+            float intensity = -dot(ssDir, input.vsNormal);
+            intensity = 1.0 - saturate(intensity);
+            intensity = intensity * intensity * intensity * intensity * intensity;
+            float shine = saturate( specularGloss.a * 20);
+            material.albedo += intensity * 0.25 * shine;
+            material.emissive =  saturate(material.emissive + material.emissive * intensity * intensity * 2.0);
 		}
 	]]>		
 	</code>

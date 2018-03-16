@@ -67,6 +67,10 @@ local function UpdateMemory(mem, ent, fromSound)
             DebugPrint("Updated %s %s", ent, fromSound and " from sound" or " from sight")
         end
     end
+    
+    if not fromSound then
+        mem.lastSightedTime = Shared.GetTime()
+    end
 
     -- otherwise, do not update it - keep the last known position/type
     mem.lastSeenTime = Shared.GetTime()
@@ -82,7 +86,8 @@ local function CreateMemory(ent)
         entId = ent:GetId(),
         btype = blipType,
         lastSeenPos = ent:GetOrigin(),
-        lastSeenTime = Shared.GetTime()
+        lastSeenTime = Shared.GetTime(),
+        lastSightedTime = 0
     }
     return mem
 
@@ -211,7 +216,7 @@ function TeamBrain:GetIsSoundAudible(sound)
     -- find all our players inside a 20m range
     -- we only do this call for sounds that belong to enemy players that are actually playing, so this
     -- should not be horribly expensive.
-    for _, friend in ipairs( GetEntitiesForTeamWithinRange("Player", self.teamNumber, sound:GetWorldOrigin(), 15) ) do
+    for _, friend in ipairs( GetEntitiesForTeamWithinRange("Player", self.teamNumber, sound:GetWorldOrigin(), 20) ) do
         if friend:GetIsAlive() then
             return true
         end
@@ -252,6 +257,18 @@ function TeamBrain:Update()
     for _, enemyCommandStructure in ipairs( GetEntitiesForTeam("CommandStructure", GetEnemyTeamNumber(self.teamNumber)) ) do
         if #GetEntitiesForTeamWithinRange("Player", self.teamNumber, enemyCommandStructure:GetOrigin(), 30) > 0 then
             self:UpdateMemoryOfEntity(enemyCommandStructure)    
+        end
+    end
+    
+    -- find all things that recently dealt damage to this team
+    local time = Shared.GetTime()
+    for _, player in ipairs( GetEntitiesForTeam("Player", self.teamNumber) ) do
+        if player:GetTimeOfLastDamage() and 
+            player:GetTimeOfLastDamage() + 1 > time then
+            local entity = Shared.GetEntity(player:GetAttackerIdOfLastDamage())
+            if entity and entity.GetIsAlive and entity:GetIsAlive() and entity.GetMapBlipInfo then
+                self:UpdateMemoryOfEntity(entity)
+            end
         end
     end
     

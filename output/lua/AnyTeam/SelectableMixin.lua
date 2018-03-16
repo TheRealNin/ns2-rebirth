@@ -25,6 +25,37 @@ function SelectableMixin:OnSighted(sighted)
 end
 
 
+function SelectableMixin:UpdateIncludeRelevancyMask()
+
+    -- Make entities which are active for a commander relevant to all commanders
+    -- on the same team.
+    local includeMask = 0
+    
+    if bit.band(self.selectionMask, 1) ~= 0 or (self:GetTeamNumber() == 1 and self:GetHotGroupNumber() ~= 0) then
+        includeMask = bit.bor(includeMask, kRelevantToTeam1Commander)
+    end
+    
+    if bit.band(self.selectionMask, 2) ~= 0 or (self:GetTeamNumber() == 2 and self:GetHotGroupNumber() ~= 0) then
+        includeMask = bit.bor(includeMask, kRelevantToTeam2Commander)
+    end
+    
+    -- special hack for special stuff
+    if self:isa("PowerPoint") then
+    
+        if kTeam1Type == kMarineTeamType then
+            includeMask = bit.bor(includeMask, kRelevantToTeam1Commander)
+        end
+        if kTeam2Type == kMarineTeamType then
+            includeMask = bit.bor(includeMask, kRelevantToTeam2Commander)
+        end
+        
+    end
+    
+    self:SetIncludeRelevancyMask( includeMask )
+    
+end
+
+
 function SelectableMixin:GetIsSelectable(byTeamNumber)
 
     local isValid = HasMixin(self, "LOS") and self:GetIsSighted() or HasMixin(self, "Team") and (byTeamNumber == self:GetTeamNumber() or self:GetTeamNumber() == kNeutralTeamType)

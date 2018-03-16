@@ -1,12 +1,10 @@
---[[
-// ======= Copyright (c) 2003-2011, Unknown Worlds Entertainment, Inc. All rights reserved. =======
-//    
-// lua\LOSMixin.lua    
-//    
-//    Created by:   Andrew Spiering (andrew@unknownworlds.com)    
-//    
-// ========= For more information, visit us at http://www.unknownworlds.com =====================    
-]]
+--  ======= Copyright (c) 2003-2011, Unknown Worlds Entertainment, Inc. All rights reserved. =======
+--
+--  lua\LOSMixin.lua
+--
+--     Created by:   Andrew Spiering (andrew@unknownworlds.com)
+--
+--  ========= For more information, visit us at http://www.unknownworlds.com =====================
 
 LOSMixin = CreateMixin(LOSMixin)
 
@@ -25,6 +23,14 @@ LOSMixin.optionalCallbacks =
 
 local kUnitMaxLOSDistance = kPlayerLOSDistance
 local kUnitMinLOSDistance = kStructureLOSDistance
+
+-- Mark entities dirty within a radius equal to the max vision radius plus the distance that could
+-- be covered in the 1-second between LOS updates.  We use the drifter speed because the drifter is
+-- the fastest non-player entity, and we use 2x that to cover cases where the drifter and the
+-- object it is observing are moving directly away from each other.  We just assume that whatever
+-- the other object is, it is only moving as fast or slower than the drifter.
+local maxEntityMoveSpeed = 11 -- drifter's speed, hard-coded here. :(
+local kUnitLOSDirtyDistance = kUnitMaxLOSDistance + (maxEntityMoveSpeed * 2)
 
 -- How often to look for nearby enemies.
 --local kLookForEnemiesRate = 0.5
@@ -60,6 +66,7 @@ function LOSMixin:GetIsSpottable()
     self:isa("Spur") or
     self:isa("TunnelEntrance")
 end
+
 local function UpdateLOS(self)
 
     local mask = bit.bor(kRelevantToTeam1Unit, kRelevantToTeam2Unit, kRelevantToReadyRoom)
@@ -70,13 +77,6 @@ local function UpdateLOS(self)
         mask = bit.bor(mask, kRelevantToTeam1Commander)
     elseif self:GetTeamNumber() == 2 then
         mask = bit.bor(mask, kRelevantToTeam2Commander)
-    end
-    
-    if kAnyTeamEnabled then
-         -- this is needed for anyteam
-        if self:GetTeamNumber() == 0 then
-            mask = bit.bor(mask, kRelevantToTeam1Commander, kRelevantToTeam2Commander)
-        end
     end
     
     self:SetExcludeRelevancyMask(mask)
@@ -104,7 +104,6 @@ function LOSMixin:__initmixin()
     if Server then
     
         self.sighted = false
-        self.spotted = false
         self.lastTimeLookedForEnemies = 0
         self.updateLOS = true
         self.timeLastLOSUpdate = 0
@@ -124,6 +123,7 @@ end
 function LOSMixin:GetIsSighted()
     return self.visibleClient
 end
+
 function LOSMixin:GetIsSpotted()
     if self:GetIsSpottable() then
         return self.spotted
@@ -132,20 +132,40 @@ function LOSMixin:GetIsSpotted()
     end
 end
 
-
 -- Remainder is server only.
 if Server then
-
+    
+    local function UnsightImmediately(self)
+        self:SetIsSighted(false)
+        UpdateLOS(self)
+    end
+    
     -- Force the relevancy mask to be updated, so that it will be relevant to members of the same team.
     function LOSMixin:OnTeamChange()
+        UnsightImmediately(self)
+    end
     
-        UpdateLOS(self)
-        self:SetIsSighted(false)
-        
+    function LOSMixin:OnTeleportEnd()
+        UnsightImmediately(self)
+    end
+    
+    function LOSMixin:OnPhaseGateEntry(destinationOrigin)
+        UnsightImmediately(self)
+    end
+    
+    function LOSMixin:OnUseGorgeTunnel(destinationOrigin)
+        UnsightImmediately(self)
+    end
+    
+    function LOSMixin:OnPreBeacon()
+        UnsightImmediately(self)
+        for _, entity in ipairs(GetEntitiesWithMixinForTeamWithinRange("LOS", GetEnemyTeamNumber(self:GetTeamNumber()), self:GetOrigin(), kUnitLOSDirtyDistance)) do
+            UnsightImmediately(entity)
+        end
     end
     
     local function GetCanSee(viewer, entity)
-    
+        
         -- SA: We now allow marines to build ghosts anywhere - so make sure they're blind. Otherwise they can sorta scout.
         if HasMixin(viewer, "GhostStructure") then
             return false
@@ -224,11 +244,6 @@ if Server then
             
                 -- Only check sight for enemy entities.
                 local areEnemies = otherEntity:GetTeamNumber() == GetEnemyTeamNumber(self:GetTeamNumber())
-                
-                if kAnyTeamEnabled then
-                    areEnemies = not GetAreFriends(otherEntity, self)
-                end
-                
                 if areEnemies and GetCanSee(self, otherEntity) then
                     otherEntity:SetIsSighted(true, self)
                 end
@@ -266,14 +281,8 @@ if Server then
     
         self.updateLOS = true
         
-        for _, entity in ipairs(GetEntitiesWithMixinForTeamWithinRange("LOS", GetEnemyTeamNumber(self:GetTeamNumber()), self:GetOrigin(), kUnitMaxLOSDistance)) do
+        for _, entity in ipairs(GetEntitiesWithMixinForTeamWithinRange("LOS", GetEnemyTeamNumber(self:GetTeamNumber()), self:GetOrigin(), kUnitLOSDirtyDistance)) do
             entity.updateLOS = true
-        end
-        if kAnyTeamEnabled then
-            
-            for _, entity in ipairs(GetEntitiesWithMixinForTeamWithinRange("LOS", 0, self:GetOrigin(), kUnitMaxLOSDistance)) do
-                entity.updateLOS = true
-            end
         end
         
     end
@@ -455,5 +464,19 @@ if Server then
         end
         
     end
+    
+    -- Should be called immediately before the player is moved to a much different position.
+    -- For example, using a phase gate, entering a tunnel, being distress beaconed home, or
+    -- even switching teams.
+    function LOSMixin:MarkNearbyDirtyImmediately()
+        MarkNearbyDirty(self)
+    end
 
 end
+
+-- DEBUG
+--[[
+if Server then
+    Event.Hook("Console_drifter_
+end
+--]]

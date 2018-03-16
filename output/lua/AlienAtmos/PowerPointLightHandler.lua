@@ -1,5 +1,3 @@
-Script.Load("lua/uniqueAlienAtmos_Elixer/Elixer_Utility.lua")
-Elixer.UseVersion(1.8)
 
 local kMinCommanderLightIntensityScalar = 0.3
 
@@ -14,103 +12,9 @@ local kNoPowerIntensity = 0.05 -- 0.02
 local kNoPowerMinIntensity = 0.45
 local kSmallLightRadius = 1.5
 
-local function hue2rgb(p, q, t)
-  if t < 0   then t = t + 1 end
-  if t > 1   then t = t - 1 end
-  if t < 1/6 then return p + (q - p) * 6 * t end
-  if t < 1/2 then return q end
-  if t < 2/3 then return p + (q - p) * (2/3 - t) * 6 end
-  return p
-end
-
-local function rgb_to_hsl(r, g, b)
-   --r, g, b = r/255, g/255, b/255
-   local min = math.min(r, g, b)
-   local max = math.max(r, g, b)
-   local delta = max - min
-
-   local h, s, l = 0, 0, ((min+max)/2)
-
-   if l > 0 and l < 0.5 then s = delta/(max+min) end
-   if l >= 0.5 and l < 1 then s = delta/(2-max-min) end
-
-   if delta > 0 then
-      if max == r and max ~= g then h = h + (g-b)/delta end
-      if max == g and max ~= b then h = h + 2 + (b-r)/delta end
-      if max == b and max ~= r then h = h + 4 + (r-g)/delta end
-      h = h / 6;
-   end
-
-   if h < 0 then h = h + 1 end
-   if h > 1 then h = h - 1 end
-
-   return h * 360, s, l
-end
-
-local function _h2rgb(m1, m2, h)
-  if h<0 then h = h+1 end
-  if h>1 then h = h-1 end
-  if h*6<1 then 
-     return m1+(m2-m1)*h*6
-  elseif h*2<1 then 
-     return m2 
-  elseif h*3<2 then 
-     return m1+(m2-m1)*(2/3-h)*6
-  else
-     return m1
-  end
-end
-
-local function hsl_to_rgb(h, s, L)
-   h = h/360
-   local m1, m2
-   if L<=0.5 then 
-      m2 = L*(s+1)
-   else 
-      m2 = L+s-L*s
-   end
-   m1 = L*2-m2
-
-
-   return _h2rgb(m1, m2, h+1/3), _h2rgb(m1, m2, h), _h2rgb(m1, m2, h-1/3)
-end
-
-
-local function _col_amp(color)
-    return color
-    --[[
-    if not color then
-      return
-    end
-    
-    local r = color.r
-    local g = color.g
-    local b = color.b
-    local h, s, l = rgb_to_hsl(r, g, b)
-    
-    if s > 1.0 then
-      Print("saturation out of range, undefined behaviour: %s", s)
-      s = 1.0
-    end
-    
-    -- bring luminosity closer to center, since we can increase intensity. l=0.5 is strongest
-    --l = Clamp(0.5 * math.pow(2.0 * l, 3.0) + 0.5, 0, 1)
-    --local old_l = l
-    l = Clamp(((0.5 * math.pow(2.0 * l - 1, 3.0) + 0.5) + l) / 2.0, 0, 1)
-    --Print("%s vs %s", old_l, l)
-    -- increase saturation
-    if (s > 0) then
-        s = Clamp(math.pow(s, 0.1), 0,1)
-    end
-    -- convert back to rgb
-    r, g, b = hsl_to_rgb(h, s, l)
-    
-    -- lower how green everyhing is now
-    g = math.pow(g, 1.1)
-    
-    
-    return Color(r, g, b, color.a)
-    --]]
+local whiteColor = Color(1,1,1,1)
+local function _col_reduce(color)
+    return LerpColor(color, whiteColor, 0.2)
 end
 
 -- set the intensity and color for a light. If the renderlight is ambient, we set the color
@@ -126,23 +30,21 @@ local function SetLight(renderLight, intensity, color)
     
     if color then
     
-        renderLight:SetColor(_col_amp(color))
+        renderLight:SetColor((color))
         
         if renderLight:GetType() == RenderLight.Type_AmbientVolume then
         
-            renderLight:SetDirectionalColor(RenderLight.Direction_Right,    _col_amp(color))
-            renderLight:SetDirectionalColor(RenderLight.Direction_Left,     _col_amp(color))
-            renderLight:SetDirectionalColor(RenderLight.Direction_Up,       _col_amp(color))
-            renderLight:SetDirectionalColor(RenderLight.Direction_Down,     _col_amp(color))
-            renderLight:SetDirectionalColor(RenderLight.Direction_Forward,  _col_amp(color))
-            renderLight:SetDirectionalColor(RenderLight.Direction_Backward, _col_amp(color))
+            renderLight:SetDirectionalColor(RenderLight.Direction_Right,    (color))
+            renderLight:SetDirectionalColor(RenderLight.Direction_Left,     (color))
+            renderLight:SetDirectionalColor(RenderLight.Direction_Up,       (color))
+            renderLight:SetDirectionalColor(RenderLight.Direction_Down,     (color))
+            renderLight:SetDirectionalColor(RenderLight.Direction_Forward,  (color))
+            renderLight:SetDirectionalColor(RenderLight.Direction_Backward, (color))
             
         end
         
     end
 end
-
-ReplaceUpValue(NormalLightWorker.Run, "SetLight", SetLight, { LocateRecurse = true; CopyUpValues = true; } )
 
 function NormalLightWorker:RestoreColor(renderLight)
     
@@ -334,11 +236,6 @@ function NoPowerLightWorker:Run()
         
         local showCommanderLight = false
         
-        local player = Client.GetLocalPlayer()
-        if player and player:isa("Commander") then
-            showCommanderLight = true
-        end
-        
         if timePassed < kPowerDownTime then
         
             local scalar = math.sin(Clamp(timePassed / kPowerDownTime, 0, 1) * math.pi / 2)
@@ -427,9 +324,6 @@ function LightGroup:RunCycle( time)
         
         local showCommanderLight = false
         local player = Client.GetLocalPlayer()
-        if player and player:isa("Commander") then
-            showCommanderLight = true
-        end
         
         for _,renderLight in ipairs(self.lights) do
         
@@ -462,27 +356,6 @@ function PowerPointLightHandler:Init(powerPoint)
 
 end
 
-function PowerPointLightHandler:Run(mode)
-
-
-    local worker = self.workerTable[mode]
-    local timeOfChange = self.powerPoint:GetTimeOfLightModeChange()
-
-    if self.lastMode ~= mode or self.lastWorker ~= worker or self.lastTimeOfChange ~= timeOfChange then
-
-        worker:Activate()
-        self.lastWorker = worker
-        self.lastTimeOfChange = timeOfChange
-
-    end
-    
-    self.lastMode = mode
-    
-    worker:Run()
-
-end
-
-
 function PowerPointLightHandler:Reset()
 
     self.lightTable = { }
@@ -506,6 +379,7 @@ function PowerPointLightHandler:Reset()
     end
     
     self.probeTable = GetReflectionProbesForLocation(self.powerPoint:GetLocationName())
+    self.workerTable = {}
     local normalWorker = NormalLightWorker():Init(self, "normal")
     self.workerTable = {
         [kLightMode.Normal] = normalWorker,
@@ -517,6 +391,26 @@ function PowerPointLightHandler:Reset()
     self:Run(kLightMode.NoPower)
 
 end
+
+function PowerPointLightHandler:Run(mode)
+
+    local worker = self.workerTable[mode]
+    local timeOfChange = self.powerPoint:GetTimeOfLightModeChange()
+
+    if self.lastMode ~= mode or self.lastWorker ~= worker or self.lastTimeOfChange ~= timeOfChange then
+
+        worker:Activate()
+        self.lastWorker = worker
+        self.lastTimeOfChange = timeOfChange
+
+    end
+    
+    self.lastMode = mode
+    
+    worker:Run()
+
+end
+
 
 local noPowerActivate = NoPowerLightWorker.Activate
 function NoPowerLightWorker:Activate()

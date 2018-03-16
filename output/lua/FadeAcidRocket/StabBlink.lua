@@ -4,7 +4,7 @@ Script.Load("lua/FadeAcidRocket/AcidRocket.lua")
 -- acid rocket is not influenced by focus
 StabBlink.cooldownInfluence = 0.0 -- 0 = no focus cooldown, 1 = same as kAttackDuration
 
-local kRocketVelocity = 25
+local kRocketVelocity = 35
 
 local kAttackDuration = Shared.GetAnimationLength("models/alien/fade/fade_view.model", "stab")
 

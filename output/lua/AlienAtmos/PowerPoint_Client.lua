@@ -35,3 +35,4 @@ PowerPoint.kAuxLightSafeTime = 2 -- short for testing, should be like 300 (5 min
 PowerPoint.kAuxLightFailTime = 2 -- short .. should be like 600 (10 minues)
 -- how long time a light takes to go from full aux power to dead (last 1/3 of that time is spent flickering)
 PowerPoint.kAuxLightDyingTime = 2
+

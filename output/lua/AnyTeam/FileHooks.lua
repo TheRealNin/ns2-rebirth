@@ -82,6 +82,7 @@ ModLoader.SetupFileHook( "lua/SelectableMixin.lua", "lua/AnyTeam/SelectableMixin
 ModLoader.SetupFileHook( "lua/AchievementGiverMixin.lua", "lua/AnyTeam/AchievementGiverMixin.lua", "post" )
 ModLoader.SetupFileHook( "lua/ServerSponitor.lua", "lua/AnyTeam/ServerSponitor.lua", "post" )
 --ModLoader.SetupFileHook( "lua/GUISelectionPanel.lua", "lua/AnyTeam/GUISelectionPanel.lua", "post" )
+ModLoader.SetupFileHook( "lua/Infestation.lua", "lua/AnyTeam/Infestation.lua", "post" )
 
 -- relevancymask fixes
 ModLoader.SetupFileHook( "lua/Cyst.lua", "lua/AnyTeam/Cyst.lua", "post" )
@@ -106,6 +107,7 @@ ModLoader.SetupFileHook( "lua/bots/BotUtils.lua", "lua/AnyTeam/bots/BotUtils.lua
 
 -- bot REPLACEMENTS
 ModLoader.SetupFileHook( "lua/bots/MarineCommanderBrain_Data.lua", "lua/AnyTeam/bots/MarineCommanderBrain_Data.lua", "replace" )
+ModLoader.SetupFileHook( "lua/bots/AlienCommanderBrain_Data.lua", "lua/AnyTeam/bots/AlienCommanderBrain_Data.lua", "replace" )
 ModLoader.SetupFileHook( "lua/bots/TeamBrain.lua", "lua/AnyTeam/bots/TeamBrain.lua", "replace" )
 ModLoader.SetupFileHook( "lua/bots/CommanderBot.lua", "lua/AnyTeam/bots/CommanderBot.lua", "replace" )
 ModLoader.SetupFileHook( "lua/bots/FadeBrain_Data.lua", "lua/AnyTeam/bots/FadeBrain_Data.lua", "replace" )
@@ -126,6 +128,9 @@ ModLoader.SetupFileHook( "lua/GUIDeathScreen.lua", "lua/AnyTeam/GUIDeathScreen.l
 ModLoader.SetupFileHook( "lua/GUIMinimapConnection.lua", "lua/AnyTeam/GUIMinimapConnection.lua", "post" )
 -- this is just to change the color (it's in a bad spot)
 ModLoader.SetupFileHook( "lua/Insight.lua", "lua/AnyTeam/Insight.lua", "post" )
+
+-- additional info for bots on first person spectate (needs netvars)
+--ModLoader.SetupFileHook( "lua/GUIFirstPersonSpectate.lua", "lua/AnyTeam/GUIFirstPersonSpectate.lua", "post" )
 
 -- weapons
 ModLoader.SetupFileHook( "lua/Weapons/Alien/Ability.lua", "lua/AnyTeam/Weapons/Alien/Ability.lua", "post" )
@@ -156,7 +161,11 @@ ModLoader.SetupFileHook( "lua/AlienStructure.lua", "lua/AnyTeam/AlienStructure.l
 ModLoader.SetupFileHook( "lua/VoiceOver.lua", "lua/AnyTeam/VoiceOver.lua", "replace" )
 ModLoader.SetupFileHook( "lua/DamageTypes.lua", "lua/AnyTeam/DamageTypes.lua", "replace" )
 ModLoader.SetupFileHook( "lua/DetectableMixin.lua", "lua/AnyTeam/DetectableMixin.lua", "replace" )
-ModLoader.SetupFileHook( "lua/LOSMixin.lua", "lua/AnyTeam/LOSMixin.lua", "replace" )
+
+-- disabled for now
+--ModLoader.SetupFileHook( "lua/LOSMixin.lua", "lua/AnyTeam/LOSMixin.lua", "replace" )
+
+
 ModLoader.SetupFileHook( "lua/TeamMixin.lua", "lua/AnyTeam/TeamMixin.lua", "replace" )
 ModLoader.SetupFileHook( "lua/MAC.lua", "lua/AnyTeam/MAC.lua", "replace" )
 ModLoader.SetupFileHook( "lua/OrdersMixin.lua", "lua/AnyTeam/OrdersMixin.lua", "replace" )

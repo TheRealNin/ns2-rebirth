@@ -74,3 +74,65 @@ function BuildClassToGrid()
     return ClassToGrid
     
 end
+
+function GetIsPointOffInfestation(point, teamNumber)
+    return not GetIsPointOnInfestation(point, teamNumber)
+end
+
+local kInfestationSearchRange = 25
+function GetIsPointOnInfestation(point, teamNumber)
+    local onInfestation = false
+    if not teamNumber then
+        --Print("waning: you should probably be calling GetIsPointOnInfestation() with a team number")
+    end
+
+    -- See if entity is on infestation
+    local infestationEntities
+    if teamNumber then
+        infestationEntities = GetEntitiesWithMixinForTeam("Infestation", teamNumber, point, kInfestationSearchRange)
+    else
+        infestationEntities = GetEntitiesWithMixinWithinRange("Infestation", point, kInfestationSearchRange)
+    end
+    for infestationIndex = 1, #infestationEntities do
+
+        local infestation = infestationEntities[infestationIndex]
+        if infestation:GetIsPointOnInfestation(point) then
+
+            onInfestation = true
+            break
+
+        end
+
+    end
+
+    -- count being inside of a gorge tunnel as on infestation
+    if not onInfestation then
+
+        local tunnelEntities = GetEntitiesWithinRange("Tunnel", point, 40)
+        onInfestation = #tunnelEntities > 0
+
+    end
+
+    return onInfestation
+
+end
+
+
+function GetInfestationRequirementsMet(techId, position, teamNumber)
+
+    local requirementsMet = true
+
+    -- Check infestation requirements
+    if LookupTechData(techId, kTechDataRequiresInfestation) then
+
+        if not GetIsPointOnInfestation(position, teamNumber) then
+            requirementsMet = false
+        end
+
+        -- SA: Note that we don't check kTechDataNotOnInfestation anymore.
+        -- This function should only be used for stuff that REQUIRES infestation.
+    end
+
+    return requirementsMet
+
+end

@@ -3,9 +3,11 @@
 	<inputs>
 		<input name="albedoMap" type="texture" address="wrap" />
 		<input name="normalMap" type="texture" address="wrap" />
+		<input name="opacityMap" type="texture" address="wrap" />
 	</inputs>
 	
 	<params>
+		<param name="alphaTest">true</param>
 		<param name="vsPosition">true</param>
 		<param name="vsNormal">true</param>
 	</params>
@@ -20,33 +22,29 @@
 		}
 		void MaterialShader(in Material_Input input, inout Material material)
 		{
-            
+
 			float4 albedo = tex2D(albedoMap, input.texCoord);
+			float shininess  = albedo.a * 20;
             float greyscale = (albedo.r + albedo.g + albedo.b)*0.3;
             float specularColor = saturate(pow(greyscale, 0.6)*0.1);
 			float glossiness = 10;
-            
+			
 			float3 ssDir = normalize(input.vsPosition);
             float intensity = -dot(ssDir, input.vsNormal);
             intensity = 1.0 - saturate(intensity);
             intensity = intensity * intensity * intensity * intensity * intensity;
             albedo += albedo * intensity * 0.2;
-			
-			float shininess  = 5;
             
-            albedo += intensity * 0.3;
             
 		
-			material.albedo 	= pow(albedo.rgb, 0.8);
+			material.albedo 	= albedo.rgb;
 			material.tsNormal 	= DecodeNormal( tex2D(normalMap, input.texCoord) );
 			material.specular	= saturate((float3)specularColor * shininess);
 			material.gloss		= glossiness / 255.0;
-            
-            
-            
+			material.opacity    = tex2D(opacityMap, input.texCoord).r;
             
 		}
-	]]>		
+	]]>
 	</code>
 
 </shader>

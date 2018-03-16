@@ -62,7 +62,7 @@ if Server then
         local hitEntities = GetEntitiesWithMixinWithinRange("Live", self:GetOrigin(), kAcidRocketSplashRadius)
         
         -- Remove rocket and firing player.
-        local player = self:GetParent()
+        local player = self:GetOwner()
         if player then
           table.removevalue(hitEntities, player)
         end

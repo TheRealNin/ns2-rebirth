@@ -96,7 +96,7 @@ local function _col_amp(color)
     --Print("%s vs %s", old_l, l)
     -- increase saturation
     if (s > 0) then
-        s = Clamp(math.pow(s, 0.95), 0,1.1)
+        s = Clamp(math.pow(s, 0.95), 0,1.0)
     end
     -- convert back to rgb
     r, g, b = hsl_to_rgb(h, s, l)
@@ -105,6 +105,42 @@ local function _col_amp(color)
     return Color(r, g, b, color.a)
 end
 
+
+local function _col_reduce(color)
+    if not color then
+      return
+    end
+    
+    local r = color.r
+    local g = color.g
+    local b = color.b
+    
+    -- lower how green everyhing will be
+    g = math.pow(g , 1.05)
+    
+    
+    local h, s, l = rgb_to_hsl(r, g, b)
+    
+    if s > 1.0 then
+      Print("saturation out of range, undefined behaviour: %s", s)
+      s = 1.0
+    end
+    
+    -- bring luminosity closer to center, since we can increase intensity. l=0.5 is strongest
+    --local old_l = l
+    --l = Clamp(0.5 * math.pow(2.0 * l, 3.0) + 0.5, 0, 1)
+    --l = Clamp(((0.5 * math.pow(2.0 * l - 1, 3.0) + 0.4) + l) / 2.0, 0, 1)
+    --Print("%s vs %s", old_l, l)
+    -- decrease saturation
+    if (s > 0) then
+        s = Clamp(math.pow(s, 2.0), 0,1.0)
+    end
+    -- convert back to rgb
+    r, g, b = hsl_to_rgb(h, s, l)
+    
+    
+    return Color(r, g, b, color.a)
+end
 
 local function ClientOnly()
     return Client ~= nil
@@ -167,8 +203,11 @@ local function LoadLight(className, groupName, values)
         --]]
         -- boost ambient light intensity if low
         if not values.color_dir_right and values.intensity and values.intensity > 0 then
+        
+        -- disabled because we now have a shader doing something similar
+        --[[ 
             local i = values.intensity
-            local ideal = 10.0
+            local ideal = 5.0
             i = i / ideal
             if i > 1.0 then
               i = i + 1 / i
@@ -176,8 +215,14 @@ local function LoadLight(className, groupName, values)
               i = 2 * - math.pow(i - 1, 2) + 2
             end
             values.intensity = i * ideal
+        --]]
             if values.color then
-                values.color              = _col_amp(values.color             )
+                
+                if className == "light_spot" then
+                    values.color  = _col_reduce(values.color)
+                else
+                    values.color  = _col_amp(values.color)
+                end
             end
         end
         

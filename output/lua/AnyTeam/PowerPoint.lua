@@ -28,6 +28,16 @@ function PowerPoint:OnInitialized()
         -- the effects of a powerpoint are visible far beyond the normal relevancy range
         self:SetRelevancyDistance(kDefaultUpdateRange + 20)
         
+        -- make it so that the relevancy is dependant on team type
+        local includeMask = 0
+        if kTeam1Type == kMarineTeamType then
+            includeMask = bit.bor(includeMask, kRelevantToTeam1Commander)
+        end
+        if kTeam2Type == kMarineTeamType then
+            includeMask = bit.bor(includeMask, kRelevantToTeam2Commander)
+        end
+        self:SetIncludeRelevancyMask( includeMask )
+        
         -- This Mixin must be inited inside this OnInitialized() function.
         if not HasMixin(self, "MapBlip") then
             InitMixin(self, MapBlipMixin)

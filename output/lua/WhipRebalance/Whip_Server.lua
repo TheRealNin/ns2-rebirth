@@ -7,7 +7,7 @@ local kBombardAfterBombardTimeout = 5.3
 local whipImpactForce = 400
 
 -- replace normal selector "validate target" with our own traceray
-function Whip:GetCanAttackTarget(selector, targetEntity, range)
+function Whip:GetCanAttackTarget(selector, targetEntity, rangeSquared)
     
     if not HasMixin(targetEntity, "Target") and targetEntity:GetEngagementPoint() then
         Log("Warning! Whip target is using GetOrigin() instead of an engagement point! If whips are missing, this is why.")
@@ -16,8 +16,8 @@ function Whip:GetCanAttackTarget(selector, targetEntity, range)
     local targetOrigin = HasMixin(targetEntity, "Target") and targetEntity:GetEngagementPoint() or targetEntity:GetOrigin()
     local eyePos = self:GetEyePos()
     
-    if (eyePos - targetOrigin):GetLength() > range then
-        -- Not in range, no point in wasting a trace
+    if (eyePos - targetOrigin):GetLengthSquared() > rangeSquared then
+        -- Not in rangeSquared, no point in wasting a trace
         return false
     end
     

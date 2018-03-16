@@ -53,9 +53,9 @@ float2 clamp_tex2D( sampler2D tex, float2 coord )
     return tex2D( tex, clamp( coord, float2( 0.001, 0.001 ), float2( 0.999, 0.999 ) ) );
 }
 
-const float4 edgeColorBlue = float4(0.1, 0.7, 1, 0) * 2.0;
-const float4 edgeColorGrey = float4(0.3, 0.3, 0.3, 0) * 5.0;
-const float4 edgeColorDarkOrange = float4(0.4, 0.04, 0.0, 0) * 6.0;
+
+const float4 edgeColorBlue = float4(0.1, 0.8, 1, 0) * 8.0;
+const float4 edgeColorDarkOrange = float4(0.8, 0.2, 0.0, 0) * 6.0;
 const float4 edgeColorGreen = float4(0.2, 0.7, 0.00, 0) * 6.0;
 
 const float4 edgeColor2 = float4(1.0, 1.0, 1.0, 0) * 0.25;
@@ -72,18 +72,19 @@ float4 SFXDarkVisionPS(PS_INPUT input) : COLOR0
     
     float2 depth1 = tex2D(depthTexture, input.texCoord).rg;
     
+    
     // Flashlight on
-    float offset = 0.0005;
+    float offset = 0.001;
     float depth2 = clamp_tex2D(depthTexture, texCoord + float2(-offset, -offset)).r;
     float depth3 = clamp_tex2D(depthTexture, texCoord + float2(-offset,  offset)).r;
     float depth4 = clamp_tex2D(depthTexture, texCoord + float2( offset, -offset)).r;
     float depth5 = clamp_tex2D(depthTexture, texCoord + float2( offset,  offset)).r;
     
     float edge = 
-            abs(depth2 - depth1.r) +
-            abs(depth3 - depth1.r) +
-            abs(depth4 - depth1.r) +
-            abs(depth5 - depth1.r);
+            max(depth2 - depth1.r, 0) +
+            max(depth3 - depth1.r, 0) +
+            max(depth4 - depth1.r, 0) +
+            max(depth5 - depth1.r, 0);
     
     if (depth1.g > 0.5) // entities
     {
@@ -96,44 +97,41 @@ float4 SFXDarkVisionPS(PS_INPUT input) : COLOR0
         float4 edgeColor;
         
         if (teamNumber > 1.5){ // team 2
-            if ( depth1.g > 0.95 ) // team 2
+            if ( depth1.g > 0.9 ) // team 2
             {
                 return saturate( inputPixel + edgeColorBlue * 0.1 * amount * edge );
             }
-            else if ( depth1.g > 0.9 ) // team 2 gorge
-            {
-                return saturate( inputPixel + edgeColorGreen * 0.1 * amount * edge );
-            }
             else if ( depth1.g > 0.8 ) // team 1
             {
-                return saturate( inputPixel + edgeColorDarkOrange * 0.4 * amount * edge );
+                return saturate( inputPixel + edgeColorDarkOrange * 0.1 * amount * edge );
             }
             else // all other entities
             {
-                return lerp(inputPixel, edgeColorGrey * edge, (0.1 + edge) * amount);
+                return lerp(inputPixel, edgeColorGreen * edge, (0.1 + edge) * amount);
             }
         }else{ // team 1
             if ( depth1.g > 0.9 ) // team 2
             {
-                return saturate( inputPixel + edgeColorDarkOrange * 0.4 * amount * edge );
+                return saturate( inputPixel + edgeColorDarkOrange * 0.1 * amount * edge );
             }
-            else if ( depth1.g > 0.85 ) // team 1
+            else if ( depth1.g > 0.8 ) // team 1
             {
                 return saturate( inputPixel + edgeColorBlue * 0.1 * amount * edge );
             }
-            else if ( depth1.g > 0.8 ) // team 1 gorge
-            {
-                return saturate( inputPixel + edgeColorGreen * 0.1 * amount * edge );
-            }
             else // all other entities
             {
-                return lerp(inputPixel, edgeColorGrey * edge, (0.1 + edge) * amount);
+                return lerp(inputPixel, edgeColorGreen * edge, (0.1 + edge) * amount);
             }
         }
     }
     else // world geometry
-    {
-        edge = edge * step( depth1.r, 100 ); // no edges for skyboxes
+    { 
+        // no edges for skyboxes
+        edge = edge * step( depth1.r, 60 );
+        edge = edge * step( depth2,   60 );
+        edge = edge * step( depth3,   60 );
+        edge = edge * step( depth4,   60 );
+        edge = edge * step( depth5,   60 );
         return lerp(inputPixel, (edgeColor2 * edge), 0.03 * amount);
     }
 }

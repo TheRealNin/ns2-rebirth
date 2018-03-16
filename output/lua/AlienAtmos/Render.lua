@@ -11,3 +11,11 @@ function Disabled_Render_SyncRenderOptions()
     Client.SetRenderSetting("bloom"  , ToString(bloom))
 
 end
+function Render_SyncRenderOptions()
+    oldRender_SyncRenderOptions()
+    local ambient_occlusion = false
+    Client.SetRenderSetting("ambient_occlusion", ToString(ambient_occlusion))
+    local bloom             = true
+    Client.SetRenderSetting("bloom"  , ToString(bloom))
+    Client.SetRenderSetting("particles", "high")
+end

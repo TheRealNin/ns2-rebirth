@@ -96,12 +96,13 @@ function HandleHitEffect(position, doer, surface, target, showtracer, altMode, d
         local trace =  Shared.TraceRay(position, position + direction, CollisionRep.Damage, PhysicsMask.Bullets)
         if trace.fraction ~= 1 then
 
-            tableParams[kEffectHostCoords] = Coords.GetTranslation(position)
-            tableParams[kEffectHostCoords].yAxis = trace.normal
+            tableParams[kEffectHostCoords] = Coords.GetTranslation(trace.endPoint)
+            tableParams[kEffectHostCoords].yAxis = (trace.normal:GetUnit() + direction:GetUnit()*0.8):GetUnit()
             tableParams[kEffectHostCoords].zAxis = direction
             tableParams[kEffectHostCoords].xAxis = tableParams[kEffectHostCoords].yAxis:CrossProduct(tableParams[kEffectHostCoords].zAxis)
             tableParams[kEffectHostCoords].zAxis = tableParams[kEffectHostCoords].xAxis:CrossProduct(tableParams[kEffectHostCoords].yAxis)
 
+            tableParams[kEffectHostCoords].yAxis:Normalize()
             tableParams[kEffectHostCoords].zAxis:Normalize()
             tableParams[kEffectHostCoords].xAxis:Normalize()
         end
@@ -156,3 +157,5 @@ function HandleHitEffect(position, doer, surface, target, showtracer, altMode, d
     HandleImpactDecal(position, doer, surface, target, showtracer, altMode, damage, direction, tableParams)
 
 end
+
+

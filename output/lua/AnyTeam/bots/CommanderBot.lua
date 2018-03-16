@@ -49,7 +49,7 @@ end
 --  Override
 ------------------------------------------
 function CommanderBot:GetNamePrefix()
-    return "[BOT] "
+    return "CMDR BOT "
 end
 
 ------------------------------------------
