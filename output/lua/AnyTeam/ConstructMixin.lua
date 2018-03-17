@@ -61,6 +61,22 @@ local function AddBuildArmor(self, scalar)
     
 end
 
+function ConstructMixin:GetCanConstruct(constructor)
+
+    if self.GetCanConstructOverride then
+        return self:GetCanConstructOverride(constructor)
+    end
+    
+    -- Check if we're on infestation
+    -- Doing the origin-based check may be expensive, but this is only done sparsely. And better than tracking infestation all the time.
+    if LookupTechData(self:GetTechId(), kTechDataNotOnInfestation) and GetIsPointOnInfestation(self:GetOrigin(), self:GetTeamNumber()) then
+        return false
+    end
+    
+    return not self:GetIsBuilt() and GetAreFriends(self, constructor) and self:GetIsAlive() and
+           (not constructor or constructor:isa("Marine") or constructor:isa("Gorge") or constructor:isa("MAC"))
+    
+end
 
 function ConstructMixin:Construct(elapsedTime, builder)
 

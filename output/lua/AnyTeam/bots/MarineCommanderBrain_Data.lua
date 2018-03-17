@@ -154,6 +154,9 @@ kMarineComBrainActions =
             [kMinimapBlipType.JetpackMarine] = 1,
             [kMinimapBlipType.Exo] = 3
         }
+        if table.contains(kMinimapBlipType, "Prowler") then
+            blipUrgency[kMinimapBlipType.Prowler] = 1
+        end
 
         if doables[kTechId.DistressBeacon] and (not bot.nextBeaconTime or bot.nextBeaconTime < Shared.GetTime()) then
             local ccs = sdb:Get("stations")

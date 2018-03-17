@@ -20,6 +20,8 @@ cp -R ../MinimapBuildings/output/* $dest
 cp -R ../ShieldGenerator/output/* $dest
 cp -R ../FasterHMGReload/output/* $dest
 cp -R ../SgShine/output/* $dest
+cp -R ../CrouchClip/output/* $dest
+cp -R ../WeaponSwitch/output/* $dest
 
 # finally, call this mod rebirth
 cp game_setup.xml $dest

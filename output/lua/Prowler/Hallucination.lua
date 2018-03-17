@@ -79,6 +79,7 @@ function GetTechIdToEmulate(techId)
     
         ghallucinateIdToTechId = {}
         ghallucinateIdToTechId[kTechId.HallucinateDrifter] = kTechId.Drifter
+        ghallucinateIdToTechId[kTechId.HallucinateProwler] = kTechId.Prowler
         ghallucinateIdToTechId[kTechId.HallucinateSkulk] = kTechId.Skulk
         ghallucinateIdToTechId[kTechId.HallucinateGorge] = kTechId.Gorge
         ghallucinateIdToTechId[kTechId.HallucinateLerk] = kTechId.Lerk

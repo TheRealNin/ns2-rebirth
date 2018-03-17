@@ -11,6 +11,7 @@ function BotMotion:OnGenerateMove(player)
     local eyePos = player:GetEyePos()
     local isSneaking = player.GetCrouching and player:GetCrouching() and player:isa("Marine")
     local doJump = false
+    local groundPoint = Pathing.GetClosestPoint(currentPos)
 
     local delta = currentPos - self.lastMovedPos
     local distToTarget = 100
@@ -133,11 +134,10 @@ function BotMotion:OnGenerateMove(player)
     -- don't move there if it's off pathing
     if self.desiredMoveDirection or distToTarget <= 2.0  then
         local roughNextPoint = currentPos + self.currMoveDir * delta:GetLength()
-        local currentPoint = Pathing.GetClosestPoint(currentPos)
         local closestPoint = Pathing.GetClosestPoint(roughNextPoint)
-        if closestPoint and currentPoint and
+        if closestPoint and groundPoint and
             ((closestPoint - roughNextPoint):GetLengthXZ() > maxDistOffPath) and 
-            ((currentPoint - currentPos):GetLengthXZ() > 0.1) then
+            ((groundPoint - currentPos):GetLengthXZ() > 0.1) then
             self.currMoveDir = (closestPoint - currentPos):GetUnit()
         end
     end
@@ -155,10 +155,20 @@ function BotMotion:OnGenerateMove(player)
 
         -- Look in move dir
         desiredDir = self:GetCurPathLook(eyePos) -- self.currMoveDir
-        if doJump or not onGround then
-            desiredDir.y = 0.2
-        else
-            desiredDir.y = 0.0  -- pathing points are slightly above ground, which leads to funny looking-up
+        if player:isa("Exo") or player:isa("Marine") or player:isa("Fade") then
+            if doJump or not onGround then
+                desiredDir.y = 0.2
+            else
+                desiredDir.y = 0.0  -- pathing points are slightly above ground, which leads to funny looking-up
+            end
+        end
+        
+        if (player:isa("Lerk") or player:isa("Fade")) and groundPoint then
+            if (currentPos - groundPoint).y > 3.0 then
+                desiredDir.y = 0.2
+            else
+                desiredDir.y = -0.2
+            end
         end
         desiredDir = desiredDir:GetUnit()
 

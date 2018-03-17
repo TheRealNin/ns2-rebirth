@@ -54,6 +54,9 @@ local function GetAttackUrgency(bot, mem)
         [kMinimapBlipType.Fade]   = true,
         [kMinimapBlipType.Onos]   = true,
     }
+    if table.contains(kMinimapBlipType, "Prowler") then
+        immediateThreats[kMinimapBlipType.Prowler] = 1
+    end
     
     if distance < 10 and immediateThreats[mem.btype] then
         -- Attack the nearest immediate threat (urgency will be 1.1 - 2)

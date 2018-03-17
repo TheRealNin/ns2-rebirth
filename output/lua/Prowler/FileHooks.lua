@@ -13,6 +13,8 @@ ModLoader.SetupFileHook( "lua/NS2ConsoleCommands_Server.lua", "lua/Prowler/NS2Co
 ModLoader.SetupFileHook( "lua/TechData.lua", "lua/Prowler/TechData.lua", "post" )
 ModLoader.SetupFileHook( "lua/TechTreeConstants.lua", "lua/Prowler/TechTreeConstants.lua", "post" )
 ModLoader.SetupFileHook( "lua/PlayerHallucinationMixin.lua", "lua/Prowler/PlayerHallucinationMixin.lua", "post" )
+ModLoader.SetupFileHook( "lua/Alien.lua", "lua/Prowler/Alien.lua", "post" )
+ModLoader.SetupFileHook( "lua/PlayerEffects.lua", "lua/Prowler/PlayerEffects.lua", "post" )
 
 -- TODO: fix this properly
 ModLoader.SetupFileHook( "lua/Hallucination.lua", "lua/Prowler/Hallucination.lua", "replace" )

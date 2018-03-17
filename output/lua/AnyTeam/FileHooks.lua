@@ -153,6 +153,8 @@ ModLoader.SetupFileHook( "lua/HiveVisionMixin.lua", "lua/AnyTeam/HiveVisionMixin
 ModLoader.SetupFileHook( "lua/CloakableMixin.lua", "lua/AnyTeam/CloakableMixin.lua", "post" )
 
 
+
+
 -- REPLACEMENTS
 -- TRY NOT TO HAVE TOO MANY
 -- big pain if there is an update
@@ -162,9 +164,11 @@ ModLoader.SetupFileHook( "lua/VoiceOver.lua", "lua/AnyTeam/VoiceOver.lua", "repl
 ModLoader.SetupFileHook( "lua/DamageTypes.lua", "lua/AnyTeam/DamageTypes.lua", "replace" )
 ModLoader.SetupFileHook( "lua/DetectableMixin.lua", "lua/AnyTeam/DetectableMixin.lua", "replace" )
 
+-- this replacement is literally just for the infestation change
+ModLoader.SetupFileHook( "lua/BuildUtility.lua", "lua/AnyTeam/BuildUtility.lua", "replace" )
+
 -- disabled for now
 --ModLoader.SetupFileHook( "lua/LOSMixin.lua", "lua/AnyTeam/LOSMixin.lua", "replace" )
-
 
 ModLoader.SetupFileHook( "lua/TeamMixin.lua", "lua/AnyTeam/TeamMixin.lua", "replace" )
 ModLoader.SetupFileHook( "lua/MAC.lua", "lua/AnyTeam/MAC.lua", "replace" )

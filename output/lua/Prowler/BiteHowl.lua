@@ -11,8 +11,8 @@ local kBiteHowlTracer = PrecacheAsset("cinematics/prowler/1p_tracer_residue.cine
 local kAttackDuration = Shared.GetAnimationLength("models/alien/skulk/skulk_view.model", "bite_attack")
 
 -- higher numbers reduces the spread
-local kSpreadDistance = 5.5
-local kSpreadVertMult = 0.3
+local kSpreadDistance = 10.0
+local kSpreadVertMult = 0.4
 BiteHowl.kSpreadVectors =
 {
     GetNormalizedVector(Vector(-0.01, 0.01, kSpreadDistance)),
@@ -146,7 +146,7 @@ function BiteHowl:OnTag(tagName)
                 local numTargets = #targets
                 
                 if numTargets == 0 then
-                    self:ApplyBulletGameplayEffects(player, nil, impactPoint, direction, 0, "infestation", showTracer)
+                    self:ApplyBulletGameplayEffects(player, nil, impactPoint, direction, 0, "rock", showTracer)
                 end
                 
                 if Client and showTracer then
@@ -158,7 +158,7 @@ function BiteHowl:OnTag(tagName)
                     local target = targets[i]
                     local hitPoint = hitPoints[i]
 
-                    self:ApplyBulletGameplayEffects(player, target, hitPoint - hitOffset, direction, self:GetBulletDamage(), "infestation", showTracer and i == numTargets)
+                    self:ApplyBulletGameplayEffects(player, target, hitPoint - hitOffset, direction, self:GetBulletDamage(), "rock", showTracer and i == numTargets)
                     
                     local client = Server and player:GetClient() or Client
                     if not Shared.GetIsRunningPrediction() and client and client.hitRegEnabled then
@@ -170,7 +170,9 @@ function BiteHowl:OnTag(tagName)
             end
             self.shootingSpikes = true
             player:DeductAbilityEnergy(self:GetEnergyCost())
-            self:TriggerEffects("parasite_attack")
+            if Server then
+                self:TriggerEffects("drifter_parasite_hit")
+            end
             
             self:DoAbilityFocusCooldown(player, kAttackDuration)
         end

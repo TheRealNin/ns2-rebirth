@@ -25,6 +25,7 @@ end
 AppendToEnum(kTechId, "Prowler")
 AppendToEnum(kTechId, "ProwlerMenu")
 AppendToEnum(kTechId, "ProwlerEgg")
+AppendToEnum(kTechId, "HallucinateProwler")
 AppendToEnum(kTechId, "UpgradeProwler")
 AppendToEnum(kTechId, "Howl")
 AppendToEnum(kTechId, "XenocideHowl")

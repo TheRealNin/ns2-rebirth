@@ -49,7 +49,8 @@ local function UpdateItemsGUIScale(self)
     GUICommanderLogout.kFontScale = Vector(1, 1, 0) * GUIScale(kCommanderGUIsGlobalScale)
     GUICommanderLogout.kTooltipPos = Vector(56, -4, 0) * GUIScale(kCommanderGUIsGlobalScale)
     --GUICommanderLogout.kSwitchPos = Vector(-46, 168, 0) * GUIScale(kCommanderGUIsGlobalScale)
-    GUICommanderLogout.kSwitchPos = Vector(0, 150, 0) * GUIScale(kCommanderGUIsGlobalScale)
+    GUICommanderLogout.kSwitchPos = Vector(0, 180, 0) * GUIScale(kCommanderGUIsGlobalScale)
+    GUICommanderLogout.kSwitchSize = Vector(300, 90, 0) * GUIScale(kCommanderGUIsGlobalScale)
     GUICommanderLogout.kLogoutOffset = GUIScale(2)
     kSmokeyBackgroundSize = GUIScale(Vector(186, 96, 0))
     
@@ -92,21 +93,30 @@ function GUICommanderLogout:Initialize()
     self.background:AddChild(self.tooltip)
     
     
-    self.readyTeam = GUIManager:CreateTextItem()
-    self.readyTeam:SetAnchor(GUIItem.Middle, GUIItem.Middle)
+    self.readyTeam = GUIManager:CreateGraphicItem()
+    self.readyTeam:SetPosition(GUICommanderLogout.kSwitchPos - GUICommanderLogout.kSwitchSize.x*0.5)
+    self.readyTeam:SetLayer(kGUILayerPlayerHUD)
+    self.readyTeam:SetSize(GUICommanderLogout.kSwitchSize)
+    self.readyTeam:SetColor(Color(0.1,0.1,0.1,0.9))
     self.readyTeam:SetTextAlignmentX(GUIItem.Align_Center)
     self.readyTeam:SetTextAlignmentY(GUIItem.Align_Center)
-    self.readyTeam:SetPosition(GUICommanderLogout.kSwitchPos)
-    self.readyTeam:SetFontName(Fonts.kAgencyFB_Huge)
-    self.readyTeam:SetScale(GUICommanderLogout.kFontScale)
-    GUIMakeFontScale(self.readyTeam)
+    self.readyTeam:SetAnchor(GUIItem.Middle, GUIItem.Middle)
+    
+    self.readyTeamText = GUIManager:CreateTextItem()
+    self.readyTeamText:SetAnchor(GUIItem.Middle, GUIItem.Middle)
+    self.readyTeamText:SetTextAlignmentX(GUIItem.Align_Center)
+    self.readyTeamText:SetTextAlignmentY(GUIItem.Align_Center)
+    self.readyTeamText:SetFontName(GUICommanderLogout.kFontName)
+    self.readyTeamText:SetScale(GUICommanderLogout.kFontScale)
+    GUIMakeFontScale(self.readyTeamText)
+    self.readyTeam:AddChild(self.readyTeamText)
     
     if CommanderUI_GetIsReady() then
-        self.readyTeam:SetText(Locale.ResolveString("Your team is ready."))
+        self.readyTeamText:SetText(Locale.ResolveString("Your team is ready."))
     else
-        self.readyTeam:SetText(Locale.ResolveString("Ready?"))
+        self.readyTeamText:SetText(Locale.ResolveString("Ready?"))
     end
-    self.readyTeam:SetColor(kMarineFontColor)
+    self.readyTeamText:SetColor(Color(1,1,1,1))
     
     
     self.marineTeam = GUIManager:CreateGraphicItem()
@@ -115,7 +125,8 @@ function GUICommanderLogout:Initialize()
     self.marineTeam:SetPosition(Vector(-GUICommanderLogout.kTeamButtonWidth - GUICommanderLogout.kTeamButtonSpacing, -GUICommanderLogout.kTeamButtonHeight, 0))
     self.marineTeam:SetLayer(kGUILayerPlayerHUD)
     self.marineTeam:SetTexture(GUICommanderLogout.kChooseMarineTextureName)
-    self.marineTeam:SetColor(ConditionalValue(CommanderUI_IsAlienCommander(), Color(0.4,0.4,0.4), Color(1,1,1)))
+    self.marineTeam:SetColor(Color(0.4,0.4,0.4))
+    --self.marineTeam:SetColor(ConditionalValue(CommanderUI_IsAlienCommander(), Color(0.4,0.4,0.4), Color(1,1,1)))
     
     local marineName = GUIManager:CreateTextItem()
     marineName:SetFontName(GUICommanderLogout.kFontName)
@@ -135,7 +146,8 @@ function GUICommanderLogout:Initialize()
     self.alienTeam:SetPosition(Vector(GUICommanderLogout.kTeamButtonSpacing, -GUICommanderLogout.kTeamButtonHeight, 0))
     self.alienTeam:SetLayer(kGUILayerPlayerHUD)
     self.alienTeam:SetTexture(GUICommanderLogout.kChooseAlienTextureName)
-    self.alienTeam:SetColor(ConditionalValue(CommanderUI_IsAlienCommander(), Color(1,1,1), Color(0.4,0.4,0.4)))
+    self.alienTeam:SetColor(Color(0.4,0.4,0.4))
+    --self.alienTeam:SetColor(ConditionalValue(CommanderUI_IsAlienCommander(), Color(1,1,1), Color(0.4,0.4,0.4)))
     
     local alienName = GUIManager:CreateTextItem()
     alienName:SetFontName(GUICommanderLogout.kFontName)
@@ -149,7 +161,7 @@ function GUICommanderLogout:Initialize()
     alienName:SetColor(kAlienFontColor)
     self.alienTeam:AddChild(alienName)
     
-    self.selectedTeam = ConditionalValue(CommanderUI_IsAlienCommander(), kAlienTeamType, kMarineTeamType)
+    self.selectedTeam = nil --ConditionalValue(CommanderUI_IsAlienCommander(), kAlienTeamType, kMarineTeamType)
     
     self:Update(0)
     
@@ -227,7 +239,7 @@ function GUICommanderLogout:SendKeyEvent(key, down)
             
             local containsPoint, withinX, withinY = GUIItemContainsPoint(self.readyTeam, mouseX, mouseY)
             
-            if containsPoint then
+            if self.selectedTeam and containsPoint then
                 -- Check if the button was pressed.
                 if not down then
                     CommanderUI_SetTeamTypeAndReady(self.selectedTeam)
@@ -291,12 +303,12 @@ function GUICommanderLogout:Update(deltaTime)
     local showOptions = switchTeamAllowed and not CommanderUI_GetIsReady()
     self.readyTeam:SetIsVisible(switchTeamAllowed)
     if switchTeamAllowed then
-        self.readyTeam:SetColor(LerpColor(kMarineFontColor, Color(0, 0, 0), 0.25))
+        self.readyTeamText:SetColor(LerpColor(kMarineFontColor, Color(0, 0, 0), 0.25))
         
         if showOptions then
             local containsPoint, withinX, withinY = GUIItemContainsPoint(self.readyTeam, mouseX, mouseY)
             if containsPoint then
-                self.readyTeam:SetColor(kMarineFontColor)
+                self.readyTeamText:SetColor(kMarineFontColor)
             end
         end
     end

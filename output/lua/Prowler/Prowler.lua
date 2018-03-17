@@ -31,12 +31,10 @@ Prowler.kMinWallJumpForce = 0.1
 Prowler.kWallJumpMaxSpeedCelerityBonus = 1.2 -- skulk is 1.2
 Prowler.kWallJumpInterval = 0.4
 Prowler.kHorizontalJumpForce = 4.3
+Prowler.kSneakSpeedModifier = 0.66
 
 Prowler.kHealth = kProwlerHealth
 Prowler.kArmor  = kProwlerArmor
-
-local kNormalWallWalkFeelerSize = 0.25
-local kNormalWallWalkRange = 0.3
 
 local kProwlerScale = 1.25
 local kProwlerVertAdjust = 0.05
@@ -69,19 +67,9 @@ end
 
 local networkVars =
 {
-    wallWalking = "compensated boolean",
-    timeLastWallWalkCheck = "private compensated time",
-    leaping = "compensated boolean",
-    timeOfLeap = "private compensated time",
     timeOfLastJumpLand = "private compensated time",
-    timeLastWallJump = "private compensated time",
     jumpLandSpeed = "private compensated float",
-    dashing = "compensated boolean",    
-    timeOfLastPhase = "private time",
     timeOfLastHowl = "private compensated time",
-    -- sneaking (movement modifier) skulks starts to trail their body behind them
-    sneakOffset = "compensated interpolated float (0 to 1 by 0.04)",
-    variant = "enum kSkulkVariant", -- why do we need this??
 }
 
 AddMixinNetworkVars(BaseMoveMixin, networkVars)
@@ -121,13 +109,10 @@ function Prowler:OnCreate()
         self.timeDashChanged = 0
     end
     
-    self.wallWalking = false
-    self.wallWalkingNormalGoal = Vector.yAxis
-    self.leaping = false
-    self.timeLastWallJump = 0
     self.timeOfLastHowl = 0
     self.variant = kDefaultSkulkVariant
-     
+    self.timeLastJumped = 0
+    self.runDist = 0
     self.sneakOffset = 0
     
 end
@@ -135,12 +120,6 @@ end
 function Prowler:OnInitialized()
 
     Alien.OnInitialized(self)
-    
-    -- Note: This needs to be initialized BEFORE calling SetModel() below
-    -- as SetModel() will call GetHeadAngles() through SetPlayerPoseParameters()
-    -- which will cause a script error if the Skulk is wall walking BEFORE
-    -- the Skulk is initialized on the client.
-    self.currentWallWalkingAngles = Angles(0.0, 0.0, 0.0)
     
     
     self:SetModel(Prowler.kModelName, Prowler.kAnimationGraph)
@@ -171,6 +150,9 @@ end
 function Prowler:GetFirstPersonFov()
   return kProwlerFov
 end
+function Prowler:GetStepLength()
+    return 0.6
+end
 function Prowler:GetAirControl()
     return 47 -- skulk is 27
 end
@@ -184,6 +166,15 @@ end
 function Prowler:SetVariant()
 end
 function Prowler:GetVariant()
+end
+function Prowler:GetCrouchShrinkAmount()
+    return 0
+end
+function Prowler:GetExtentsCrouchShrinkAmount()
+    return 0
+end
+function Prowler:GetCrouchSpeedScalar()
+    return 0
 end
 
 -- Tilt the camera based on the wall the Prowler is attached to.
@@ -219,6 +210,23 @@ function Prowler:GetMaxSpeed(possible)
     
 end
 
+function Prowler:OnProcessMove(input)
+
+    Alien.OnProcessMove(self, input)
+    
+    if self:GetPlayFootsteps() and Client then
+        local delta = self:GetVelocity():GetLength() * input.time
+        self.runDist = self.runDist + delta
+        local i = 0
+        while self.runDist > 0 and i < 5 do
+            i = i + 1
+            self.runDist = self.runDist - self:GetStepLength()
+            self:TriggerFootstep()
+        end
+    end
+
+end
+
 function Prowler:GetMaxViewOffsetHeight()
     return Prowler.kViewOffsetHeight
 end
@@ -248,12 +256,30 @@ function Prowler:ModifyJump(input, velocity, jumpVelocity)
 
     end
     
-    self.timeLastWallJump = Shared.GetTime()
-        
+    self.timeLastJumped = Shared.GetTime()
     
 end
+
+function Prowler:OnJump( modifiedVelocity )
+
+    local material = self:GetMaterialBelowPlayer()    
+    
+    local currentSpeed = modifiedVelocity:GetLengthXZ()
+    local maxWallJumpSpeed = self:GetMaxWallJumpSpeed()
+            
+    if currentSpeed > maxWallJumpSpeed * 0.95 then
+        self:TriggerEffects("jump_best", {surface = material})          
+    elseif currentSpeed > maxWallJumpSpeed * 0.75 then
+        self:TriggerEffects("jump_good", {surface = material})       
+    end
+    
+    self:TriggerEffects("jump", {surface = material})
+
+    
+end
+
 function Prowler:GetRecentlyWallJumped()
-    return self.timeLastWallJump + Prowler.kWallJumpInterval > Shared.GetTime()
+    return self.timeLastJumped + Prowler.kWallJumpInterval > Shared.GetTime()
 end
 function Prowler:ModifyCelerityBonus(celerityBonus)
     
@@ -265,18 +291,10 @@ function Prowler:ModifyCelerityBonus(celerityBonus)
     
 end
 
-function Prowler:GetIsWallWalking()
-    return false
-end
 
 function Prowler:GetJumpHeight()
     return Skulk.kJumpHeight + 0.4
 end
-
-function Prowler:GetIsWallWalkingPossible() 
-    return not self:GetRecentlyJumped() and not self:GetCrouching()
-end
-
 function Prowler:GetMaxWallJumpSpeed()
     local celerityMod = (GetHasCelerityUpgrade(self) and GetSpurLevel(self:GetTeamNumber()) or 0) * Prowler.kWallJumpMaxSpeedCelerityBonus/3.0
     return Prowler.kWallJumpMaxSpeed + celerityMod
@@ -320,39 +338,6 @@ function Prowler:PreUpdateMove(input, runningPrediction)
 
     PROFILE("Prowler:PreUpdateMove")
     
-    if self:GetCrouching() then
-        self.wallWalking = false
-    end
-
-    if self.wallWalking then
-
-        self.wallWalking = false
-    
-    end
-    
-    if not self:GetIsWallWalking() then
-        -- When not wall walking, the goal is always directly up (running on ground).
-        self.wallWalkingNormalGoal = Vector.yAxis
-    end
-
-    if self.leaping and Shared.GetTime() > self.timeOfLeap + kLeapTime then
-        self.leaping = false
-    end
-        
-    self.currentWallWalkingAngles = self.GetAnglesFromWallNormal and self:GetAnglesFromWallNormal(self.wallWalkingNormalGoal or Vector.yAxis) or self.currentWallWalkingAngles
-
-    -- adjust the sneakOffset so sneaking skulks can look around corners without having to expose themselves too much
-    local delta = input.time * math.min(1, self:GetVelocityLength())
-    if self.movementModiferState then
-        if self.sneakOffset < Prowler.kMaxSneakOffset then
-            self.sneakOffset = math.min(Prowler.kMaxSneakOffset, self.sneakOffset + delta)
-        end
-    else
-        if self.sneakOffset > 0 then
-            self.sneakOffset = math.max(0, self.sneakOffset - delta)
-        end
-    end
-    
 end
 
 function Prowler:OnUpdateAnimationInput(modelMixin)
@@ -361,6 +346,11 @@ function Prowler:OnUpdateAnimationInput(modelMixin)
     
     Alien.OnUpdateAnimationInput(self, modelMixin)
 end
+
+function Prowler:GetPlayFootsteps()
+    return self:GetVelocityLength() > .75 and self:GetIsOnGround() and self:GetIsAlive() and not self.movementModiferState
+end
+
 
 function Prowler:GetMass()
     return kMass
@@ -410,9 +400,9 @@ function Prowler:OnHowl()
             
             if spawnPoint then
 
-                local hallucinatedPlayer = CreateEntity(self:GetMapName(), spawnPoint, self:GetTeamNumber())
+                local hallucinatedPlayer = CreateEntity(Skulk.kMapName, spawnPoint, self:GetTeamNumber())
                 
-                hallucinatedPlayer:SetVariant(self:GetVariant())
+                hallucinatedPlayer:SetVariant(kSkulkVariant.normal)
                 hallucinatedPlayer.isHallucination = true
                 InitMixin(hallucinatedPlayer, PlayerHallucinationMixin)                
                 InitMixin(hallucinatedPlayer, SoftTargetMixin)                
@@ -438,8 +428,22 @@ function Prowler:OnHowl()
 end
 
 
+if Server then
+    function Prowler:OnKill(attacker, doer, point, direction)
+    
+        Alien.OnKill(self, attacker, doer, point, direction)
+        self:TriggerEffects("death", { classname = self:GetClassName(), effecthostcoords = Coords.GetTranslation(self:GetOrigin()) })
+        
+        
+    end
+end
+
 function Prowler:GetArmorFullyUpgradedAmount()
     return kSkulkArmorFullyUpgradedAmount
+end
+
+function Prowler:GetAnimateDeathCamera()
+    return false
 end
 
 Shared.LinkClassToMap("Prowler", Prowler.kMapName, networkVars, true)

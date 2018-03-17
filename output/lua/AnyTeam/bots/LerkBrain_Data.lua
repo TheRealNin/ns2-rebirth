@@ -54,6 +54,9 @@ local function GetAttackUrgency(bot, mem)
         [kMinimapBlipType.Fade]   = true,
         [kMinimapBlipType.Onos]   = true
     }
+    if table.contains(kMinimapBlipType, "Prowler") then
+        immediateThreats[kMinimapBlipType.Prowler] = 1
+    end
     
     if distance < 10 and immediateThreats[mem.btype] then
         -- Attack the nearest immediate threat (urgency will be 1.1 - 2)
@@ -119,37 +122,21 @@ local function GetAttackUrgency(bot, mem)
 end
 
 
-local function PerformAttackEntity( eyePos, bestTarget, bot, brain, move )
+local function PerformAttackEntity( eyePos, bestTarget, lastSeenPos, bot, brain, move )
 
     assert( bestTarget )
 
-    local marinePos = bestTarget:GetOrigin()
+    local sighted = bestTarget:GetIsSighted()
+    local aimPos = sighted and GetBestAimPoint( bestTarget ) or (lastSeenPos + Vector(0,0.5,0))
 
     local doFire = false
-    bot:GetMotion():SetDesiredMoveTarget( marinePos )
+    bot:GetMotion():SetDesiredMoveTarget( aimPos )
     
-    local distance = eyePos:GetDistance(marinePos)
-    if distance < 18 and bot:GetBotCanSeeTarget( bestTarget ) then
+    local distance = eyePos:GetDistance(aimPos)
+    if distance < 35 and bot:GetBotCanSeeTarget( bestTarget ) then
         doFire = true
     end
-                
-    if doFire then
-
-        bot:GetMotion():SetDesiredViewTarget( bestTarget:GetEngagementPoint() )
-        
-        if distance > 3 then
-            move.commands = AddMoveCommand( move.commands, Move.SecondaryAttack )
-        else    
-            move.commands = AddMoveCommand( move.commands, Move.PrimaryAttack )
-        end
-
-        -- Attacking a structure
-        if GetDistanceToTouch(eyePos, bestTarget) < 8 then
-            -- Stop running at the structure when close enough
-            bot:GetMotion():SetDesiredMoveTarget(nil)
-        end
-
-    end
+    
     
     -- Occasionally jump
     if math.random() < 0.1 and bot:GetPlayer():GetIsOnGround() then
@@ -170,7 +157,7 @@ local function PerformAttackEntity( eyePos, bestTarget, bot, brain, move )
         
         if bot.jumpOffset == nil then
             
-            local botToTarget = GetNormalizedVectorXZ(marinePos - eyePos)
+            local botToTarget = GetNormalizedVectorXZ(aimPos - eyePos)
             local sideVector = botToTarget:CrossProduct(Vector(0, 1, 0))                
             if math.random() < 0.5 then
                 bot.jumpOffset = botToTarget + sideVector
@@ -183,7 +170,25 @@ local function PerformAttackEntity( eyePos, bestTarget, bot, brain, move )
         
         bot:GetMotion():SetDesiredMoveDirection( bot.jumpOffset )
         
-    end    
+    end
+    
+    doFire = doFire and bot.aim:UpdateAim(bestTarget, aimPos)
+                
+    if doFire then
+        
+        if distance > 2 then
+            move.commands = AddMoveCommand( move.commands, Move.SecondaryAttack )
+        else    
+            move.commands = AddMoveCommand( move.commands, Move.PrimaryAttack )
+        end
+
+        -- Attacking a structure
+        if GetDistanceToTouch(eyePos, bestTarget) < 1 then
+            -- Stop running at the structure when close enough
+            bot:GetMotion():SetDesiredMoveTarget(nil)
+        end
+
+    end
     
 end
 
@@ -195,7 +200,7 @@ local function PerformAttack( eyePos, mem, bot, brain, move )
 
     if target ~= nil then
 
-        PerformAttackEntity( eyePos, target, bot, brain, move )
+        PerformAttackEntity( eyePos, target, mem.lastSeenPos, bot, brain, move )
 
     else
     
@@ -479,7 +484,7 @@ kLerkBrainActions =
 
                     if target ~= nil and order:GetType() == kTechId.Attack then
 
-                        PerformAttackEntity( skulk:GetEyePos(), target, bot, brain, move )
+                        PerformAttackEntity( skulk:GetEyePos(), target, target:GetOrigin(), bot, brain, move )
                         
                     else
 
