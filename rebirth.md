@@ -28,8 +28,9 @@ title: Nin's NS2:Rebirth
 * * Stab is now Acid Rocket: A 55 structural damage projectile with a small AOE. 
 * Whips now have knockback.
 * Gorge Hydras have been reworked. They now autobuild, cost 1 res, have very little health, but attack very quickly.
+* Gorge Webs now prevent lerks from gliding or flapping for 4 seconds. If this happens to you, it will be the longest 4 seconds of your life.
 * Skulks will spawn with their previous upgrades
-* Players respawn 2 seconds faster, but gestate in their egg for +2 seconds.
+* Alien players respawn 2 seconds faster, but gestate in their egg for +2 seconds.
 
 
 ## Marine-specific changes
@@ -54,6 +55,7 @@ title: Nin's NS2:Rebirth
 * Scans and building blueprints are coloured orange if they are the enemy's.
 * Scanned players are tracked with a circle that stays on and doesn't flicker (NS2+ cheat has been disabled)
 * Marines can always see power node status. This can reveal your enemy's starting location (or race)
+* Sentries no longer require a sentry battery. Batteries can no longer be constructed.
 
 ## Extra Mods
 ### Healing field
