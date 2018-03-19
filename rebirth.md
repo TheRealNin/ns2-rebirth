@@ -1,8 +1,10 @@
 ---
 title: Nin's NS2:Rebirth
 ---
+Welcome to Rebirth, an overhaul of NS2.
 
 ## Major Changes
+* Each commander may choose their teams race (Marine or Alien)
 * Power nodes are neutral, and can only be damaged if your team isn't using it.
 * Unused rooms will start with powernodes destroyed
 * All friendly structures, players, and equipment have a blue outline. Enemies have no outlines.
@@ -57,6 +59,7 @@ title: Nin's NS2:Rebirth
 * Scanned players are tracked with a circle that stays on and doesn't flicker (NS2+ cheat has been disabled)
 * Marines can always see power node status. This can reveal your enemy's starting location (or race)
 * Sentries no longer require a sentry battery. Batteries can no longer be constructed.
+* Significant bot intelligence improvements
 
 ## Extra Mods
 ### Healing field
