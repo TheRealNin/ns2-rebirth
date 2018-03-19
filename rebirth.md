@@ -5,11 +5,11 @@ Welcome to Rebirth, an overhaul of NS2.
 
 ## Major Changes
 * Each commander may choose their teams race (Marine or Alien)
-* Power nodes are neutral, and can only be damaged if your team isn't using it.
-* Unused rooms will start with powernodes destroyed
 * All friendly structures, players, and equipment have a blue outline. Enemies have no outlines.
 * All marine to marine damage is increased by 33%
 * Aliens deal 15% less damage to aliens
+* Power nodes are neutral, and can only be damaged if your team isn't using it.
+* Unused rooms will start with powernodes destroyed
 
 ## Alien-specific changes
 * Skulks take an extra 30% less melee damage from aliens. (At biomass 1, it takes 1 parasite and 2 bites to kill a skulk. At biomass 2, it takes 2 parasites and 2 bites.)
