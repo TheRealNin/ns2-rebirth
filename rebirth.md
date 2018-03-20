@@ -1,7 +1,7 @@
 ---
 title: Nin's NS2:Rebirth
 ---
-Welcome to Rebirth, an overhaul of NS2.
+Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on the bottom of this window.
 
 ## Major Changes
 * Each commander may choose their teams race (Marine or Alien)
