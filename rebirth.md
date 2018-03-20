@@ -82,6 +82,7 @@ Welcome to Rebirth, an overhaul of NS2.
 * Blueprint placed by commander
 * Costs 10 res, can only be armed by a marine (not a MAC)
 * Detonates after 25 seconds, and does massive damage to all units in a radius (including allies)
+* Only damages things within line of sight!
 
 ### Creepier Atmosphere mod
 * Rooms start dark, but flashlights are boosted
