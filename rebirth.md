@@ -13,8 +13,6 @@ Welcome to Rebirth, an overhaul of NS2.
 * Aliens have a new playable class: Prowler
 * Marines have new shield tech and healing fields
 
-<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfkWCsNKce21ATnjFduOb5CafCgb96KCxobpFKazP84fVIWiw/viewform?embedded=true" width="100%" height="300" frameborder="0" marginheight="0" marginwidth="0">Loading feedback form...</iframe>
-
 ## Alien-specific changes
 * Skulks take an extra 30% less melee damage from aliens. (At biomass 1, it takes 1 parasite and 2 bites to kill a skulk. At biomass 2, it takes 2 parasites and 2 bites.)
 * Onos deals double damage to Onos
