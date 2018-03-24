@@ -2,8 +2,19 @@
 title: Nin's NS2:Rebirth
 ---
 Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on the bottom of this window.
+## Latest Changes
 
-## Major Changes
+### March 24
+* Robotics Factory cost reduced to 5 (from 10). ARC Factory increased to 10 (from 5).
+* Fade teleport energy cost increased to 17% (from 14%).
+* Hydra damage increased from 2 damage per hit to 3.
+* Major bot code upgrades for skulks and lerks
+* Fixed some bugs to do with bot view angles jerking around
+* Outlines added to marine vision for powernodes
+* Alien vision and outlines changed to red (from orange). This should make it easier to pick out enemies.
+* Fixed some bugs with auto-evolve
+
+## Rebirth Mod Summary
 * Each commander may choose their teams race (Marine or Alien)
 * All friendly structures, players, and equipment have a blue outline. Enemies have no outlines.
 * All marine to marine damage is increased by 33%
@@ -12,6 +23,7 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * Unused rooms will start with powernodes destroyed
 * Aliens have a new playable class: Prowler
 * Marines have new shield tech and healing fields
+
 
 ## Alien-specific changes
 * Skulks take an extra 30% less melee damage from aliens. (At biomass 1, it takes 1 parasite and 2 bites to kill a skulk. At biomass 2, it takes 2 parasites and 2 bites.)
