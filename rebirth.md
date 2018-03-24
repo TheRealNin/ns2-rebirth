@@ -5,6 +5,7 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 ## Latest Changes
 
 ### March 24
+* Hades device cost reduced to 5 (from 10)
 * Robotics Factory cost reduced to 5 (from 10). ARC Factory increased to 10 (from 5).
 * Fade teleport energy cost increased to 17% (from 14%).
 * Hydra damage increased from 2 damage per hit to 3.
