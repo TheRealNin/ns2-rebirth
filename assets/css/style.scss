@@ -6,4 +6,8 @@
 #header{display: none;}
 section{margin-top: 0px;}
 section #title{ display: none;}
-ul{list-style-type: circle;}
+ul{
+  list-style-type: circle;
+  list-style-image:none;
+  padding: 0 0 0 20px;
+}
