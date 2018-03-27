@@ -1,5 +1,5 @@
 
-kPlayerBrainTickrate = 4
+kPlayerBrainTickrate = 6
 kPlayerBrainTickFrametime = 1 / kPlayerBrainTickrate
 
 function PlayerBrain:Update(bot, move)
@@ -62,6 +62,7 @@ function PlayerBrain:Update(bot, move)
     end
 
     if bestAction ~= nil then
+        --Log(bestAction.name)
         if self.debug then
             DebugPrint("-- chose action: " .. bestAction.name)
         end

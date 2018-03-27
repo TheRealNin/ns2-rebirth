@@ -7,12 +7,19 @@ local kMinEnterEtherealTime = 0.35
 local kFadeScanDuration = 4
 
 
-local kFadeShadowDanceHealthRegen = 6
+local kFadeShadowDanceHealthRegen = 8
 local kFadeShadowDanceDelay = 1.0
 
 local kViewOffsetHeight = 1.4
 Fade.YExtents = 0.80 -- was 1.05
 
+local networkVars =
+{
+    startBlinkLocation = "compensated vector",
+    startVelocity = "compensated vector",
+    endBlinkLocation = "compensated vector",
+    etherealStartTime = "compensated time",
+}
 
 function SwipeBlink:GetMeleeBase()
     -- Width of box, height of box
@@ -97,7 +104,7 @@ function Fade:OnProcessMove(input)
 
     end
     if self.ethereal then
-      if Shared.GetTime() - self.etherealStartTime < kshadowStepTime and player.OnBlinkEnd then
+      if Shared.GetTime() - self.etherealStartTime < kshadowStepTime and player.OnBlinkEnd and self.endBlinkLocation then
         --player.blinkAmount = 1
         local shadowStepFraction = Clamp((Shared.GetTime() - self.etherealStartTime) / kshadowStepTime, 0, 1) * 0.5 + 0.5
         local newPos = self.startBlinkLocation * (1-shadowStepFraction) + self.endBlinkLocation * shadowStepFraction
@@ -134,6 +141,26 @@ function Fade:OnProcessMove(input)
     end
 end
 
+function Fade:MovementModifierChanged(newMovementModifierState, input)
+
+    if newMovementModifierState and self:GetActiveWeapon() ~= nil then
+        local weaponMapName = self:GetActiveWeapon():GetMapName()
+        local metabweapon = self:GetWeapon(Metabolize.kMapName)
+        if metabweapon then
+            if self:GetEnergy() >= metabweapon:GetEnergyCost() and not metabweapon:GetHasAttackDelay() then
+                self:SetActiveWeapon(Metabolize.kMapName)
+                self:PrimaryAttack()
+                if weaponMapName ~= Metabolize.kMapName then
+                    self.previousweapon = weaponMapName
+                end
+            else
+                self:TriggerInvalidSound()
+            end
+        end
+    end
+    
+end
+
 -- health regen comes from another passive ability now
 function Fade:GetMovementSpecialTechId()
     return kTechId.MetabolizeEnergy
@@ -167,7 +194,7 @@ if Client then
     function Fade:OnUpdateRender()
         if self.ethereal then
             local player = self
-            if Shared.GetTime() - self.etherealStartTime < kshadowStepTime and player.OnBlinkEnd then
+            if Shared.GetTime() - self.etherealStartTime < kshadowStepTime and player.OnBlinkEnd and player.controller then
                 --player.blinkAmount = 1
                 local shadowStepFraction = Clamp((Shared.GetTime() - self.etherealStartTime) / kshadowStepTime, 0, 1)
                 local newPos = self.startBlinkLocation * (1-shadowStepFraction) + self.endBlinkLocation * shadowStepFraction
@@ -179,3 +206,5 @@ if Client then
         end
     end
 end
+
+Shared.LinkClassToMap("Fade", Fade.kMapName, networkVars, true)

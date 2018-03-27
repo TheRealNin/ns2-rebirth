@@ -8,6 +8,7 @@
 		<input name="blendMap" type="texture" address="wrap">materials/effects/mesh_effects/skulk_view_blood.dds</input>
 		<input name="overlayMap" type="texture" address="wrap">materials/effects/mesh_effects/nanoshield_circuit.dds</input>
 		<input name="hiddenAmount" type="float">0.0</input>
+		<input name="outline" type="float">0.0</input>
 		<input name="highlight" type="float">0.0</input>
 		<input name="tint" type="float">0.0</input>
 		
@@ -108,6 +109,7 @@
 			}
 			
 			material.id = 1*highlightId; // To make it show up on alien vision
+			material.outline = outline; // for parasite
 			
 		}
 	]]>

@@ -1,18 +1,20 @@
 -- shamelessly stolen from Ghoul's balance mod
+-- Copyright Ghoul
+-- Licensed under the MIT License
 
 
 --Todo: Receive this via a alienteam method
 local kUpgrades = {
-	[kTechId.Shell] = { kTechId.Vampirism, kTechId.Carapace, kTechId.Regeneration },
-	[kTechId.Vampirism] = kTechId.Shell,
+	[kTechId.Shell] = { kTechId.Carapace, kTechId.Regeneration, kTechId.Crush },
 	[kTechId.Carapace] = kTechId.Shell,
 	[kTechId.Regeneration] = kTechId.Shell,
-	[kTechId.Veil] = { kTechId.Silence, kTechId.Aura }, --ignore Focus for autoselect
-	[kTechId.Silence] = kTechId.Veil,
+	[kTechId.Crush] = kTechId.Shell,
+	[kTechId.Veil] = { kTechId.Aura, kTechId.Vampirism},
+	[kTechId.Vampirism] = kTechId.Veil,
 	[kTechId.Aura] = kTechId.Veil,
 	[kTechId.Focus] = kTechId.Veil,
-	[kTechId.Spur] = { kTechId.Crush, kTechId.Celerity, kTechId.Adrenaline },
-	[kTechId.Crush] = kTechId.Spur,
+	[kTechId.Spur] = { kTechId.Silence, kTechId.Celerity, kTechId.Adrenaline },
+	[kTechId.Silence] = kTechId.Spur,
 	[kTechId.Celerity] = kTechId.Spur,
 	[kTechId.Adrenaline] = kTechId.Spur,
 }

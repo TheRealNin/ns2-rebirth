@@ -1,5 +1,5 @@
 
-kFadeTeleportEnergyCost = 14 -- was 22
+kFadeTeleportEnergyCost = 17 -- was 22
 
 kMetabolizeEnergyCost = 35 -- was 25
 

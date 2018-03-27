@@ -107,7 +107,7 @@ function Player:SetCameraShake(amount, speed, time)
     local delta = currentTime - self.cameraShakeLastTime
 
     self.cameraShakeAmount = math.max((self.cameraShakeAmount - cameraShakeFalloff * delta), 0) + amount
-
+    self.cameraShakeAmount = math.min(10.0, self.cameraShakeAmount)
     -- "bumps" per second
     self.cameraShakeSpeed = 10
 

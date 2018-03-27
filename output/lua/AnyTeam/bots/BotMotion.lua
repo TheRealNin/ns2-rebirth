@@ -1,7 +1,7 @@
 
 local maxDistOffPath = 0.65
 local minDistToUnstuck = 3.0
-local timeToBeStuck = 30.0
+local timeToBeStuck = 60.0
 
 function BotMotion:OnGenerateMove(player)
     PROFILE("BotMotion:OnGenerateMove")
@@ -9,7 +9,7 @@ function BotMotion:OnGenerateMove(player)
     local currentPos = player:GetOrigin()
     local onGround = player.GetIsOnGround and player:GetIsOnGround()
     local eyePos = player:GetEyePos()
-    local isSneaking = player.GetCrouching and player:GetCrouching() and player:isa("Marine")
+    local isSneaking = (player.GetCrouching and player:GetCrouching() and player:isa("Marine")) or (player:isa("Skulk") and player.movementModiferState)
     local doJump = false
     local groundPoint = Pathing.GetClosestPoint(currentPos)
 
@@ -37,10 +37,10 @@ function BotMotion:OnGenerateMove(player)
             local unstuckDuration = 0.4
             local isStuck = delta:GetLength() < 1e-2 or self.unstuckUntil > now
             
-            if self.desiredMoveTarget then
+            if self.desiredMoveTarget  then
                 local moveTargetDelta = self.desiredMoveTarget - player:GetOrigin()
                 local vertDist = math.abs(moveTargetDelta.y)
-                if vertDist > 1.5 and vertDist > moveTargetDelta:GetLengthXZ() then
+                if vertDist > 3.5 and vertDist > moveTargetDelta:GetLengthXZ() then
                     isStuck = true
                     -- but not actually stuck! we just want the random movement/jumping
                     self.lastStuckPos = nil
@@ -132,7 +132,7 @@ function BotMotion:OnGenerateMove(player)
     end
     
     -- don't move there if it's off pathing
-    if self.desiredMoveDirection or distToTarget <= 2.0  then
+    if self.desiredMoveDirection and distToTarget <= 2.0  then
         local roughNextPoint = currentPos + self.currMoveDir * delta:GetLength()
         local closestPoint = Pathing.GetClosestPoint(roughNextPoint)
         if closestPoint and groundPoint and
@@ -154,7 +154,14 @@ function BotMotion:OnGenerateMove(player)
     elseif self.currMoveDir:GetLength() > 1e-4 then
 
         -- Look in move dir
-        desiredDir = self:GetCurPathLook(eyePos) -- self.currMoveDir
+        if self:isa("Marine") or self:isa("Exo") then
+            desiredDir = self:GetCurPathLook(eyePos) -- self.currMoveDir
+        else
+            desiredDir = self.currMoveDir
+            desiredDir.y = 0.0  -- pathing points are slightly above ground, which leads to funny looking-up
+            desiredDir = desiredDir:GetUnit()
+        end
+        
         if player:isa("Exo") or player:isa("Marine") or player:isa("Fade") then
             if doJump or not onGround then
                 desiredDir.y = 0.2
@@ -163,11 +170,14 @@ function BotMotion:OnGenerateMove(player)
             end
         end
         
-        if (player:isa("Lerk") or player:isa("Fade")) and groundPoint then
-            if (currentPos - groundPoint).y > 3.0 then
+        if (player:isa("Lerk") or player:isa("Fade") or player:isa("Skulk")) and groundPoint then
+        
+            if (currentPos - groundPoint).y > 1.5 then
+                desiredDir.y = -0.2
+            elseif(currentPos - groundPoint).y < 0.6 then
                 desiredDir.y = 0.2
             else
-                desiredDir.y = -0.2
+                desiredDir.y = 0.0
             end
         end
         desiredDir = desiredDir:GetUnit()
@@ -178,9 +188,9 @@ function BotMotion:OnGenerateMove(player)
     
     if desiredDir then
         -- TODO: change the frametime to the actual time spent
-        local slerpSpeed = kPlayerBrainTickFrametime * 0.75
+        local slerpSpeed = kPlayerBrainTickFrametime * 1.25
         
-        local currentYaw = GetYawFromVector(self.currViewDir)
+        local currentYaw = player:GetViewAngles().yaw
         local targetYaw = GetYawFromVector(desiredDir)
         
         local xzLen = desiredDir:GetLengthXZ()
@@ -198,6 +208,7 @@ function BotMotion:OnGenerateMove(player)
     if self.lastStuckPos and self.lastStuckTime and 
         (currentPos - self.lastStuckPos):GetLength() < minDistToUnstuck and
         self.lastStuckTime + timeToBeStuck < now then
+        
         -- we've been stuck for a very long time... we can't get out
         player:Kill(nil, nil, player:GetOrigin())
         self.lastStuckPos = nil
@@ -237,7 +248,7 @@ end
 function BotMotion:GetOptimalMoveDirection(from, to)
     PROFILE("BotMotion:GetOptimalMoveDirection")
 
-    local minDistOpti = 2 -- Distance below which the next point in the path is removed.
+    local minDistOpti = 4 -- Distance below which the next point in the path is removed.
     local newMoveDir, reachable
 
     if self.currPathPoints == nil or self.forcePathRegen or from:GetDistanceTo(to) < minDistOpti then

@@ -142,21 +142,25 @@ end
 local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, move )
 
     assert(target ~= nil )
-
-    if not target.GetIsSighted then
-        Print("attack target has no GetIsSighted: %s", target:GetClassName() )
-        return
-    end
     
     local player = bot:GetPlayer()
     local time = Shared.GetTime()
-    local sighted = target:GetIsSighted()
+    
+    local sighted 
+    if not target.GetIsSighted then
+        -- Print("attack target has no GetIsSighted: %s", target:GetClassName() )
+        sighted = true
+    else
+        sighted = target:GetIsSighted()
+    end
+    
     local aimPos = sighted and GetBestAimPoint( target ) or (lastSeenPos + Vector(0,0.5,0))
     local dist = GetDistanceToTouch( eyePos, target )
     local doFire = false
     local shouldStrafe = false
     local shouldStrafeForward = false
-
+    local isDodgeable = target:isa("Player") or target:isa("Babbler")
+    
     -- Avoid doing expensive vis check if we are too far
     local hasClearShot = dist < 45.0 and bot:GetBotCanSeeTarget( target )
     
@@ -168,7 +172,7 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
         
     elseif not hasClearShot then
         local isNotDetected =  not (player:GetIsDetected() or player:GetIsSighted())
-        if isNotDetected and bot.sneakyAbility and dist < 20.0 and dist > 4.0 and target:isa("Player") and
+        if isNotDetected and bot.sneakyAbility and dist < 20.0 and dist > 4.0 and isDodgeable and
             (not bot.lastSeenEnemy or bot.lastSeenEnemy + 10 < time) and not sighted then
             
             move.commands = AddMoveCommand( move.commands, Move.Crouch )
@@ -197,7 +201,7 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
         
             -- too close - back away while firing if health is still high
             local healthThreshold =  0.3 + bot.aggroAbility * 0.5
-            if target.health / target.maxHealth >healthThreshold and target:isa("Player") then
+            if target.health / target.maxHealth >healthThreshold and isDodgeable then
                 bot:GetMotion():SetDesiredMoveTarget( nil )
                 bot:GetMotion():SetDesiredMoveDirection( -( aimPos-eyePos ) )
                 shouldStrafe = true
@@ -217,7 +221,7 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
     end
     
     if shouldStrafe then
-        if not target:isa("Player") then
+        if not isDodgeable then
             if shouldStrafeForward then
                 bot:GetMotion():SetDesiredMoveTarget( aimPos )
             else
@@ -255,7 +259,7 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
     
     
     -- retreat! Ignore previous move order, but keep our aim
-    if armory and minFraction < 0.3 and target:isa("Player") then
+    if armory and minFraction < 0.3 and isDodgeable then
         local touchDist = GetDistanceToTouch( eyePos, armory )
         if touchDist > 2.0 then
             bot:GetMotion():SetDesiredMoveTarget( armory:GetEngagementPoint() )
@@ -276,7 +280,7 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
         bot.lastAimPos = aimPos
         brain.lastShootingTime = Shared.GetTime()
         
-        if (not bot.lastHostilesTime or bot.lastHostilesTime < Shared.GetTime() - 45) and target:isa("Player") then
+        if (not bot.lastHostilesTime or bot.lastHostilesTime < Shared.GetTime() - 45) and isDodgeable then
             CreateVoiceMessage( player, kVoiceId.MarineHostiles )
             bot:SendTeamMessage("Enemy contact!", 60)
             bot.lastHostilesTime = Shared.GetTime()
@@ -744,6 +748,7 @@ kMarineBrainActions =
                         {10.0, 0.2},
                         {25.0, 0.0}
                         })
+                        
                 weight = weight + weight * bot.helpAbility
                         
                 if weldTarget:isa("Exo") or weldTarget:isa("Exosuit") then
@@ -866,6 +871,8 @@ kMarineBrainActions =
                 weight = 3.1 -- should be higher than construct..
             end
         end
+        
+        weight = weight + weight * bot.helpAbility
 
         return { name = name, weight = weight,
             perform = function(move)
@@ -1002,6 +1009,41 @@ kMarineBrainActions =
 
     end,
 
+    function(bot, brain)
+
+        local name = "clearBabblers"
+        local marine = bot:GetPlayer()
+        local sdb = brain:GetSenses()
+        local weight = 0.0
+
+        local babblerData = sdb:Get("nearestBabbler")
+        
+        if babblerData and babblerData.entity then
+            local babblerPos = babblerData.entity:GetOrigin()
+            
+            local dist = babblerPos:GetDistance(marine:GetOrigin())
+            
+            weight = EvalLPF( dist, {
+                    {0.0, 2.5},
+                    {3.0, 1.0},
+                    {5.0, 1.0},
+                    {15.0, 0.0}
+                    })
+        end
+        
+
+        return { name = name, weight = weight,
+            perform = function(move)
+                if babblerData and babblerData.entity then
+                    local babbler = babblerData.entity
+                    SwitchToPrimary(marine)
+                    PerformAttackEntity(marine:GetEyePos(), babbler, babbler:GetEngagementPoint(), bot, brain, move )
+                end
+            end
+            }
+
+    end,
+    
     function(bot, brain)
 
         local name = "buyWeapon"
@@ -1405,7 +1447,7 @@ local function GetAttackUrgency(bot, mem)
         return urgTable[ mem.btype ] + closeBonus
 
     end
-
+    
     return nil
 
 end
@@ -1617,7 +1659,7 @@ function CreateMarineBrainSenses()
 
             local marine = db.bot:GetPlayer()
             local marinePos = marine:GetOrigin()
-            local cysts = GetEntitiesWithinRange("Cyst", marinePos, 20)
+            local cysts = GetEntitiesWithinRange("Cyst", marinePos, 25)
 
             local dist, cyst = GetMinTableEntry( cysts, function(cyst)
                 if cyst:GetIsSighted() then
@@ -1627,6 +1669,20 @@ function CreateMarineBrainSenses()
                 end)
 
             return {entity = cyst, distance = dist}
+            end)
+            
+    s:Add("nearestBabbler", function(db)
+
+            local marine = db.bot:GetPlayer()
+            local marinePos = marine:GetOrigin()
+            local babblers = GetEntitiesWithinRange("Babbler", marinePos, 15)
+
+            local dist, babbler = GetMinTableEntry( babblers, function(babbler)
+                -- TODO: Make sure we can see it...
+                return marinePos:GetDistance( babbler:GetOrigin() )
+            end)
+
+            return {entity = babbler, distance = dist}
             end)
 
     s:Add("attackNearestCyst", function(db)
@@ -1638,12 +1694,12 @@ function CreateMarineBrainSenses()
                 local cystPos = cyst.entity:GetOrigin()
                 local powerPos = power.entity:GetOrigin()
                 --DebugLine( cystPos, powerPos, 0.0, 1,1,0,1,  true )
-                return cystPos:GetDistance(powerPos) < 25 or cystPos:GetDistance(marine:GetOrigin()) < 10
+                return cystPos:GetDistance(powerPos) < 15 or cystPos:GetDistance(marine:GetOrigin()) < 5
             else
                 return false
             end
             end)
-
+            
     s:Add("comPingElapsed", function(db)
 
             local marine = db.bot:GetPlayer()

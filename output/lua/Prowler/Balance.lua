@@ -6,8 +6,8 @@ kProwlerEggCost = 6
 kProwlerGestateTime = 3
 kProwlerPointValue = 10
 kProwlerUpgradeCost = 1
-kProwlerDamagePerPellet = 2 -- if set to 5, it deals as much damage as a skulk
-kBiteHowlDamageType = kDamageType.Structural
+kProwlerDamagePerPellet = 2.5 -- if set to 5, it deals as much damage as a skulk
+kBiteHowlDamageType = kDamageType.Heavy
 
 kHallucinationLifeTime = 5 -- was 30
 

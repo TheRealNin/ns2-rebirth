@@ -93,6 +93,15 @@ function BiteHowl:OnUpdateAnimationInput(modelMixin)
     local activityString = (self.primaryAttacking and "primary") or "none"
     modelMixin:SetAnimationInput("activity", activityString)
     
+    local player = self:GetParent()
+    if player then
+        
+        local viewmodel = player:GetViewModelEntity()
+        if viewmodel  then
+            viewmodel:SetIsVisible(false)
+        end
+    end
+    
 end
 
 function BiteHowl:OnTag(tagName)

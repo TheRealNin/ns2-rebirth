@@ -55,7 +55,7 @@ float2 clamp_tex2D( sampler2D tex, float2 coord )
 
 
 const float4 edgeColorBlue = float4(0.1, 0.8, 1, 0) * 8.0;
-const float4 edgeColorDarkOrange = float4(0.8, 0.2, 0.0, 0) * 6.0;
+const float4 edgeColorDarkOrange = float4(0.5, 0.05, 0.01, 0) * 6.0;
 const float4 edgeColorGreen = float4(0.2, 0.7, 0.00, 0) * 6.0;
 
 const float4 edgeColor2 = float4(1.0, 1.0, 1.0, 0) * 0.25;

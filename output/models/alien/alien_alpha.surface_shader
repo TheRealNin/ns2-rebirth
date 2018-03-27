@@ -72,8 +72,9 @@
 			float3 ssDir = normalize(input.vsPosition);
             float intensity = -dot(ssDir, input.vsNormal);
             intensity = 1.0 - intensity;
-            intensity = intensity * intensity * intensity * intensity * intensity;
-            material.albedo += intensity * 0.6;
+            intensity = intensity * intensity * intensity * intensity * intensity * intensity * intensity;
+            float shine = saturate( specularGloss.a * 20);
+            material.albedo += intensity * 0.25 * shine;
             
 			material.id = 1*highlightId; // To make it show up on alien vision
 			material.outline = outline;

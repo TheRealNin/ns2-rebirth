@@ -14,7 +14,7 @@ Script.Load("lua/CelerityMixin.lua")
 Script.Load("lua/Mixins/CameraHolderMixin.lua")
 --Script.Load("lua/WallMovementMixin.lua")
 Script.Load("lua/DissolveMixin.lua")
-Script.Load("lua/BabblerClingMixin.lua")
+--Script.Load("lua/BabblerClingMixin.lua")
 Script.Load("lua/TunnelUserMixin.lua")
 Script.Load("lua/RailgunTargetMixin.lua")
 Script.Load("lua/IdleMixin.lua")
@@ -38,6 +38,7 @@ Prowler.kArmor  = kProwlerArmor
 
 local kProwlerScale = 1.25
 local kProwlerVertAdjust = 0.05
+local kProwlerForwardAdjust = -0.15
 local kProwlerAttackVertAdjust = 0.25
 local kMass = 60
 local kLeapTime = 0.2
@@ -70,6 +71,7 @@ local networkVars =
     timeOfLastJumpLand = "private compensated time",
     jumpLandSpeed = "private compensated float",
     timeOfLastHowl = "private compensated time",
+    timeLastJumped = "private compensated time"
 }
 
 AddMixinNetworkVars(BaseMoveMixin, networkVars)
@@ -80,7 +82,7 @@ AddMixinNetworkVars(CelerityMixin, networkVars)
 AddMixinNetworkVars(CameraHolderMixin, networkVars)
 --AddMixinNetworkVars( WallMovementMixin, networkVars)
 AddMixinNetworkVars(DissolveMixin, networkVars)
-AddMixinNetworkVars(BabblerClingMixin, networkVars)
+--AddMixinNetworkVars(BabblerClingMixin, networkVars)
 AddMixinNetworkVars(TunnelUserMixin, networkVars)
 AddMixinNetworkVars(IdleMixin, networkVars)
 --AddMixinNetworkVars(SkulkVariantMixin, networkVars)
@@ -101,7 +103,7 @@ function Prowler:OnCreate()
     Alien.OnCreate(self)
 
     InitMixin(self, DissolveMixin)
-    InitMixin(self, BabblerClingMixin)
+    --InitMixin(self, BabblerClingMixin)
     InitMixin(self, TunnelUserMixin)
     
     if Client then
@@ -147,21 +149,50 @@ function Prowler:GetThirdPersonOffset()
   local z = -1.8 - self:GetVelocityLength() / self:GetMaxSpeed(true) * 0.4
   return Vector(0, 0.6, z) 
 end
+
+function Prowler:GetHeartOffset()
+    return Vector(0, 0.6, 0)
+end
+
 function Prowler:GetFirstPersonFov()
   return kProwlerFov
 end
+
 function Prowler:GetStepLength()
     return 0.6
 end
+
 function Prowler:GetAirControl()
     return 47 -- skulk is 27
 end
+
 function Prowler:GetAirAcceleration()
     return 7 -- skulk is 9
 end
+
+function Prowler:GetCollisionSlowdownFraction()
+    return 0.15
+end
+function Prowler:GetGroundTransistionTime()
+    return 0.1
+end
+function Prowler:GetIsSmallTarget()
+    return true
+end
+
+function Prowler:GetGroundFriction()
+    return 11
+end
+
 function Prowler:GetAirFriction()
     return 0.045 - (GetHasCelerityUpgrade(self) and GetSpurLevel(self:GetTeamNumber()) or 0) * 0.004 -- skulk was 0.055 - (GetHasCelerityUpgrade(self) and GetSpurLevel(self:GetTeamNumber()) or 0) * 0.009
 end
+
+local kProwlerEngageOffset = Vector(0, 0.5, 0)
+function Prowler:GetEngagementPointOverride()
+    return self:GetOrigin() + kProwlerEngageOffset
+end
+
 -- we, uh, don't have variants 
 function Prowler:SetVariant()
 end

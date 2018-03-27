@@ -37,7 +37,7 @@ function Blink:GetShadowStepDistance()
     return shadowStepDistance + (player.celeritySpeedScalar or 0) * maxShadowStepBonus
 end
 
-function OldBlinkEndTarget(self)  
+function OldBlinkEndTarget(self)
   local player = self:GetParent()
   
   local lookedAtPoint = player:GetEyePos() + player:GetViewAngles():GetCoords().zAxis * self:GetShadowStepDistance()
@@ -71,6 +71,9 @@ end
 
 function BlinkEndTarget(self)  
   local player = self:GetParent()
+  if not player then
+    return
+  end
   
   local lookedAtPoint = player:GetEyePos() + player:GetViewAngles():GetCoords().zAxis * self:GetShadowStepDistance()
   
@@ -86,8 +89,12 @@ function BlinkEndTarget(self)
   
   local numStarts = 2
   for startStep=0,numStarts,1 do
-    local traceStart = player:GetEyePos() + sphereCenter - startStep * capsuleHeight * 0.5
-    local traceEnd = lookedAtPoint + sphereCenter
+    local traceStart = player:GetEyePos() - startStep * Vector(0,capsuleHeight * 0.5,0)
+    local traceEnd = lookedAtPoint-- + sphereCenter
+    
+    if (traceStart - traceEnd):GetLength() < 0.25 then
+        return OldBlinkEndTarget(self)
+    end
     
     local trace = Shared.TraceCapsule( traceStart, traceEnd, capsuleRadius * 1.0, 0, CollisionRep.Move, PhysicsMask.All, EntityFilterOneAndIsa(player, "Babbler"))
     -- trace is now the furthest point we can see with the mini sphere
@@ -175,8 +182,8 @@ function Blink:OnSecondaryAttack(player)
             
         end
         
-    else
-      player:TriggerInvalidSound()
+    --else
+      --player:TriggerInvalidSound()
     end
     
     Ability.OnSecondaryAttack(self, player)
@@ -233,7 +240,7 @@ function Blink:SetEthereal(player, state)
           self:TriggerEffects("shadow_step", { effecthostcoords = Coords.GetLookIn(player:GetOrigin(),  player:GetViewAngles():GetCoords().zAxis) })
           
           player.startBlinkLocation = player:GetOrigin() 
-          player.startVelocity = player:GetVelocity() 
+          player.startVelocity = Vector(player:GetVelocity().x, math.max(player:GetVelocity().y, 0), player:GetVelocity().z)
           player.endBlinkLocation = BlinkEndTarget(self).origin
           
         elseif player.OnBlinkEnd then

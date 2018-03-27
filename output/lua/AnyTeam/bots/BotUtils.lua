@@ -9,7 +9,7 @@ function GetBotCanSeeTarget(attacker, target)
 
     local p0 = attacker:GetEyePos()
     local p1 = target:GetEngagementPoint()
-    local bias = 0.75 -- allow trace entity to be this much closer and still call a hit
+    local bias = 1.5 -- allow trace entity to be this much closer and still call a hit
 
     local trace = Shared.TraceCapsule( p0, p1, 0.15, 0,
             CollisionRep.Damage, PhysicsMask.Bullets,

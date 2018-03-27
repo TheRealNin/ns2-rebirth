@@ -34,7 +34,8 @@ function Infestation:UpdateInfestables()
     end
     
     local origin = self.coords.origin
-    for _, entity in ipairs(GetEntitiesWithMixinForTeam("InfestationTracker", self.teamNumber, self.coords.origin, biggestRadius)) do
+    -- don't specify team number here since marine buildings take damage from infestation
+    for _, entity in ipairs(GetEntitiesWithMixinWithinRange("InfestationTracker",  self.coords.origin, biggestRadius)) do
     
         local range = (origin - entity:GetOrigin()):GetLength()
         if range >= smallestRadius and range <= biggestRadius then

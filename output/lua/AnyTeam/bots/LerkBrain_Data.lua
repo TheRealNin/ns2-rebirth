@@ -16,6 +16,35 @@ local kUpgrades = {
     kTechId.Adrenaline,
 }
 
+
+------------------------------------------
+--  Handles things like using tunnels, walljumping, leaping etc
+------------------------------------------
+local function PerformMove( alienPos, targetPos, bot, brain, move )
+
+    bot:GetMotion():SetDesiredMoveTarget( targetPos )
+    bot:GetMotion():SetDesiredViewTarget( nil )
+    
+    local player = bot:GetPlayer()
+    
+    local disiredDiff = (targetPos-alienPos)
+    if disiredDiff:GetLengthSquared() > 16 and not player.flapPressed  then
+        if player:GetVelocity():GetLength() / player:GetMaxSpeed() < 0.8 or player:GetIsOnGround() and
+            Math.DotProduct(player:GetVelocity():GetUnit(), disiredDiff:GetUnit()) > 0.2 then
+            if bot.timeOfJump == nil or bot.timeOfJump + .1 < Shared.GetTime() then
+                --Log("jumping to accelerate")
+                move.commands = AddMoveCommand( move.commands, Move.Jump )
+                bot.timeOfJump = Shared.GetTime()
+            end
+        end
+    end
+    if not bot:GetPlayer():GetIsOnGround() and player:GetVelocity():GetLength() / player:GetMaxSpeed() > 0.8 then
+        move.commands = AddMoveCommand( move.commands, Move.Jump ) -- gotta glide
+        --Log("gliding fast")
+    
+    end 
+end
+
 ------------------------------------------
 --  More urgent == should really attack it ASAP
 ------------------------------------------
@@ -130,46 +159,16 @@ local function PerformAttackEntity( eyePos, bestTarget, lastSeenPos, bot, brain,
     local aimPos = sighted and GetBestAimPoint( bestTarget ) or (lastSeenPos + Vector(0,0.5,0))
 
     local doFire = false
-    bot:GetMotion():SetDesiredMoveTarget( aimPos )
+    
+    PerformMove(eyePos, aimPos, bot, brain, move)
     
     local distance = eyePos:GetDistance(aimPos)
     if distance < 35 and bot:GetBotCanSeeTarget( bestTarget ) then
         doFire = true
     end
     
-    
-    -- Occasionally jump
-    if math.random() < 0.1 and bot:GetPlayer():GetIsOnGround() then
-    
-        move.commands = AddMoveCommand( move.commands, Move.Jump )
-
-        -- When approaching, try to jump sideways
-        bot.timeOfJump = Shared.GetTime()
-        bot.jumpOffset = nil
-
-    end 
-    
-    if not bot:GetPlayer():GetIsOnGround() and bot.timeOfJump and bot.timeOfJump + 0.15 < Shared.GetTime() then
-        move.commands = AddMoveCommand( move.commands, Move.Jump )
-    end    
-    
-    if bot.timeOfJump ~= nil and Shared.GetTime() - bot.timeOfJump < 0.3 then
-        
-        if bot.jumpOffset == nil then
-            
-            local botToTarget = GetNormalizedVectorXZ(aimPos - eyePos)
-            local sideVector = botToTarget:CrossProduct(Vector(0, 1, 0))                
-            if math.random() < 0.5 then
-                bot.jumpOffset = botToTarget + sideVector
-            else
-                bot.jumpOffset = botToTarget - sideVector
-            end            
-            bot:GetMotion():SetDesiredViewTarget( bestTarget:GetEngagementPoint() )
-            
-        end
-        
-        bot:GetMotion():SetDesiredMoveDirection( bot.jumpOffset )
-        
+    if doFire and distance < 2 then
+        move.commands = AddMoveCommand( move.commands, Move.PrimaryAttack )
     end
     
     doFire = doFire and bot.aim:UpdateAim(bestTarget, aimPos)
@@ -178,8 +177,6 @@ local function PerformAttackEntity( eyePos, bestTarget, lastSeenPos, bot, brain,
         
         if distance > 2 then
             move.commands = AddMoveCommand( move.commands, Move.SecondaryAttack )
-        else    
-            move.commands = AddMoveCommand( move.commands, Move.PrimaryAttack )
         end
 
         -- Attacking a structure
@@ -203,11 +200,7 @@ local function PerformAttack( eyePos, mem, bot, brain, move )
         PerformAttackEntity( eyePos, target, mem.lastSeenPos, bot, brain, move )
 
     else
-    
-        -- mem is too far to be relevant, so move towards it
-        bot:GetMotion():SetDesiredViewTarget(nil)
-        bot:GetMotion():SetDesiredMoveTarget(mem.lastSeenPos)
-
+        assert(false)
     end
     
     brain.teamBrain:AssignBotToMemory(bot, mem)
@@ -239,43 +232,11 @@ kLerkBrainActions =
     ------------------------------------------
     CreateExploreAction( 0.01, function(pos, targetPos, bot, brain, move)
     
-                if math.random() < 0.1 and bot:GetPlayer():GetIsOnGround() then
+    
+                PerformMove(pos, targetPos, bot, brain, move)
                 
-                    move.commands = AddMoveCommand( move.commands, Move.Jump )
+            end ),
 
-                    -- When approaching, try to jump sideways
-                    bot.timeOfJump = Shared.GetTime()
-                    bot.jumpOffset = nil
-           
-                end 
-    
-                if not bot:GetPlayer():GetIsOnGround() and bot.timeOfJump and bot.timeOfJump + 0.3 < Shared.GetTime() then
-                    move.commands = AddMoveCommand( move.commands, Move.Jump )
-                    
-                    if bot.timeOfJump + 3 > Shared.GetTime() then
-                        bot.timeOfJump = Shared.GetTime()
-                    end    
-                    
-                end 
-    
-                bot:GetMotion():SetDesiredMoveTarget(targetPos)
-                bot:GetMotion():SetDesiredViewTarget(nil)
-                end ),
-
-    function(bot, brain)
-        local weight = 0
-        local player = bot:GetPlayer()
-
-        if player:GetVelocity():GetLength() < 5 and (bot.timeOfJump or 0) + 2 < Shared.GetTime() then
-            weight = 35
-            bot.timeOfJump = Shared.GetTime()
-        end
-
-        return { name = "flap", weight = weight,
-            perform = function(move)
-                move.commands = AddMoveCommand( move.commands, Move.Jump )
-            end }
-    end,
     ------------------------------------------
     --
     ------------------------------------------
@@ -400,7 +361,7 @@ kLerkBrainActions =
         local skulk = bot:GetPlayer()
         local eyePos = skulk:GetEyePos()
 
-        local pheromones = EntityListToTable(Shared.GetEntitiesWithClassname("Pheromone"))            
+        local pheromones = GetEntitiesForTeam( "Pheromone", skulk:GetTeamNumber())        
         local bestPheromoneLocation = nil
         local bestValue = 0
         
@@ -457,8 +418,8 @@ kLerkBrainActions =
 
         return { name = name, weight = weight,
             perform = function(move)
-                bot:GetMotion():SetDesiredMoveTarget(bestPheromoneLocation)
-                bot:GetMotion():SetDesiredViewTarget(nil)
+            
+                PerformMove(eyePos, bestPheromoneLocation, bot, brain, move)
             end }
     end,
 
@@ -492,27 +453,8 @@ kLerkBrainActions =
                             DebugPrint("unknown order type: %s", ToString(order:GetType()) )
                         end
 
-                        bot:GetMotion():SetDesiredMoveTarget( order:GetLocation() )
-                        bot:GetMotion():SetDesiredViewTarget( nil )
+                        PerformMove(skulk:GetEyePos(), order:GetLocation(), bot, brain, move)
                         
-                        if math.random() < 0.1 and bot:GetPlayer():GetIsOnGround() then
-                        
-                            move.commands = AddMoveCommand( move.commands, Move.Jump )
-
-                            -- When approaching, try to jump sideways
-                            bot.timeOfJump = Shared.GetTime()
-                            bot.jumpOffset = nil
-                   
-                        end 
-            
-                        if not bot:GetPlayer():GetIsOnGround() and bot.timeOfJump and bot.timeOfJump + 0.3 < Shared.GetTime() then
-                            move.commands = AddMoveCommand( move.commands, Move.Jump )
-                            
-                            if bot.timeOfJump + 3 > Shared.GetTime() then
-                                bot.timeOfJump = Shared.GetTime()
-                            end    
-                            
-                        end
 
                     end
                 end
@@ -532,7 +474,7 @@ kLerkBrainActions =
         -- If we are pretty close to the hive, stay with it a bit longer to encourage full-healing, etc.
         -- so pretend our situation is more dire than it is
         if hiveDist < 4.0 and healthFraction < 0.9 then
-            healthFraction = healthFraction / 3.0
+            healthFraction = healthFraction / 6.0
         end
 
         local weight = 0.0
@@ -556,8 +498,8 @@ kLerkBrainActions =
 
                     local touchDist = GetDistanceToTouch( player:GetEyePos(), hive )
                     if touchDist > 1.5 then
-                        bot:GetMotion():SetDesiredMoveTarget( hive:GetEngagementPoint() )
-                        bot:GetMotion():SetDesiredViewTarget( nil )
+                    
+                        PerformMove(player:GetEyePos(), hive:GetEngagementPoint(), bot, brain, move)
                     else
                         -- sit and wait to heal
                         bot:GetMotion():SetDesiredViewTarget( hive:GetEngagementPoint() )

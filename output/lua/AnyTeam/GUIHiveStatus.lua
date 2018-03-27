@@ -70,7 +70,13 @@ function GUIHiveStatus:Update( deltaTime )
         local locationId = self.validLocations[locIdx]
         
         if locationId then
-        
+            
+            -- SUPER HACKY OMG
+            local localPlayer = Client.GetLocalPlayer()
+            if localPlayer then
+                self.teamInfoEnt = GetTeamInfoEntity( localPlayer:GetTeamNumber() )
+            end
+            
             if self.teamInfoEnt then
             
                 local slotData = self.teamInfoEnt:GetLocationSlotData( locationId )

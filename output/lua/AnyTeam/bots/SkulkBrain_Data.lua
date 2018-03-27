@@ -17,10 +17,62 @@ local kUpgrades = {
 }
 
 local kEvolutions = {
+-- gorge is bugged as hell
     kTechId.Lerk,
     kTechId.Fade,
     kTechId.Onos
 }
+
+
+
+
+------------------------------------------
+--  Handles things like using tunnels, walljumping, leaping etc
+------------------------------------------
+local function PerformMove( alienPos, targetPos, bot, brain, move )
+
+    bot:GetMotion():SetDesiredMoveTarget( targetPos )
+    bot:GetMotion():SetDesiredViewTarget( nil )
+    
+    local player = bot:GetPlayer()
+    local isSneaking = player.movementModiferState
+    
+    local disiredDiff = (targetPos-alienPos)
+    if not isSneaking and disiredDiff:GetLengthSquared() > 25 and
+        player:GetVelocity():GetLengthXZ() / player:GetMaxSpeed() > 0.9 and
+        Math.DotProduct(player:GetVelocity():GetUnit(), disiredDiff:GetUnit()) > 0.6 then
+        if player.timeOfLastJump == nil or player.timeOfLastJump + .25 > Shared.GetTime() then
+            move.commands = AddMoveCommand( move.commands, Move.Crouch )
+        else
+            move.commands = AddMoveCommand( move.commands, Move.Jump )
+        end
+    end
+    
+    
+    --[[
+    local dist, gate = GetTunnelDistanceForAlien( bot:GetPlayer(), targetPos, brain.lastGateId )
+
+    if gate ~= nil then
+
+        local gatePos = gate:GetOrigin()
+        bot:GetMotion():SetDesiredMoveTarget( gatePos )
+        bot:GetMotion():SetDesiredViewTarget( nil )
+        brain.lastGateId = gate:GetId()
+
+    else
+
+        bot:GetMotion():SetDesiredMoveTarget( targetPos )
+        bot:GetMotion():SetDesiredViewTarget( nil )
+        brain.lastGateId = nil
+        
+        -- do a jump... we're probably stuck
+        if dist < 1.5 and math.abs(marinePos.y - targetPos.y) > 1.0 then
+            move.commands = AddMoveCommand(move.commands, Move.Jump)
+        end
+
+    end
+    ]]--
+end
 
 ------------------------------------------
 --  More urgent == should really attack it ASAP
@@ -114,53 +166,83 @@ local function GetAttackUrgency(bot, mem)
 end
 
 
-local function PerformAttackEntity( eyePos, bestTarget, bot, brain, move )
+local function PerformAttackEntity( eyePos, bestTarget, lastSeenPos, bot, brain, move )
 
     assert( bestTarget )
+    local player = bot:GetPlayer()
 
-    local marinePos = bestTarget:GetOrigin()
-
-    local doFire = false
-    bot:GetMotion():SetDesiredMoveTarget( marinePos )
+    local sighted 
+    if not bestTarget.GetIsSighted then
+        -- Print("attack target has no GetIsSighted: %s", bestTarget:GetClassName() )
+        sighted = true
+    else
+        sighted = bestTarget:GetIsSighted()
+    end
     
-    local distance = eyePos:GetDistance(marinePos)
-    if distance < 2.5 then
+    local aimPos = sighted and GetBestAimPoint( bestTarget ) or (lastSeenPos + Vector(0,0.5,0))
+    local doFire = false
+    
+    local distance = GetDistanceToTouch(eyePos, bestTarget)
+    local time = Shared.GetTime()
+    
+    local targetPos = bestTarget:GetEngagementPoint()
+    local isDodgeable = bestTarget:isa("Player") or bestTarget:isa("Babbler")
+    local hasClearShot = distance < 45.0 and bot:GetBotCanSeeTarget( bestTarget )
+    if hasClearShot then
+        bot.lastFoughtEnemy = time
+    end    
+    
+    if distance < 2.0 then
         doFire = true
     end
+    
+    PerformMove(eyePos, aimPos, bot, brain, move)
                 
     if doFire then
-        local target = bestTarget:GetEngagementPoint()
-
-        if bestTarget:isa("Player") then
-             -- Attacking a player
-             target = target + Vector( math.random(), math.random(), math.random() ) * 0.3
-            if bot:GetPlayer():GetIsOnGround() and bestTarget:isa("Player") then
-                move.commands = AddMoveCommand( move.commands, Move.Jump )
+        
+        player:SetActiveWeapon(BiteLeap.kMapName)    
+        move.commands = AddMoveCommand( move.commands, Move.PrimaryAttack )
+        if isDodgeable then
+             -- Attacking a player or babbler
+            --local viewTarget = aimPos + Vector( math.random(), math.random(), math.random() ) * 0.3
+            
+            if bot.aim then
+                bot.aim:UpdateAim(target, aimPos)
             end
+            
         else
             -- Attacking a structure
-            if GetDistanceToTouch(eyePos, bestTarget) < 1 then
+            if distance < 1 then
                 -- Stop running at the structure when close enough
                 bot:GetMotion():SetDesiredMoveTarget(nil)
+                bot:GetMotion():SetDesiredViewTarget( aimPos )
             end
         end
-
-        bot:GetMotion():SetDesiredViewTarget( target )
-        move.commands = AddMoveCommand( move.commands, Move.PrimaryAttack )
     else
-        bot:GetMotion():SetDesiredViewTarget( nil )
+        if hasClearShot and bot.aim then
+            bot.aim:UpdateAim(target, aimPos)
+            if not bot.lastSeenEnemy then
+                bot.lastSeenEnemy = Shared.GetTime()
+            end
+            if player:GetEnergy() > 60 and bot.lastSeenEnemy + 1 < Shared.GetTime() then
+                player:SetActiveWeapon(Parasite.kMapName, true)
+                move.commands = AddMoveCommand( move.commands, Move.PrimaryAttack )
+            end
+        else
+            bot.lastSeenEnemy = nil
+            local isNotDetected =  not (player:GetIsDetected() or player:GetIsSighted())
+            if isNotDetected and bot.sneakyAbility and distance < 20.0 and distance > 4.0 and isDodgeable and
+                (not bot.lastFoughtEnemy or bot.lastFoughtEnemy + 10 < time) and not sighted then
+                
+                move.commands = AddMoveCommand( move.commands, Move.MovementModifier )
+            end
+            -- uses a gate
+            PerformMove( eyePos, aimPos, bot, brain, move )
 
-        -- Occasionally jump
-        if math.random() < 0.1 and bot:GetPlayer():GetIsOnGround() then
-            move.commands = AddMoveCommand( move.commands, Move.Jump )
-            if distance < 15 then
-                -- When approaching, try to jump sideways
-                bot.timeOfJump = Shared.GetTime()
-                bot.jumpOffset = nil
-            end    
-        end        
+            doFire = false
+        end
     end
-    
+    --[[
     if bot.timeOfJump ~= nil and Shared.GetTime() - bot.timeOfJump < 0.5 then
         
         if bot.jumpOffset == nil then
@@ -178,6 +260,7 @@ local function PerformAttackEntity( eyePos, bestTarget, bot, brain, move )
         
         bot:GetMotion():SetDesiredMoveDirection( bot.jumpOffset )
     end    
+    ]]--
     
 end
 
@@ -189,14 +272,10 @@ local function PerformAttack( eyePos, mem, bot, brain, move )
 
     if target ~= nil then
 
-        PerformAttackEntity( eyePos, target, bot, brain, move )
+        PerformAttackEntity( eyePos, target, mem.lastSeenPos, bot, brain, move )
 
     else
-    
-        -- mem is too far to be relevant, so move towards it
-        bot:GetMotion():SetDesiredViewTarget(nil)
-        bot:GetMotion():SetDesiredMoveTarget(mem.lastSeenPos)
-
+        assert(false)
     end
     
     brain.teamBrain:AssignBotToMemory(bot, mem)
@@ -227,12 +306,11 @@ kSkulkBrainActions =
     --  
     ------------------------------------------
     CreateExploreAction( 0.01, function(pos, targetPos, bot, brain, move)
-                bot:GetMotion():SetDesiredMoveTarget(targetPos)
-                bot:GetMotion():SetDesiredViewTarget(nil)
-                end ),
+            PerformMove(pos, targetPos, bot, brain, move)
+    end ),
     
     ------------------------------------------
-    --  
+    --  Tries to evolve (if not a hallucination)
     ------------------------------------------
     function(bot, brain)
         local name = "evolve"
@@ -240,7 +318,13 @@ kSkulkBrainActions =
         local weight = 0.0
         local player = bot:GetPlayer()
 
-        if not player.isHallucination and not bot.lifeformEvolution then
+        -- Hallucinations don't evolve
+        if player.isHallucination then
+            return { name = name, weight = weight,
+                perform = function() end }
+        end
+
+        if not bot.lifeformEvolution then
             local pick = math.random(1, #kEvolutions)
             bot.lifeformEvolution = kEvolutions[pick]
         end
@@ -251,10 +335,12 @@ kSkulkBrainActions =
         local res = player:GetPersonalResources()
         
         local distanceToNearestThreat = s:Get("nearestThreat").distance
+        local distanceToNearestHive = s:Get("nearestHive").distance
         local desiredUpgrades = {}
         
         if allowedToBuy and
            (distanceToNearestThreat == nil or distanceToNearestThreat > 15) and 
+           (distanceToNearestHive == nil or distanceToNearestHive < 25) and 
            (player.GetIsInCombat == nil or not player:GetIsInCombat()) then
             
             -- Safe enough to try to evolve            
@@ -279,25 +365,28 @@ kSkulkBrainActions =
 
             local evolvingId = kTechId.Skulk
 
-            for i = 1, #avaibleUpgrades do
+            -- Check lifeform
+            local techId = avaibleUpgrades[1]
+            local techNode = player:GetTechTree():GetTechNode(techId)
+            local isAvailable = techNode and techNode:GetAvailable(player, techId, false)
+            local cost = isAvailable and GetCostForTech(techId) or math.huge
+
+            if res >= cost then
+                res = res - cost
+                evolvingId = techId
+                existingUpgrades = {}
+
+                table.insert(desiredUpgrades, techId)
+            end
+
+            -- Check upgrades
+            for i = 2, #avaibleUpgrades do
                 local techId = avaibleUpgrades[i]
                 local techNode = player:GetTechTree():GetTechNode(techId)
-
-                local isAvailable = false
-                local cost = 0
-                if techNode ~= nil then
-                    isAvailable = techNode:GetAvailable(player, techId, false)
-                    if isAvailable then
-                        if LookupTechData(techId, kTechDataGestateName) then
-                            cost = GetCostForTech(techId)
-                            evolvingId = techId
-                        else
-                            cost = LookupTechData(techId, kTechDataUpgradeCost, 0)
-                        end
-                    end
-                end
+                local isAvailable = techNode and techNode:GetAvailable(player, techId, false)
+                local cost = isAvailable and LookupTechData(evolvingId, kTechDataUpgradeCost, 0) or math.huge
                 
-                if not player:GetHasUpgrade(techId) and isAvailable and res - cost > 0 and
+                if res >= cost and not table.icontains(existingUpgrades, techId) and
                         GetIsUpgradeAllowed(player, techId, existingUpgrades) and
                         GetIsUpgradeAllowed(player, techId, desiredUpgrades) then
                     res = res - cost
@@ -316,35 +405,47 @@ kSkulkBrainActions =
             end }
     
     end,
-
+    
     --[[
-    --Save hives under attack
+    -- Save hives under attack
      ]]
     function(bot, brain)
         local skulk = bot:GetPlayer()
         local teamNumber = skulk:GetTeamNumber()
 
-        local hiveUnderAttack
         bot.hiveprotector = bot.hiveprotector or math.random()
-        if bot.hiveprotector > 0.5 then
-            for _, hive in ipairs(GetEntitiesForTeam("Hive", teamNumber)) do
-                if hive:GetHealthScalar() <= 0.4 then
-                    hiveUnderAttack = hive
-                    break
-                end
+
+        local name = "hiveunderattack"
+        if bot.hiveprotector < 0.8 then
+            return { name = name, weight = 0,
+                perform = function() end }
+        end
+
+        local hiveUnderAttack
+        for _, hive in ipairs(GetEntitiesForTeam("Hive", teamNumber)) do
+            if hive:GetIsAlive() and hive:GetHealthScalar() <= 0.9 and 
+                hive:GetTimeOfLastDamage() and hive:GetTimeOfLastDamage() + 10 > Shared.GetTime() then
+                hiveUnderAttack = hive
+                break
             end
         end
 
-        local weight = hiveUnderAttack and 1.1 or 0
-        local name = "hiveunderattack"
+        local hiveOrigin = hiveUnderAttack and hiveUnderAttack:GetOrigin()
+        local botOrigin = skulk:GetOrigin()
+
+        if hiveUnderAttack and botOrigin:GetDistanceSquared( hiveOrigin ) < 50 then
+            hiveUnderAttack = nil
+        end
+
+        local weight = hiveUnderAttack and 1.5 or 0
 
         return { name = name, weight = weight,
             perform = function(move)
-                bot:GetMotion():SetDesiredMoveTarget(hiveUnderAttack and hiveUnderAttack:GetOrigin())
-                bot:GetMotion():SetDesiredViewTarget(nil)
+                PerformMove(botOrigin, hiveOrigin, bot, brain, move)
             end }
 
     end,
+
 
     ------------------------------------------
     --  
@@ -361,7 +462,7 @@ kSkulkBrainActions =
                 end)
         
         local weapon = skulk:GetActiveWeapon()
-        local canAttack = weapon ~= nil and weapon:isa("BiteLeap")
+        local canAttack = weapon ~= nil and (weapon:isa("BiteLeap") or weapon:isa("Parasite"))
 
         local weight = 0.0
 
@@ -401,7 +502,7 @@ kSkulkBrainActions =
         local skulk = bot:GetPlayer()
         local eyePos = skulk:GetEyePos()
 
-        local pheromones = EntityListToTable(Shared.GetEntitiesWithClassname("Pheromone"))            
+        local pheromones = GetEntitiesForTeam( "Pheromone", skulk:GetTeamNumber())
         local bestPheromoneLocation = nil
         local bestValue = 0
         
@@ -458,8 +559,7 @@ kSkulkBrainActions =
 
         return { name = name, weight = weight,
             perform = function(move)
-                bot:GetMotion():SetDesiredMoveTarget(bestPheromoneLocation)
-                bot:GetMotion():SetDesiredViewTarget(nil)
+                PerformMove(pos, bestPheromoneLocation, bot, brain, move)
             end }
     end,
 
@@ -474,7 +574,7 @@ kSkulkBrainActions =
 
         local weight = 0.0
         if order ~= nil then
-            weight = 10.0
+            weight = 3.0
         end
 
         return { name = name, weight = weight,
@@ -485,7 +585,7 @@ kSkulkBrainActions =
 
                     if target ~= nil and order:GetType() == kTechId.Attack then
 
-                        PerformAttackEntity( skulk:GetEyePos(), target, bot, brain, move )
+                        PerformAttackEntity( skulk:GetEyePos(), target, order:GetLocation(), bot, brain, move )
                         
                     else
 
@@ -493,8 +593,7 @@ kSkulkBrainActions =
                             DebugPrint("unknown order type: %s", ToString(order:GetType()) )
                         end
 
-                        bot:GetMotion():SetDesiredMoveTarget( order:GetLocation() )
-                        bot:GetMotion():SetDesiredViewTarget( nil )
+                        PerformMove(pos, order:GetLocation(), bot, brain, move)
 
                     end
                 end
@@ -529,6 +628,22 @@ function CreateSkulkBrainSenses()
                 end)                
         end)
 
+    s:Add("nearestHive", function(db)
+
+            local skulk = db.bot:GetPlayer()
+            local skulkPos = skulk:GetOrigin()
+            local hives = GetEntitiesForTeam( "Hive", skulk:GetTeamNumber() )
+
+            local dist, hive = GetMinTableEntry( hives,
+                function(hive)
+                    if hive:GetIsBuilt() then
+                        return skulkPos:GetDistance( hive:GetOrigin() )
+                    end
+                end)
+
+            return {entity = hive, distance = dist}
+            end)
+            
     s:Add("nearestThreat", function(db)
             local allThreats = db:Get("allThreats")
             local player = db.bot:GetPlayer()

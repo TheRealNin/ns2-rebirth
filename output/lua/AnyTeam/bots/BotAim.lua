@@ -40,7 +40,7 @@ function BotAim:UpdateAim(target, targetAimPoint)
 end
 
 function BotAim:GetReactionTime()
-    local reducedReaction = self.owner.aimAbility * 0.2
+    local reducedReaction = self.owner.aimAbility * 0.1
     return BotAim.reactionTime - reducedReaction
 end
 

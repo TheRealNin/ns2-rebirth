@@ -29,6 +29,7 @@ function EquipmentOutline_UpdateModel(forEntity)
             break
         end
     end
+    
     -- Update the visibility status.
     if model and visible ~= model.equipmentVisible then    
     

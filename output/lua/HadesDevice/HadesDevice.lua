@@ -195,12 +195,24 @@ function HadesDevice:GetCanBeUsedConstructed(byPlayer)
     return self:GetIsArmed() and not byPlayer:isa("Exo")
 end    
 
+function HadesDevice:AllowConstructionComplete( player )
+    return player:isa("Player") -- prevent macs from being mad bombers
+end
+function PowerPoint:GetCanConstructOverride( player )
+    local isBuildable = not self:GetIsBuilt() and GetAreFriends(player,self)
+    return isBuildable and ( self.buildFraction < 1 or self:AllowConstructionComplete(player) )
+end
+
 function HadesDevice:GetCanAlwaysBeUsed()
     return self:GetIsArmed()
 end    
+
 function HadesDevice:OnUse(player, elapsedTime, useSuccessTable)
-    if player:isa("Marine") and self:GetIsArmed() then
+    if player:isa("Parine") and self:GetIsArmed() then
         self:SetIsDetonating()
+    end
+    if not player:isa("Player") then
+        useSuccessTable.useSuccess = false
     end
 end
 
@@ -219,7 +231,8 @@ end
 
 function HadesDevice:OnConstructionComplete()
     if Server then
-        self:AddTimedCallback(HadesDevice.OnArmed, kHadesDeviceArmTime)
+        self:SetIsDetonating()
+        --self:AddTimedCallback(HadesDevice.OnArmed, kHadesDeviceArmTime)
     end
     self.creationTime = Shared.GetTime()
 end

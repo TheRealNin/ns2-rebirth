@@ -3,9 +3,9 @@
 -- alien changes
 kHydraCost = 0.5
 kHydraBuildTime = 1.5
-kHydraDamage = 2.5  -- was 15 -- From NS1
+kHydraDamage = 3.0  -- was 15 -- From NS1
 
-kLerkBiteDamage = 30 -- was 60
+kLerkBiteDamage = 50 -- was 60
 kBitePoisonDamage = 12 -- was 6 -- per second
 kPoisonBiteDuration = 6
 
@@ -37,6 +37,10 @@ kMinigunDamageFalloffFraction = 0.6
 
 kClusterGrenadeDamage = 55 * 1.4
 kClusterFragmentDamage = 20 * 1.4
+
+
+kRoboticsFactoryCost = 5 -- was 10
+kUpgradeRoboticsFactoryCost = 10 -- was 5
 
 
 --kRailgunDamageType = kDamageType.Normal -- was kDamageType.Structural

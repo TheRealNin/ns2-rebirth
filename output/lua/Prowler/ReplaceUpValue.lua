@@ -74,5 +74,5 @@ function ReplaceUpValue( func, localname, newval, options )
 	end
 
 	debug.setupvalue( func, i, newval )
-end;
+end
 

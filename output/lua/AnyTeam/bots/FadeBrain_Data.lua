@@ -467,20 +467,6 @@ kFadeBrainActions =
         local weight = 0
         local player = bot:GetPlayer()
 
-        if player:GetVelocity():GetLength() < 8 and player:GetEnergy() > 60 then
-            weight = 35
-        end
-
-        return { name = "bink", weight = weight,
-            perform = function(move)
-                move.commands = AddMoveCommand( move.commands, Move.SecondaryAttack )
-            end }
-    end,
-
-    function(bot, brain)
-        local weight = 0
-        local player = bot:GetPlayer()
-
         if player:GetEnergy() < 30 and (bot.timeOfMeta or 0) < Shared.GetTime() then
             weight = 35
             bot.timeOfMeta = Shared.GetTime() + kMetabolizeDelay

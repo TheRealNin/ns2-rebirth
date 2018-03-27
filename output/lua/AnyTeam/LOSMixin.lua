@@ -42,13 +42,13 @@ local function UpdateLOS(self)
     
     if self.sighted then
         mask = bit.bor(mask, kRelevantToTeam1Commander, kRelevantToTeam2Commander)
-    elseif self:GetTeamNumber() == 1 then
+    elseif self:GetTeamNumber() == kTeam2Index then
         mask = bit.bor(mask, kRelevantToTeam1Commander)
-    elseif self:GetTeamNumber() == 2 then
+    elseif self:GetTeamNumber() == kTeam1Index then
         mask = bit.bor(mask, kRelevantToTeam2Commander)
     end
     if self:GetTeamNumber() == kNeutralTeamNumber then -- powerpoint
-        mask = bit.bor(mask, kRelevantToTeam1Commander, kRelevantToTeam2Commander)
+        mask = bit.bor(kRelevantToTeam1Unit, kRelevantToTeam2Unit, kRelevantToReadyRoom, kRelevantToTeam2Commander, kRelevantToTeam1Commander)
     end
 
     self:SetExcludeRelevancyMask(mask)
@@ -179,11 +179,23 @@ if Server then
         for e = 1, #entities do
         
             local otherEntity = entities[e]
+        
+            if otherEntity:isa("PowerPoint") then
+                Log("We are checking the powerPoint")
+            end
             
             if not otherEntity.sighted then
             
                 -- Only check sight for enemy entities.
-                local areEnemies = not GetAreFriends(otherEntity, self)
+                -- NOTE: Neutral entities are enemies to non-neutral entities
+                local areEnemies = GetAreEnemies(otherEntity, self)
+                if otherEntity:isa("PowerPoint") then
+                    if areEnemies then
+                        Log("We are enemies to the powerPoint")
+                    else
+                        Log("We are NOT enemies to the powerPoint")
+                    end
+                end
                 if areEnemies and GetCanSee(self, otherEntity) then
                     otherEntity:SetIsSighted(true, self)
                 end

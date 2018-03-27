@@ -22,6 +22,7 @@ cp -R ../FasterHMGReload/output/* $dest
 cp -R ../SgShine/output/* $dest
 cp -R ../CrouchClip/output/* $dest
 cp -R ../WeaponSwitch/output/* $dest
+cp -R ../RebirthChangelog/output/* $dest
 
 # finally, call this mod rebirth
 cp game_setup.xml $dest

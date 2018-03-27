@@ -71,6 +71,8 @@ ModLoader.SetupFileHook( "lua/ServerAdminCommands.lua", "lua/AnyTeam/ServerAdmin
 ModLoader.SetupFileHook( "lua/AlienTeamInfo.lua", "lua/AnyTeam/AlienTeamInfo.lua", "post" )
 ModLoader.SetupFileHook( "lua/GUISensorBlips.lua", "lua/AnyTeam/GUISensorBlips.lua", "post" )
 ModLoader.SetupFileHook( "lua/Armory.lua", "lua/AnyTeam/Armory.lua", "post" )
+ModLoader.SetupFileHook( "lua/CommandStation.lua", "lua/AnyTeam/CommandStation.lua", "post" )
+ModLoader.SetupFileHook( "lua/Extractor.lua", "lua/AnyTeam/Extractor.lua", "post" )
 ModLoader.SetupFileHook( "lua/ARC.lua", "lua/AnyTeam/ARC.lua", "post" )
 ModLoader.SetupFileHook( "lua/Observatory.lua", "lua/AnyTeam/Observatory.lua", "post" )
 ModLoader.SetupFileHook( "lua/Onos.lua", "lua/AnyTeam/Onos.lua", "post" )
