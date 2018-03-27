@@ -379,8 +379,9 @@ kMarineComBrainActions =
                             scanTarget = target
                         end
                     end
+                elseif time - alert.time > 5 then
+                    table.remove(alertqueue, i)
                 end
-
             end
             
             com:SetAlertQueue(alertqueue)

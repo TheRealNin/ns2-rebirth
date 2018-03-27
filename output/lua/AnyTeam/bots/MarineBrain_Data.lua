@@ -389,7 +389,7 @@ local function PerformWeld(marine, target, bot, brain, move)
     if not hasClearShot then
         -- cannot see it yet - keep moving
         PerformMove( marine:GetOrigin(), usePos, bot, brain, move )
-    elseif dist < 1.9 and wasWelded then
+    elseif dist < 2.3 and wasWelded then
         -- close enough to just PrimaryAttack
         bot:GetMotion():SetDesiredViewTarget( target:GetEngagementPoint() )
         bot:GetMotion():SetDesiredMoveTarget( nil )
@@ -695,7 +695,7 @@ kMarineBrainActions =
         if not sdb:Get("welder") and
             (brain.wantsWelder or 
              (weldTarget and armory and 
-              weldDist < 10 and armoryDist < 20 and 
+              weldDist + armoryDist < 30 and 
               resources >= LookupTechData(kTechId.Welder, kTechDataCostKey)) 
             ) then
             

@@ -46,8 +46,16 @@ local function PerformMove( alienPos, targetPos, bot, brain, move )
         else
             move.commands = AddMoveCommand( move.commands, Move.Jump )
         end
+        
     end
+    if not isSneaking and disiredDiff:GetLengthSquared() > 9 and
+        Math.DotProduct(player:GetVelocity():GetUnit(), disiredDiff:GetUnit()) > 0.6 then
     
+        -- leap, maybe?
+        if player:GetEnergy() > 85 then
+            move.commands = AddMoveCommand( move.commands, Move.SecondaryAttack )
+        end
+    end
     
     --[[
     local dist, gate = GetTunnelDistanceForAlien( bot:GetPlayer(), targetPos, brain.lastGateId )
