@@ -19,6 +19,8 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * Bot fixes and improvements
 * Prowler ragdoll fixed!
 * Prowler health increased slightly
+* Machine gun is now more accurate when firing on the ground, but far less accurate in the air.
+* Machine gun ground movespeed when firing slowed dramatically
 
 ## Alien-specific changes
 * Skulks take an extra 30% less melee damage from aliens. (At biomass 1, it takes 1 parasite and 2 bites to kill a skulk. At biomass 2, it takes 2 parasites and 2 bites.)
@@ -102,7 +104,8 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * If you spot an enemy building, it will stay on your minimap until it is destroyed
 
 ### Machine Gun Rebalance
-* Machine guns now reloads twice as fast, but firing it lowers your move speed by 20%. All other values remain the same as vanilla.
+* Machine guns now reloads twice as fast, but firing it lowers your move speed by 50%.
+* Machine gun is now more accurate when firing on the ground, but far less accurate in the air.
 
 ### Crouch Fix
 * Players can no longer crouch to clip into ceilings and vents.
