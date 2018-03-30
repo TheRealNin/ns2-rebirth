@@ -17,6 +17,8 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 ### March 30
 * Sentries now require power and are limited to 2 per room.
 * Bot fixes and improvements
+* Prowler ragdoll fixed!
+* Prowler health increased slightly
 
 ## Alien-specific changes
 * Skulks take an extra 30% less melee damage from aliens. (At biomass 1, it takes 1 parasite and 2 bites to kill a skulk. At biomass 2, it takes 2 parasites and 2 bites.)
@@ -29,8 +31,8 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * Alien vision needed to be re-written so that players can differenciate between friend and foe. Your enemies are always orange, and your team is always blue.
 * Lerk bite damage decreased to 50 (was 60). Poison damage has been doubled (12/s up from 6/s)
 * New alien class: Prowler. 
-* * Same HP as the skulk, and moves roughly the same but cannot climb on walls
-* * Repeatedly jumping (or bunny-hopping) can gain high speed
+* * Slightly more HP than the skulk, and moves roughly the same but cannot climb on walls
+* * Repeatedly jumping (or bunny-hopping) forward can let the player gain high speed
 * * Takes over all drifter abilities for free, on a short cooldown simply by right-clicking
 * * Primary fire is very low damage (maximum 30 structural damage) but has range
 * Fades have been reworked to be the Wraith Fade
