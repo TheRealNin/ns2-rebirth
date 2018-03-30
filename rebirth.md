@@ -4,17 +4,6 @@ title: Nin's NS2:Rebirth
 Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on the bottom of this window.
 ## Latest Changes
 
-### March 24
-* Hades device cost reduced to 5 (from 10)
-* Robotics Factory cost reduced to 5 (from 10). ARC Factory increased to 10 (from 5).
-* Fade teleport energy cost increased to 17% (from 14%).
-* Hydra damage increased from 2 damage per hit to 3.
-* Major bot code upgrades for skulks and lerks
-* Fixed some bugs to do with bot view angles jerking around
-* Outlines added to marine vision for powernodes
-* Alien vision and outlines changed to red (from orange). This should make it easier to pick out enemies.
-* Fixed some bugs with auto-evolve
-
 ## Rebirth Mod Summary
 * Each commander may choose their teams race (Marine or Alien)
 * All friendly structures, players, and equipment have a blue outline. Enemies have no outlines.
@@ -25,6 +14,9 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * Aliens have a new playable class: Prowler
 * Marines have new shield tech and healing fields
 
+### March 30
+* Sentries now require power and are limited to 2 per room.
+* Bot fixes and improvements
 
 ## Alien-specific changes
 * Skulks take an extra 30% less melee damage from aliens. (At biomass 1, it takes 1 parasite and 2 bites to kill a skulk. At biomass 2, it takes 2 parasites and 2 bites.)
@@ -75,8 +67,9 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * Scans and building blueprints are coloured orange if they are the enemy's.
 * Scanned players are tracked with a circle that stays on and doesn't flicker (NS2+ cheat has been disabled)
 * Marines can always see power node status. This can reveal your enemy's starting location (or race)
-* Sentries no longer require a sentry battery. Batteries can no longer be constructed.
+* Sentries no longer require a sentry battery, but now require power. Batteries can no longer be constructed. Max of 2 sentries per room.
 * Significant bot intelligence improvements
+* Robotics Factory cost reduced to 5 (from 10). ARC Factory increased to 10 (from 5).
 
 ## Extra Mods
 ### Healing field
@@ -95,7 +88,7 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 
 ### Hades Device
 * Blueprint placed by commander
-* Costs 10 res, can only be armed by a marine (not a MAC)
+* Costs 5 res, can only be armed by a marine (not a MAC)
 * Detonates after 25 seconds, and does massive damage to all units in a radius (including allies)
 * Only damages things within line of sight!
 
