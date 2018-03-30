@@ -2,8 +2,6 @@
 title: Nin's NS2:Rebirth
 ---
 Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on the bottom of this window.
-## Latest Changes
-
 ## Rebirth Mod Summary
 * Each commander may choose their teams race (Marine or Alien)
 * All friendly structures, players, and equipment have a blue outline. Enemies have no outlines.
@@ -13,6 +11,8 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * Unused rooms will start with powernodes destroyed
 * Aliens have a new playable class: Prowler
 * Marines have new shield tech and healing fields
+
+## Latest Changes
 
 ### March 30
 * Sentries now require power and are limited to 2 per room.
