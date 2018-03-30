@@ -2,7 +2,8 @@
 title: Nin's NS2:Rebirth
 ---
 Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on the bottom of this window.
-## Rebirth Mod Summary
+
+## Summary
 * Each commander may choose their teams race (Marine or Alien)
 * All friendly structures, players, and equipment have a blue outline. Enemies have no outlines.
 * All marine to marine damage is increased by 33%
