@@ -34,10 +34,11 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * Alien vision needed to be re-written so that players can differenciate between friend and foe. Your enemies are always orange, and your team is always blue.
 * Lerk bite damage decreased to 50 (was 60). Poison damage has been doubled (12/s up from 6/s)
 * New alien class: Prowler. 
-* * Slightly more HP than the skulk, and moves roughly the same but cannot climb on walls
+* * More HP than the skulk but less than the lerk, and moves roughly the same but cannot climb on walls
 * * Repeatedly jumping (or bunny-hopping) forward can let the player gain high speed
+* * Aiming up and holding forward allows for higher jumps
 * * Takes over all drifter abilities for free, on a short cooldown simply by right-clicking
-* * Primary fire is very low damage (maximum 30 structural damage) but has range
+* * Primary fire is very low damage (maximum 30 normal) but has range
 * Fades have been reworked to be the Wraith Fade
 * * Blink has been replaced with Teleport: Hold right-click to preview where you will go, then let go to teleport there nearly instantly
 * * Metabolize is now Backtrack: Press Shift to teleport to where you were 4 seconds ago after a short delay. Has a 12 second cooldown.
