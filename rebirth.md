@@ -15,13 +15,10 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 
 ## Latest Changes
 
-### March 30
-* Sentries now require power and are limited to 2 per room.
-* Bot fixes and improvements
-* Prowler ragdoll fixed!
-* Prowler health increased slightly
-* Machine gun is now more accurate when firing on the ground, but far less accurate in the air.
-* Machine gun ground movespeed when firing slowed dramatically
+### April 8
+* Shader fixes and performance improvements
+* Some fixes for spectator mode. Please keep sending in bugs using the report button below!
+* Acid rocket has moved to biomass 6 (was biomass 7)
 
 ## Alien-specific changes
 * Skulks take an extra 30% less melee damage from aliens. (At biomass 1, it takes 1 parasite and 2 bites to kill a skulk. At biomass 2, it takes 2 parasites and 2 bites.)
