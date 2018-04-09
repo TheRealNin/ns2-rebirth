@@ -40,7 +40,7 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * * Blink has been replaced with Teleport: Hold right-click to preview where you will go, then let go to teleport there nearly instantly
 * * Metabolize is now Backtrack: Press Shift to teleport to where you were 4 seconds ago after a short delay. Has a 12 second cooldown.
 * * Advanced Metabolize is now Shadow Dance: You will automatically regenerate health when you are not visible to your enemies.
-* * Stab is now Acid Rocket: A 55 structural damage projectile with a small AOE. 
+* * Stab is now Acid Rocket: A 55 structural damage projectile with a small AOE. Requires biomass 6 (not 7, like stab)
 * Whips now have knockback.
 * Gorge Hydras have been reworked. They now autobuild, cost 1 res, have very little health, but attack very quickly.
 * Gorge Webs now prevent lerks from gliding or flapping for 4 seconds. If this happens to you, it will be the longest 4 seconds of your life.
