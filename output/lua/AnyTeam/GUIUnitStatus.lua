@@ -560,7 +560,7 @@ function GUIUnitStatus:UpdateUnitStatusBlip( blipIndex, localPlayerIsCommander, 
         
         if true then
             local percentage = blipData.IsPlayer and blipData.ArmorFraction or (blipData.HealthFraction + blipData.ArmorFraction)/2
-            color = (percentage < 0.5 and LerpColor(kRed, kYellow, percentage*2)) or (percentage >= 0.5 and LerpColor(kYellow, kWhite, (percentage-0.5)*2))
+            color = (percentage < 0.5 and LerpColor(kYellow, kWhite, percentage*2)) or (percentage >= 0.5 and LerpColor(kWhite, kGreen, (percentage-0.5)*2))
         else 
             if blipData.Status == kUnitStatus.Unrepaired then
                 color = kYellow

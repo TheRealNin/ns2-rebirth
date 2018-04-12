@@ -1,4 +1,6 @@
 
+local aimRandomness = 0.0001
+
 -- from http://stackoverflow.com/questions/10768142/verify-if-point-is-inside-a-cone-in-3d-space
 local function IsPointInCone(point, cone_origin, cone_dir, angle)
     
@@ -25,13 +27,15 @@ local function IsPointInCone(point, cone_origin, cone_dir, angle)
 end
 
 BotAim.viewAngle = math.rad(47)
-BotAim.reactionTime = 0.4 -- was 0.3
+BotAim.reactionTime = 0.3 -- was 0.3
 
 function BotAim:UpdateAim(target, targetAimPoint)
     PROFILE("BotAim:UpdateAim")
     local player = self.owner:GetPlayer()
-    if player and IsPointInCone(targetAimPoint, player:GetEngagementPoint(), player:GetCoords().zAxis, BotAim.viewAngle) then
-        return BotAim_UpdateAim(self, target, targetAimPoint)
+    if player and IsPointInCone(targetAimPoint, player:GetEyePos(), player:GetCoords().zAxis, BotAim.viewAngle) then
+        local newAim = BotAim_UpdateAim(self, target, targetAimPoint)
+        
+        return newAim
     else
         -- try to view the target anyways, even though we can't directly see it
         self.owner:GetMotion():SetDesiredViewTarget( targetAimPoint )
@@ -56,7 +60,7 @@ function BotAim_GetAimPoint(self, now, aimPoint)
         local p1, t1, target1 = targetData1[1], targetData1[2], targetData1[3]
         local p2, t2, target2 = targetData2[1], targetData2[2], targetData2[3]
                
-        if target1 ~= target2 or now - t1 > self:GetReactionTime() + 0.1 or now - t2 > self:GetReactionTime()then
+        if target1 ~= target2 or now - t1 > self:GetReactionTime() + 0.5 or now - t2 > self:GetReactionTime()then
             -- t1 can't be used to shot on t2 due to different target
             -- OR t1 is uselessly old 
             -- OR we can use 2 because t2 is > reaction time
@@ -71,16 +75,19 @@ function BotAim_GetAimPoint(self, now, aimPoint)
                     local speed = movementVector:GetLength()
                     local result = p1 + movementVector * (dt)
                     local delta = result - aimPoint
+                    
+                    local d = delta:GetLength() * aimRandomness
+                    local randPoint = Vector(math.random() * d - d*0.5,math.random() *  d - d*0.5,math.random() *  d - d*0.5)
                     if gBotDebug:Get("aim") then
                         Log("%s: Aiming at %s, off by %s, speed %s (%s tracks)", self.owner, target1, delta:GetLength(), speed, #self.targetTrack)
                     end
-                    return result
+                    return result + randPoint
                 end
             end
             if gBotDebug:Get("aim") and gBotDebug:Get("spam") then
                 Log("%s: waiting for reaction time", self.owner)
             end
-            return null
+            return nil
         end
     end
     if gBotDebug:Get("aim") and gBotDebug:Get("spam") then

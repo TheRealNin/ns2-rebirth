@@ -77,11 +77,6 @@ function Armory:GetShouldResupplyPlayer(player)
         return false
     end
     
-    local isVortexed = self:GetIsVortexed() or ( HasMixin(player, "VortexAble") and player:GetIsVortexed() )
-    if isVortexed then
-        return false
-    end    
-    
     local stunned = HasMixin(player, "Stun") and player:GetIsStunned()
     
     if stunned then

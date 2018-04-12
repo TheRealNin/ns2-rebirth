@@ -193,7 +193,7 @@ function OrdersMixin:GiveOrder(orderType, targetId, targetOrigin, orientation, c
 
     ASSERT(type(orderType) == "number")
     
-    if GetIsVortexed(self) or self.ignoreOrders or OrderTargetInvalid(self, targetId) or ( #self.orders > OrdersMixin.kMaxOrdersPerUnit or (self.timeLastOrder and self.timeLastOrder + OrdersMixin.kOrderDelay > Shared.GetTime()) )  then
+    if self.ignoreOrders or OrderTargetInvalid(self, targetId) or ( #self.orders > OrdersMixin.kMaxOrdersPerUnit or (self.timeLastOrder and self.timeLastOrder + OrdersMixin.kOrderDelay > Shared.GetTime()) )  then
         return kTechId.None
     end
     

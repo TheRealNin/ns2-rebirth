@@ -9,10 +9,12 @@ function PlayerBrain:Update(bot, move)
         Log("PlayerBrain:Update")
     end
 
+    
     if not bot:GetPlayer():isa( self:GetExpectedPlayerClass() )
-    or bot:GetPlayer():GetTeamNumber() <= 0 then
-        Log("WARNING: Bot isn't on the right team OR the right player class. Deleting brain.")
+        or bot:GetPlayer():GetTeamNumber() <= 0 then
+        -- Log("WARNING: Bot isn't on the right team OR the correct player class. Deleting brain.")
         bot.brain = nil
+        bot:GetPlayer().botBrain = nil
         return false
     end
 
@@ -62,7 +64,7 @@ function PlayerBrain:Update(bot, move)
     end
 
     if bestAction ~= nil then
-        --Log(bestAction.name)
+        -- Log(bestAction.name)
         if self.debug then
             DebugPrint("-- chose action: " .. bestAction.name)
         end

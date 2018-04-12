@@ -57,7 +57,7 @@ if Client then
         
         local blipTeam = self:GetMapBlipTeam(minimap)
         
-        if self.spotted and 
+        if self.spotted and not minimap.spectating and 
            ((not kAnyTeamEnabled and not self.OnSameMinimapBlipTeam(minimap.playerTeam, blipTeam)) or
             (kAnyTeamEnabled and not IsAnyTeamFriendly(blipTeam))) then
             self.currentMapBlipColor =  Color(spottedColor.r, spottedColor.g, spottedColor.b, self.currentMapBlipColor.a)

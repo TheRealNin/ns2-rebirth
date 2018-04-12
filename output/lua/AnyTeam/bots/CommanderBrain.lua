@@ -1,3 +1,9 @@
+
+-- this is a hack to make sure that commander brains are not removed
+function CommanderBrain:GetExpectedPlayerClass()
+    return "Player"
+end
+
 ------------------------
 --  This enumerates EVERYTHING that the commander can do right now - EVERYTHING
 --  The result is a hash table with techId as keys and an array of units as values. These are the units that you can perform the tech on (it may just be com)

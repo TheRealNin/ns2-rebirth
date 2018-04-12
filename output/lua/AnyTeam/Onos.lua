@@ -1,8 +1,8 @@
 
 local kOnosGoreModifier = 2.0
 
-local kBlockDoers =
-{
+Onos.kBlockDoers =
+set {
     "Minigun",
     "Pistol",
     "Rifle",
@@ -26,68 +26,32 @@ local kBlockDoers =
     "Whip"
 }
 
-
-
-local function GetHitsBoneShield(self, doer, hitPoint)
-
-    if table.icontains(kBlockDoers, doer:GetClassName()) then
-    
-        local viewDirection = GetNormalizedVectorXZ( self:GetViewCoords().zAxis )
-        local zPosition = viewDirection:DotProduct( GetNormalizedVector( hitPoint - self:GetOrigin() ) )
-        return zPosition >= 0.34 --approx 115 degree cone of Onos facing
-    
-    end
-    
-    return false
-
-end
-
-ReplaceUpValue( Onos.ModifyDamageTaken, "GetHitsBoneShield", GetHitsBoneShield, { LocateRecurse = true; CopyUpValues = true; } )
-
-
-
-local function CanBeStampeded(onos, ent)
-    
-    if ent.nextStampede and Shared.GetTime() < ent.nextStampede then
-        return false
-    end
-    
-    if not GetAreEnemies(onos, ent) then
-        return false
-    end
-    
-    return true
-end
-
-local kChargeExtents = Vector(1, 1.2, 1.2)
-local kStampedeCheckRadius = kChargeExtents:GetLength() + 1.5
 local function GetNearbyStampedeables(onos, origin)
-    local marines = GetEntitiesWithinRange("Marine", origin, kStampedeCheckRadius)
-    local exos = GetEntitiesWithinRange("Exo", origin, kStampedeCheckRadius)
-    local aliens = GetEntitiesForTeamWithinRange("Alien", GetEnemyTeamNumber(onos:GetTeamNumber()), origin, kStampedeCheckRadius)
+    local marines = GetEntitiesWithinRange("Marine", origin, Onos.kStampedeCheckRadius)
+    local exos = GetEntitiesWithinRange("Exo", origin, Onos.kStampedeCheckRadius)
+    local aliens = GetEntitiesForTeamWithinRange("Alien", GetEnemyTeamNumber(onos:GetTeamNumber()), origin, Onos.kStampedeCheckRadius)
     local all = {}
-    for i=1, #marines do
-        if CanBeStampeded(onos, marines[i]) then
-            table.insert(all, marines[i])
+    for i = 1, #marines do
+        if self:CanBeStampeded(marines[i]) then
+            table.insert(both, marines[i])
         end
     end
-    for i=1, #exos do
-        if CanBeStampeded(onos, exos[i]) then
-            table.insert(all, exos[i])
+
+    for i = 1, #exos do
+        if self:CanBeStampeded(exos[i]) then
+            table.insert(both, exos[i])
         end
     end
-    for i=1, #aliens do
-        if CanBeStampeded(onos, aliens[i]) then
-            table.insert(all, aliens[i])
+
+    for i = 1, #aliens do
+        if self:CanBeStampeded(aliens[i]) then
+            table.insert(both, aliens[i])
         end
     end
+
+
     return all
 end
-
-ReplaceUpValue( Onos.PreUpdateMove, "GetNearbyStampedeables", GetNearbyStampedeables, { LocateRecurse = true; CopyUpValues = true; } )
-
-
-
 
 local kOnosModifier = {}
 kOnosModifier["Gore"] = kOnosGoreModifier

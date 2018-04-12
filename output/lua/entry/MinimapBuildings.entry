@@ -1,4 +1,4 @@
 modEntry = {
 FileHooks = "lua/MinimapBuildings/FileHooks.lua",
-Priority = 30
+Priority = 5
 }

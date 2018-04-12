@@ -90,7 +90,7 @@ local function ConstructTargetEntry(origin, hitEntity, damage, radius, ignoreLos
 
     local entry = {}
     
-    if not hitEntity or not hitEntity:GetCanTakeDamage() or GetIsVortexed(hitEntity) then
+    if not hitEntity or not hitEntity:GetCanTakeDamage() then
         return nil
     end    
 

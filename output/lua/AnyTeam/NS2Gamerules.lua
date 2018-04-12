@@ -388,13 +388,19 @@ if Server then
     -- No enforced balanced teams on join as the auto team balance system balances teams.
     function NS2Gamerules:GetCanJoinTeamNumber(player, teamNumber)
 
+            
+        if player:isa("Commander") then
+            return true
+        end
+        
         local forceEvenTeams = Server.GetConfigSetting("force_even_teams_on_join")
         if forceEvenTeams then
 
             local team1Players, _, team1Bots = self.team1:GetNumPlayers()
             local team2Players, _, team2Bots = self.team2:GetNumPlayers()
-            --Log("player.botBrain: %s", player.botBrain)
-            if not player.botBrain then
+            --Log("player.is_a_robot: %s", player.is_a_robot)
+            
+            if not player.is_a_robot then
               team1Players = team1Players - team1Bots
               team2Players = team2Players - team2Bots
             end

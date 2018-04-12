@@ -1,5 +1,5 @@
 
-kFadeTeleportEnergyCost = 17 -- was 22
+kFadeTeleportEnergyCost = 20 -- was 22, and was 17 before shadow dance added energy
 
 kMetabolizeEnergyCost = 35 -- was 25
 

@@ -15,6 +15,7 @@ ModLoader.SetupFileHook( "lua/TechTreeConstants.lua", "lua/Prowler/TechTreeConst
 ModLoader.SetupFileHook( "lua/PlayerHallucinationMixin.lua", "lua/Prowler/PlayerHallucinationMixin.lua", "post" )
 ModLoader.SetupFileHook( "lua/Alien.lua", "lua/Prowler/Alien.lua", "post" )
 ModLoader.SetupFileHook( "lua/PlayerEffects.lua", "lua/Prowler/PlayerEffects.lua", "post" )
+ModLoader.SetupFileHook( "lua/DamageTypes.lua", "lua/Prowler/DamageTypes.lua", "post" )
 
 -- TODO: fix this properly
 ModLoader.SetupFileHook( "lua/Hallucination.lua", "lua/Prowler/Hallucination.lua", "replace" )

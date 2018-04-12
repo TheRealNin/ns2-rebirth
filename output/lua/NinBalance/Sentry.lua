@@ -1,7 +1,17 @@
 Sentry.kTargetScanDelay = 1.5
 
+Script.Load("lua/PowerConsumerMixin.lua")
+
 local kAttackSoundName = PrecacheAsset("sound/NS2.fev/marine/structures/sentry_fire_loop")
 local kSentryScanSoundName = PrecacheAsset("sound/NS2.fev/marine/structures/sentry_scan")
+local networkVars = {}
+
+
+AddMixinNetworkVars(PowerConsumerMixin, networkVars)
+
+function Sentry:GetRequiresPower()
+    return true
+end
 
 function Sentry:OnCreate()
 
@@ -23,6 +33,7 @@ function Sentry:OnCreate()
     InitMixin(self, ResearchMixin)
     InitMixin(self, RecycleMixin)
     InitMixin(self, CombatMixin)
+    InitMixin(self, PowerConsumerMixin)
     InitMixin(self, RagdollMixin)
     InitMixin(self, DamageMixin)
     InitMixin(self, StunMixin)
@@ -30,7 +41,6 @@ function Sentry:OnCreate()
     InitMixin(self, OrdersMixin, { kMoveOrderCompleteDistance = kAIMoveOrderCompleteDistance })
     InitMixin(self, DissolveMixin)
     InitMixin(self, GhostStructureMixin)
-    InitMixin(self, VortexAbleMixin)
     InitMixin(self, ParasiteMixin)    
     
     if Client then
@@ -301,6 +311,15 @@ if Server then
     ]]--
 end
 
+
+function Sentry:OnUpdateAnimationInput(modelMixin)
+
+    PROFILE("Sentry:OnUpdateAnimationInput")    
+    modelMixin:SetAnimationInput("attack", self.attacking)
+    modelMixin:SetAnimationInput("powered", self.attachedToBattery and self:GetIsPowered())
+    
+end
+
 if Client then
 
     local function UpdateAttackEffects(self, deltaTime)
@@ -369,3 +388,4 @@ if Client then
     end
 
 end
+Shared.LinkClassToMap("Sentry", Sentry.kMapName, networkVars)

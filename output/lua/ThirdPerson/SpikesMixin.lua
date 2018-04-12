@@ -1,7 +1,5 @@
 
 
-Script.Load("lua/ThirdPerson/ReplaceUpValue.lua")
-
 
 local kSpikeSize = 0.03
 local kSpread = Math.Radians(4)
@@ -51,4 +49,4 @@ local function NewFireSpikes(self)
     end
     
 end
-ReplaceUpValue( SpikesMixin.OnTag, "FireSpikes", NewFireSpikes, { LocateRecurse = true; CopyUpValues = true; } )
+debug.replaceupvalue( SpikesMixin.OnTag, "FireSpikes", NewFireSpikes, true)

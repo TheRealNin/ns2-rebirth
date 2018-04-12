@@ -89,7 +89,7 @@ function Metabolize:GetEnergyCost(player)
 end
 
 function Metabolize:GetHUDSlot()
-    return 2
+    return kNoWeaponSlot
 end
 
 function Metabolize:GetDeathIconIndex()

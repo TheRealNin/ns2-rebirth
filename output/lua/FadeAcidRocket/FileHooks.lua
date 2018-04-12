@@ -3,6 +3,8 @@ ModLoader.SetupFileHook( "lua/Fade.lua", "lua/FadeAcidRocket/Fade.lua", "post" )
 ModLoader.SetupFileHook( "lua/Balance.lua", "lua/FadeAcidRocket/Balance.lua", "post" )
 ModLoader.SetupFileHook( "lua/AlienWeaponEffects.lua", "lua/FadeAcidRocket/AlienWeaponEffects.lua", "post" )
 ModLoader.SetupFileHook( "lua/Weapons/Marine/Flamethrower.lua", "lua/FadeAcidRocket/Flamethrower.lua", "post" )
+ModLoader.SetupFileHook( "lua/TechTree_Server.lua", "lua/FadeAcidRocket/TechTree_Server.lua", "post" )
+ModLoader.SetupFileHook( "lua/AlienTechMap.lua", "lua/FadeAcidRocket/AlienTechMap.lua", "post" )
 
 
 if Client then

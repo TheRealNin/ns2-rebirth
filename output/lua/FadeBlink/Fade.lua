@@ -8,6 +8,7 @@ local kFadeScanDuration = 4
 
 
 local kFadeShadowDanceHealthRegen = 8
+local kFadeShadowDanceEnergyRegen = 3
 local kFadeShadowDanceDelay = 1.0
 
 local kViewOffsetHeight = 1.4
@@ -28,9 +29,9 @@ function SwipeBlink:GetMeleeBase()
 end
 
 -- since the fade loses some it's mobility, it gains speed
-ReplaceLocals( Fade.GetMaxSpeed, { kMaxSpeed = kMaxSpeed} )
-ReplaceLocals( Fade.GetRecentlyBlinked, { kMinEnterEtherealTime = kMinEnterEtherealTime} )
-ReplaceLocals( Fade.GetMaxViewOffsetHeight, { kViewOffsetHeight = kViewOffsetHeight} )
+debug.setupvaluex( Fade.GetMaxSpeed, "kMaxSpeed", kMaxSpeed)
+debug.setupvaluex( Fade.GetRecentlyBlinked, "kMinEnterEtherealTime", kMinEnterEtherealTime)
+debug.setupvaluex( Fade.GetMaxViewOffsetHeight, "kViewOffsetHeight", kViewOffsetHeight )
 
 -- reduce this to prevent air-dodging
 function Fade:GetAirControl()
@@ -126,16 +127,21 @@ function Fade:OnProcessMove(input)
         self.previousweapon = nil
     end
     
-    if self:GetCanMetabolizeHealth() and not self:GetIsSighted() and self:GetHealthScalar() ~= 1 then
+    if self:GetCanMetabolizeHealth() and not self:GetIsSighted() then
         if self.timeOfLastPhase + kFadeShadowDanceDelay < Shared.GetTime() then
             self.timeOfLastPhase = Shared.GetTime()
             
-            local totalHealed = self:AddHealth(kFadeShadowDanceHealthRegen, false, false)
-            if Client and totalHealed > 0 then
-                local GUIRegenerationFeedback = ClientUI.GetScript("GUIRegenerationFeedback")
-                GUIRegenerationFeedback:TriggerRegenEffect()
-                local cinematic = Client.CreateCinematic(RenderScene.Zone_ViewModel)
-                cinematic:SetCinematic(kRegenerationViewCinematic)
+            self:AddEnergy(kFadeShadowDanceEnergyRegen)
+            
+            if self:GetHealthScalar() ~= 1 then
+                local totalHealed = self:AddHealth(kFadeShadowDanceHealthRegen, false, false)
+                
+                if Client and totalHealed > 0 then
+                    local GUIRegenerationFeedback = ClientUI.GetScript("GUIRegenerationFeedback")
+                    GUIRegenerationFeedback:TriggerRegenEffect()
+                    local cinematic = Client.CreateCinematic(RenderScene.Zone_ViewModel)
+                    cinematic:SetCinematic(kRegenerationViewCinematic)
+                end
             end
         end
     end

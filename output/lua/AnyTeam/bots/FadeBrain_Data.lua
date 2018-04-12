@@ -265,9 +265,6 @@ kFadeBrainActions =
                     table.insert(avaibleUpgrades, kUpgrades[math.random(1,3) + i * 3])
                 end
 
-                if player.lifeformEvolution then
-                    table.insert(avaibleUpgrades, player.lifeformEvolution)
-                end
 
                 player.lifeformUpgrades = avaibleUpgrades
             end

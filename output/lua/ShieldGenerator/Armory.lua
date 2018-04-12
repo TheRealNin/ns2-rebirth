@@ -19,7 +19,7 @@ function AdvancedArmory:GetItemList(forPlayer)
     
 end
 
-
+local shieldGeneratorPos = 4
 local oldGetTechButtons = Armory.GetTechButtons
 function Armory:GetTechButtons(techId)
     
@@ -28,12 +28,14 @@ function Armory:GetTechButtons(techId)
    -- techButtons = { kTechId.ShotgunTech, kTechId.MinesTech, kTechId.GrenadeTech, kTechId.None,
    --                 kTechId.None, kTechId.None, kTechId.None, kTechId.None }
    
-    if GetHasTech(self, kTechId.ShieldGeneratorTech2, true) then
-        techButtons[4] = kTechId.ShieldGeneratorTech3
-    elseif GetHasTech(self, kTechId.ShieldGeneratorTech, true) then
-        techButtons[4] = kTechId.ShieldGeneratorTech2
-    else
-        techButtons[4] = kTechId.ShieldGeneratorTech
+    if techButtons[shieldGeneratorPos] == kTechId.None then
+        if GetHasTech(self, kTechId.ShieldGeneratorTech2, true) then
+            techButtons[shieldGeneratorPos] = kTechId.ShieldGeneratorTech3
+        elseif GetHasTech(self, kTechId.ShieldGeneratorTech, true) then
+            techButtons[shieldGeneratorPos] = kTechId.ShieldGeneratorTech2
+        else
+            techButtons[shieldGeneratorPos] = kTechId.ShieldGeneratorTech
+        end
     end
     --techButtons[6] = kTechId.ShieldGeneratorTech
     --techButtons[7] = kTechId.AdvancedShieldGeneratorTech
@@ -49,13 +51,14 @@ function AdvancedArmory:GetTechButtons(techId)
 
    -- techButtons = { kTechId.ShotgunTech, kTechId.MinesTech, kTechId.GrenadeTech, kTechId.None,
    --                 kTechId.None, kTechId.None, kTechId.None, kTechId.None }
-    
-    if GetHasTech(self, kTechId.ShieldGeneratorTech2, true) then
-        techButtons[4] = kTechId.ShieldGeneratorTech3
-    elseif GetHasTech(self, kTechId.ShieldGeneratorTech, true) then
-        techButtons[4] = kTechId.ShieldGeneratorTech2
-    else
-        techButtons[4] = kTechId.ShieldGeneratorTech
+    if techButtons[shieldGeneratorPos] == kTechId.None then
+        if GetHasTech(self, kTechId.ShieldGeneratorTech2, true) then
+            techButtons[shieldGeneratorPos] = kTechId.ShieldGeneratorTech3
+        elseif GetHasTech(self, kTechId.ShieldGeneratorTech, true) then
+            techButtons[shieldGeneratorPos] = kTechId.ShieldGeneratorTech2
+        else
+            techButtons[shieldGeneratorPos] = kTechId.ShieldGeneratorTech
+        end
     end
     --techButtons[6] = kTechId.ShieldGeneratorTech
     --techButtons[7] = kTechId.AdvancedShieldGeneratorTech

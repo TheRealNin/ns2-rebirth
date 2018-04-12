@@ -14,7 +14,13 @@ function MarineBrain:Update( bot, move )
     local marine = bot:GetPlayer()
 
     if marine ~= nil and marine:GetIsAlive() then
-
+        
+        -- handle firing pistol
+        local weapon = marine:GetActiveWeapon()
+        if weapon and weapon:isa("Pistol") and bit.band(move.commands, Move.PrimaryAttack) ~= 0 and marine.primaryAttackLastFrame then
+            move.commands = bit.bxor(move.commands, Move.PrimaryAttack)
+        end
+        
         -- Send ammo request
         if self.hadAmmo then
             if self.senses:Get("ammoFraction") <= 0.0 then

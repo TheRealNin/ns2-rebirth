@@ -21,3 +21,57 @@ function GetBotCanSeeTarget(attacker, target)
         (trace.entity and trace.entity.GetTeamNumber and target.GetTeamNumber and (trace.entity:GetTeamNumber() == target:GetTeamNumber()))
 
 end
+
+local kDistCheckTime = 2
+
+-- this is also a VERY expensive function
+local origGetMinPathDistToEntities = GetMinPathDistToEntities
+function GetMinPathDistToEntities( fromEnt, toEnts )
+
+    PROFILE("GetMinPathDistToEntities")
+    --return origGetMinPathDistToEntities(fromEnt, toEnts )
+    local minDist
+    local fromPos = fromEnt:GetOrigin()
+    local path = PointArray()
+    local fromEntId = fromEnt:GetId()
+    local time = Shared.GetTime()
+    
+    if not fromEnt._pathDistances then
+        fromEnt._pathDistances = {}
+    end
+
+    for _,toEnt in ipairs(toEnts) do
+        local toEntId = toEnt:GetId()
+        local dist = 0
+        
+        if not toEnt._pathDistances then
+            toEnt._pathDistances = {}
+        end
+        
+        if fromEnt._pathDistances[toEntId] and fromEnt._pathDistances[toEntId].validTill > time then
+            --Log("Using cached fromEnt")
+            dist = fromEnt._pathDistances[toEntId].dist
+        elseif toEnt._pathDistances[fromEntId] and toEnt._pathDistances[fromEntId].validTill > time then
+            --Log("Using cached toEnt")
+            dist = toEnt._pathDistances[fromEntId].dist
+        else
+            --Log("Not using cache")
+            Pathing.GetPathPoints(fromPos, toEnt:GetOrigin(), path)
+            dist = GetPointDistance(path)
+            local distObj =  {
+                dist = dist,
+                validTill = time + kDistCheckTime
+            }
+            fromEnt._pathDistances[toEntId] = distObj
+            toEnt._pathDistances[fromEntId] = distObj
+        end
+        if not minDist or dist < minDist then
+            minDist = dist
+        end
+
+    end
+
+    return minDist
+
+
+end

@@ -93,6 +93,8 @@ function CommanderBot:GenerateMove()
     end
 
     local player = self:GetPlayer()
+    player.is_a_robot = true
+    
     local team = GetGamerules():GetTeam(self.team)
     
     local teamType = team:GetTeamType()
@@ -112,9 +114,9 @@ function CommanderBot:GenerateMove()
 
             local newPlayer = entity:LoginPlayer(player, true)
             if newPlayer then
-                newPlayer:SetIsReady(true)
+                newPlayer.is_a_robot = true
+                break
             end
-            break
             
         end
 

@@ -1,4 +1,8 @@
 
+local function PrioritizeDamagedFriends(weapon, player, newTarget, oldTarget)
+    return not oldTarget or (HasMixin(newTarget, "Team") and newTarget:GetTeamNumber() == player:GetTeamNumber() and (HasMixin(newTarget, "Weldable") and newTarget:GetCanBeWelded(weapon)))
+end
+
 function Welder:PerformWeld(player)
 
     local attackDirection = player:GetViewCoords().zAxis

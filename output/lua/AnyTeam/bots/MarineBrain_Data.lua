@@ -120,6 +120,15 @@ local function SwitchToPrimary(marine)
         marine:SetActiveWeapon(GrenadeLauncher.kMapName, true)
     end
 end
+
+local function SwitchToPistol(marine)
+    local weapon = marine:GetWeapon( Pistol.kMapName )
+    if weapon and weapon:GetAmmo() / weapon:GetMaxAmmo() > 0.0 then
+        marine:SetActiveWeapon(Pistol.kMapName, true)
+    else
+        SwitchToPrimary(marine)
+    end
+end
 ------------------------------------------
 --  Utility perform function used by multiple wants
 ------------------------------------------
@@ -154,7 +163,7 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
         sighted = target:GetIsSighted()
     end
     
-    local aimPos = sighted and GetBestAimPoint( target ) or (lastSeenPos + Vector(0,0.5,0))
+    local aimPos = sighted and GetBestAimPoint( target ) or (lastSeenPos + Vector(0,0.1,0))
     local dist = GetDistanceToTouch( eyePos, target )
     local doFire = false
     local shouldStrafe = false
@@ -171,6 +180,7 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
         doFire = false
         
     elseif not hasClearShot then
+        
         local isNotDetected =  not (player:GetIsDetected() or player:GetIsSighted())
         if isNotDetected and bot.sneakyAbility and dist < 20.0 and dist > 4.0 and isDodgeable and
             (not bot.lastSeenEnemy or bot.lastSeenEnemy + 10 < time) and not sighted then
@@ -216,8 +226,14 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
             doFire = true
         end
         
-        doFire = doFire and bot.aim:UpdateAim(target, aimPos)
-        
+        -- this is a hack because there's a bug somewhere...
+        if doFire and (target:isa("Babbler") or target:isa("Clog")) and hasClearShot then
+            doFire = true
+            aimPos = target:GetEngagementPoint()
+            bot:GetMotion():SetDesiredViewTarget( aimPos )
+        else
+            doFire = doFire and bot.aim:UpdateAim(target, aimPos)
+        end
     end
     
     if shouldStrafe then
@@ -276,6 +292,7 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
     
     
     if doFire then
+    
         move.commands = AddMoveCommand( move.commands, Move.PrimaryAttack )
         bot.lastAimPos = aimPos
         brain.lastShootingTime = Shared.GetTime()
@@ -287,6 +304,7 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
         end
         
     else
+    
         if (brain.lastShootingTime and brain.lastShootingTime > Shared.GetTime() - 0.5) then
             -- blindfire at same old spot
             if bot.lastAimPos then
@@ -614,8 +632,9 @@ kMarineBrainActions =
 
             threat = s:Get("biggestThreat")
 
-            if threat ~= nil and threat.distance < 15 and s:Get("clipFraction") > 0.0 then
-                -- threat really close, and we have some ammo, shoot it!
+            if threat ~= nil and threat.distance < 15 and 
+                (s:Get("clipFraction") > 0.0 or s:Get('pistolClipFraction') > 0 ) then
+                -- threat really close, and we have some ammo or a backup weapon, shoot it!
                 weight = 0.01
             else
                 weight = EvalLPF( s:Get("clipFraction"), {
@@ -638,6 +657,9 @@ kMarineBrainActions =
                         bot:GetMotion():SetDesiredViewTarget( target:GetEngagementPoint() )
                     end
                 end
+                if weapon:isa("ClipWeapon") and weapon:GetClip() / weapon:GetClipSize() > 0.9 then
+                    SwitchToPrimary(marine)
+                end
                 move.commands = AddMoveCommand(move.commands, Move.Reload)
             end }
     end,
@@ -651,7 +673,7 @@ kMarineBrainActions =
         local threat = sdb:Get("biggestThreat")
         local weight = 0.0
 
-        if threat ~= nil and sdb:Get("weaponReady") then
+        if threat ~= nil and sdb:Get("weaponOrPistolReady") then
 
             weight = EvalLPF( threat.distance, {
                         { 0.0, EvalLPF( threat.urgency, {
@@ -671,7 +693,13 @@ kMarineBrainActions =
 
         return { name = name, weight = weight, fastUpdate = true,
             perform = function(move)
-                SwitchToPrimary(marine)
+            
+                local target = Shared.GetEntity(threat.memory.entId)
+                if sdb:Get("clipFraction") > 0.0 or not target:isa("Player") then
+                    SwitchToPrimary(marine)
+                else
+                    SwitchToPistol(marine)
+                end
                 
                 PerformAttack( marine:GetEyePos(), threat.memory, bot, brain, move )
             end }
@@ -998,7 +1026,7 @@ kMarineBrainActions =
             weight = 0.0
         end
 
-        return { name = name, weight = weight,
+        return { name = name, weight = weight, fastUpdate = true,
             perform = function(move)
                     local cyst = sdb:Get("nearestCyst")
                     assert(cyst ~= nil)
@@ -1024,7 +1052,7 @@ kMarineBrainActions =
             local dist = babblerPos:GetDistance(marine:GetOrigin())
             
             weight = EvalLPF( dist, {
-                    {0.0, 2.5},
+                    {0.0, 3.5},
                     {3.0, 1.0},
                     {5.0, 1.0},
                     {15.0, 0.0}
@@ -1032,7 +1060,7 @@ kMarineBrainActions =
         end
         
 
-        return { name = name, weight = weight,
+        return { name = name, weight = weight, fastUpdate = true,
             perform = function(move)
                 if babblerData and babblerData.entity then
                     local babbler = babblerData.entity
@@ -1463,7 +1491,7 @@ function CreateMarineBrainSenses()
 
     s:Add("clipFraction", function(db)
             local marine = db.bot:GetPlayer()
-            local weapon = marine:GetActiveWeapon()
+            local weapon = marine:GetWeaponInHUDSlot(1)
             if weapon ~= nil then
                 if weapon:isa("ClipWeapon") then
                     return weapon:GetClip() / weapon:GetClipSize()
@@ -1473,11 +1501,24 @@ function CreateMarineBrainSenses()
             else
                 return 0.0
             end
-            end)
-
+        end)
+        
+    s:Add("pistolClipFraction", function(db)
+            local marine = db.bot:GetPlayer()
+            local weapon = marine:GetWeapon(Pistol.kMapName)
+            if weapon ~= nil then
+                if weapon:isa("ClipWeapon") then
+                    return weapon:GetClip() / weapon:GetClipSize()
+                else
+                    return 1.0
+                end
+            else
+                return 0.0
+            end
+        end)
     s:Add("ammoFraction", function(db)
             local marine = db.bot:GetPlayer()
-            local weapon = marine:GetActiveWeapon()
+            local weapon = marine:GetWeaponInHUDSlot(1)
             if weapon ~= nil then
                 if weapon:isa("ClipWeapon") then
                     return weapon:GetAmmo() / weapon:GetMaxAmmo()
@@ -1487,8 +1528,22 @@ function CreateMarineBrainSenses()
             else
                 return 0.0
             end
-            end)
+        end)
 
+    s:Add("pistolAmmoFraction", function(db)
+            local marine = db.bot:GetPlayer()
+            local weapon = marine:GetWeapon(Pistol.kMapName)
+            if weapon ~= nil then
+                if weapon:isa("ClipWeapon") then
+                    return weapon:GetAmmo() / weapon:GetMaxAmmo()
+                else
+                    return 0.0
+                end
+            else
+                return 0.0
+            end
+        end
+        )
     s:Add("welder", function(db)
             local marine = db.bot:GetPlayer()
             return marine:GetWeapon( Welder.kMapName )
@@ -1503,6 +1558,10 @@ function CreateMarineBrainSenses()
             return db:Get("ammoFraction") > 0
             end)
 
+    s:Add("weaponOrPistolReady", function(db)
+            return db:Get("ammoFraction") > 0 or db:Get("pistolAmmoFraction") > 0
+            end)
+            
     s:Add("healthFraction", function(db)
             local marine = db.bot:GetPlayer()
             return marine:GetHealthFraction()

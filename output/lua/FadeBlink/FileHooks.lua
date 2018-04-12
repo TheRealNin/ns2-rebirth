@@ -24,7 +24,7 @@ if Client then
         ['HELP_SCREEN_METABOLIZE'] = 'Backtrack',
         ['HELP_SCREEN_METABOLIZE_DESCRIPTION'] = 'Teleport back to where you were 4 seconds ago. Try to remember where that was!',
         ['HELP_SCREEN_METABOLIZE_ADV'] = 'Shadow Dance',
-        ['HELP_SCREEN_METABOLIZE_ADV_DESCRIPTION'] = 'Passively regenerate health as long as you are unseen. An eye shows up on your HUD if you are being seen by the enemy.',
+        ['HELP_SCREEN_METABOLIZE_ADV_DESCRIPTION'] = 'Passively regenerate health and energy as long as you are unseen. An eye shows up on your HUD if you are being seen by the enemy.',
         ['HELP_SCREEN_BLINK'] = 'Blink',
         ['HELP_SCREEN_BLINK_DESCRIPTION'] = 'Teleport a short distance in front of you. Hold the button down to see where you will appear.'
     }

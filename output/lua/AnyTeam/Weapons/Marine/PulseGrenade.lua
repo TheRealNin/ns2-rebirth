@@ -46,9 +46,6 @@ if Server then
 
         local surface = GetSurfaceFromEntity(targetHit)
         
-        if GetIsVortexed(self) then
-            surface = "ethereal"
-        end
 
         local params = { surface = surface }
         if not targetHit then

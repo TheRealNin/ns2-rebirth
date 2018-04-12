@@ -94,7 +94,9 @@ kAlienComBrainActions =
     CreateBuildNearHiveActionWithReqHiveNum( kTechId.Spur  , "Spur"  , 3 , 2.0 + math.random(), 1 ),
 
     function(bot, brain)
-
+        
+        PROFILE("AlienCommanderBrain_Data:harvester")
+        
         local name = "harvester"
         local com = bot:GetPlayer()
         local sdb = brain:GetSenses()
@@ -127,6 +129,7 @@ kAlienComBrainActions =
     end,
 
     function(bot, brain)
+        PROFILE("AlienCommanderBrain_Data:mist")
 
         local name = "mist"
         local com = bot:GetPlayer()
@@ -233,6 +236,8 @@ kAlienComBrainActions =
 
     function(bot, brain)
 
+        PROFILE("AlienCommanderBrain_Data:cyst")
+        
         local name = "cyst"
         local com = bot:GetPlayer()
         local sdb = brain:GetSenses()
@@ -385,6 +390,8 @@ kAlienComBrainActions =
 
     function(bot, brain)
 
+        PROFILE("AlienCommanderBrain_Data:hive")
+        
         local name = "hive"
         local com = bot:GetPlayer()
         local sdb = brain:GetSenses()
@@ -487,7 +494,7 @@ function CreateAlienComSenses()
         local tps = GetAvailableTechPoints()
             local hives = db:Get("cysts")
             local dist, tp = GetMinTableEntry( tps, function(tp)
-                return GetMinPathDistToEntities( tp, hives )
+                return GetMinDistToEntities( tp, hives )
                 end)
             return tp
             end)

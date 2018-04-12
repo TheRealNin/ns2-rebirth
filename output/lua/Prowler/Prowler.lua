@@ -119,6 +119,10 @@ function Prowler:OnCreate()
     
 end
 
+function Prowler:GetPlayInstantRagdoll()
+    return true
+end
+
 function Prowler:OnInitialized()
 
     Alien.OnInitialized(self)
@@ -402,7 +406,7 @@ end
 
 function Prowler:SpawnCloud(techId)
 
-    local position = self:GetOrigin()
+    local position = self:GetOrigin() + self:GetViewAngles():GetCoords().zAxis * 5
     
     local mapName = LookupTechData(techId, kTechDataMapName)
     if mapName and Server then
@@ -463,9 +467,18 @@ if Server then
     function Prowler:OnKill(attacker, doer, point, direction)
     
         Alien.OnKill(self, attacker, doer, point, direction)
-        self:TriggerEffects("death", { classname = self:GetClassName(), effecthostcoords = Coords.GetTranslation(self:GetOrigin()) })
+        --self:TriggerEffects("death", { classname = "Skulk", effecthostcoords = Coords.GetTranslation(self:GetOrigin()), doer = "Railgun"})
         
+        local useModelName = self:GetModelName()
+        local useGraphName = self:GetGraphName()
         
+        local ragdoll = CreateEntity(Ragdoll.kMapName, self:GetOrigin())
+        ragdoll:SetCoords(self:GetCoords())
+        ragdoll:SetModel(useModelName, useGraphName)
+        ragdoll:SetPhysicsType(PhysicsType.Dynamic)
+        ragdoll:SetPhysicsGroup(PhysicsGroup.RagdollGroup)
+        
+        self:SetModel(nil)
     end
 end
 

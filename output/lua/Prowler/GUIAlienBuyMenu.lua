@@ -1,6 +1,4 @@
 
-Script.Load("lua/Prowler/ReplaceUpValue.lua")
-
 
 local function newUpdateItemsGUIScale(self)
 
@@ -72,5 +70,5 @@ local function newUpdateItemsGUIScale(self)
     
 end
 
-ReplaceUpValue( GUIAlienBuyMenu.Initialize, "UpdateItemsGUIScale", newUpdateItemsGUIScale, { LocateRecurse = true; CopyUpValues = true; } )
+debug.replaceupvalue( GUIAlienBuyMenu.Initialize, "UpdateItemsGUIScale", newUpdateItemsGUIScale, true)
 

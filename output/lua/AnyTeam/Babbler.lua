@@ -59,4 +59,4 @@ local function UpdateBabbler(self, deltaTime)
 
 end
 
-ReplaceUpValue( Babbler.OnProcessMove, "UpdateBabbler", UpdateBabbler, { LocateRecurse = true; CopyUpValues = true; } )
+debug.replaceupvalue( Babbler.OnProcessMove, "UpdateBabbler", UpdateBabbler, true)

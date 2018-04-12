@@ -60,7 +60,7 @@ local function GetAttackUrgency(bot, mem)
 
     if distance < 15 and immediateThreats[mem.btype] then
         -- Attack the nearest immediate threat (urgency will be 1.1 - 2)
-        return 1 + 1 / math.max(distance, 1)
+        return 3 + 1 / math.max(distance, 1)
     end
 
     -- No immediate threat - load balance!
@@ -223,13 +223,11 @@ kOnosBrainActions =
             if not avaibleUpgrades then
                 avaibleUpgrades = {}
 
+                
                 for i = 0, 2 do
                     table.insert(avaibleUpgrades, kUpgrades[math.random(1,3) + i * 3])
                 end
 
-                if player.lifeformEvolution then
-                    table.insert(avaibleUpgrades, player.lifeformEvolution)
-                end
 
                 player.lifeformUpgrades = avaibleUpgrades
             end
@@ -393,7 +391,7 @@ kOnosBrainActions =
 
         local weight = 0.0
         if order ~= nil then
-            weight = 10.0
+            weight = 3.0
         end
 
         return { name = name, weight = weight,

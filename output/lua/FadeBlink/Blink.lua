@@ -71,7 +71,7 @@ end
 
 function BlinkEndTarget(self)  
   local player = self:GetParent()
-  if not player then
+  if not player or not player.GetEyePos then
     return
   end
   

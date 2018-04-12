@@ -8,7 +8,7 @@ function Marine:OnCreate()
   originalOnCreate(self)
   if Client then
       self.flashlight:SetInnerCone( math.rad(1) )
-      self.flashlight:SetOuterCone( math.rad(47) )
+      self.flashlight:SetOuterCone( math.rad(37) ) -- was 47
       self.flashlight:SetColor( Color(.9, .9, 1.0) )
       self.flashlight:SetIntensity( 9 )
       self.flashlight:SetRadius( 30 ) 
@@ -51,6 +51,9 @@ function Marine:OnDestroy()
         end
 
 
+        if self._fake_reflection ~= nil then
+            Client.DestroyRenderLight(self._fake_reflection)
+        end
     end
     
 end

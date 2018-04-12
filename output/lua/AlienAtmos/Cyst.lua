@@ -40,3 +40,17 @@ if Client then
         
     end
 end
+
+
+local oldOnUpdateRender = Cyst.OnUpdateRender
+function Cyst:OnUpdateRender()
+    oldOnUpdateRender(self)
+    
+    local model = self:GetRenderModel()
+    if model then
+    
+        model:SetMaterialParameter("connected", math.max(self.connectedFraction, 0.2))
+        
+    end
+    
+end

@@ -27,6 +27,11 @@ function PlayerBot:OnThink()
 
     Bot.OnThink(self)
 
+    local player = self:GetPlayer()
+    if player then
+        player.is_a_robot = true
+    end
+    
     self:_LazilyInitBrain()
 
     if not self.initializedBot then
@@ -52,10 +57,11 @@ function PlayerBot:GetNamePrefix()
 end
 
 function PlayerBot:_LazilyInitBrain()
-
+    local player = self:GetPlayer()
+    if not player then return end
+    
     if self.brain == nil then
-        local player = self:GetPlayer()
-
+        
         if player:isa("Marine") then
             self.brain = MarineBrain()
         elseif player:isa("Skulk") then
@@ -74,17 +80,17 @@ function PlayerBot:_LazilyInitBrain()
 
         if self.brain ~= nil then
             self.brain:Initialize()
-            self:GetPlayer().botBrain = self.brain
+            player.botBrain = self.brain
             self.aim = BotAim()
             self.aim:Initialize(self)
         end
 
     else
-
+    
         -- destroy brain if we are ready room
-        if self:GetPlayer():isa("ReadyRoomPlayer") then
+        if player:isa("ReadyRoomPlayer") then
             self.brain = nil
-            self:GetPlayer().botBrain = nil
+            player.botBrain = nil
         end
 
     end
@@ -94,10 +100,11 @@ end
 
 function PlayerBot:UpdateNameAndGender()
     PROFILE("PlayerBot:UpdateNameAndGender")
+    
+    local player = self:GetPlayer()
 
-    if self.botSetName == nil then
+    if self.botSetName == nil and player then
 
-        local player = self:GetPlayer()
         local name = player:GetName()
         
         self.botSetName = true

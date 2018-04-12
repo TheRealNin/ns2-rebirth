@@ -36,10 +36,57 @@ function Marine:OnUpdateRender()
         local isLocal = self:GetIsLocalPlayer()
         if isLocal and not self:GetIsThirdPerson() then
             density = 0
+            if not self._fake_reflection then
+            
+                self._fake_reflection = Client.CreateRenderLight()
+                
+                self._fake_reflection:SetType( RenderLight.Type_Point )
+                self._fake_reflection:SetColor( Color(1, 1, 1) )
+                self._fake_reflection:SetIntensity( 0.1 )
+                self._fake_reflection:SetRadius( 10 ) 
+                self._fake_reflection:SetSpecular( false ) 
+                self._fake_reflection:SetCastsShadows( false )
+            end
+            
+            local coords = Coords(self:GetViewCoords())
+            local newOrigin = coords.origin
+            local checkDir = Vector(0,0,6)
+            local maxCheck = 1.0
+            local stepSize = 0.33
+            local xDir = -maxCheck
+            local yDir = -maxCheck+1 -- special case so we don't care about the ground as much
+            while xDir <= maxCheck do
+                checkDir.x = xDir
+                xDir = xDir + stepSize
+                    
+                while yDir <= maxCheck do
+                    checkDir.y = yDir
+                    yDir = yDir + stepSize
+                    
+                    local endPoint = coords.origin + coords.xAxis * checkDir.x + coords.yAxis * checkDir.y + coords.zAxis * checkDir.z
+                    local trace = Shared.TraceRay(coords.origin, endPoint, CollisionRep.Damage, PhysicsMask.Bullets, EntityFilterAll())
+                    if trace.fraction < 1 and trace.endPoint then
+                        newOrigin = (newOrigin + trace.endPoint) * 0.5
+                    else
+                        newOrigin = (newOrigin + endPoint) * 0.5
+                    end
+                end
+            end
+            coords.origin = (newOrigin + coords.origin) * 0.5
+            self._fake_reflection:SetCoords(coords)
+            
         else
+        
+            
             radius = 10
             intensity = 5
             self.flashlight:SetCastsShadows( false )
+            
+            if self._fake_reflection ~= nil then
+                Client.DestroyRenderLight(self._fake_reflection)
+                self._fake_reflection = nil
+            end
+            
         end
         self.flashlight:SetAtmosphericDensity(density)
         self.flashlight:SetRadius( radius ) 
@@ -79,5 +126,10 @@ function Marine:OnUpdateRender()
         self.flashlight_cinematic:SetIsActive(false)
         self.flashlight_cinematic_small:SetIsVisible(false)
         self.flashlight_cinematic_small:SetIsActive(false)
+        
+        if self._fake_reflection ~= nil then
+            Client.DestroyRenderLight(self._fake_reflection)
+            self._fake_reflection = nil
+        end
     end
 end

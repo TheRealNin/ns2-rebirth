@@ -6,6 +6,7 @@ function Flamethrower:BurnSporesAndUmbra(startPoint, endPoint)
     toTarget:Normalize()
     
     local stepLength = 2
+    local burnSpent = false
 
     for i = 1, 5 do
     
@@ -29,16 +30,23 @@ function Flamethrower:BurnSporesAndUmbra(startPoint, endPoint)
         for index, bomb in ipairs(bombs) do
             bomb:TriggerEffects("burn_bomb", { effecthostcoords = Coords.GetTranslation(bomb:GetOrigin()) } )
             DestroyEntity(bomb)
+            burnSpent = true
         end
         
         for index, spore in ipairs(spores) do
             self:TriggerEffects("burn_spore", { effecthostcoords = Coords.GetTranslation(spore:GetOrigin()) } )
             DestroyEntity(spore)
+            burnSpent = true
         end
         
         for index, umbra in ipairs(umbras) do
             self:TriggerEffects("burn_umbra", { effecthostcoords = Coords.GetTranslation(umbra:GetOrigin()) } )
             DestroyEntity(umbra)
+            burnSpent = true
+        end
+        
+        if burnSpent then
+            break
         end
     
     end

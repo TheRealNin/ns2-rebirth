@@ -14,7 +14,6 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 
     -- attacker is always a player, doer is 'self'
     local attacker, weapon
-    local parentVortexed = false
     local currentComm
     
     if target and target:isa("Ragdoll") then
@@ -28,7 +27,6 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 
         if self:GetParent() and self:GetParent():isa("Player") then
             attacker = self:GetParent()
-            parentVortexed = GetIsVortexed(attacker)
             
             if attacker:isa("Alien") and ( self.secondaryAttacking or self.shootingSpikes) then
                 weapon = attacker:GetActiveWeapon():GetSecondaryTechId()
@@ -138,10 +136,7 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
         
             -- local playArmorEffect = armorUsed * armorMultiplier > healthUsed
             
-            if parentVortexed or GetIsVortexed(self) or GetIsVortexed(target) then            
-                surface = "ethereal"
-                
-            elseif HasMixin(target, "NanoShieldAble") and target:GetIsNanoShielded() then    
+            if HasMixin(target, "NanoShieldAble") and target:GetIsNanoShielded() then    
                 surface = "nanoshield"
                 
             elseif HasMixin(target, "Fire") and target:GetIsOnFire() then

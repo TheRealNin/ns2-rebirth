@@ -360,6 +360,7 @@ kSkulkBrainActions =
             if not avaibleUpgrades then
                 avaibleUpgrades = {}
 
+
                 if bot.lifeformEvolution then
                     table.insert(avaibleUpgrades, bot.lifeformEvolution)
                 end
@@ -368,6 +369,7 @@ kSkulkBrainActions =
                     table.insert(avaibleUpgrades, kUpgrades[math.random(1,3) + i * 3])
                 end
 
+                
                 player.lifeformUpgrades = avaibleUpgrades
             end
 
@@ -656,7 +658,7 @@ function CreateSkulkBrainSenses()
             local allThreats = db:Get("allThreats")
             local player = db.bot:GetPlayer()
             local playerPos = player:GetOrigin()
-            
+           
             local distance, nearestThreat = GetMinTableEntry( allThreats,
                 function( mem )
                     local origin = mem.origin

@@ -6,17 +6,26 @@ function MarineBuy_GetWeaponDescription(techId)
         return oldMarineBuy_GetWeaponDescription(techId)
     end
     
-    local description = "Replace your armor with an auto-recharging, 95% effective energy shield, giving you extra armor. Additionally, it has 25% resistance against Railgun, Minigun, and Grenade Launcher damage."
+    local description = "Replace your armor with an auto-recharging, 95% effective energy shield, giving you extra armor. Additionally, it has 30% resistance against Railgun, Minigun, and Grenade Launcher damage."
 
-    --[[
-    if GetHasTech(self, kTechId.ShieldGeneratorTech3, true) then
-        description = description .. " (level 3)"
-    elseif GetHasTech(self, kTechId.ShieldGeneratorTech2, true) then
-        description = description .. " (level 2)"
-    end
-    ]]--
-    
     local techTree = GetTechTree()
+        
+    if techTree then
+
+        local level3Node = techTree:GetTechNode(kTechId.ShieldGeneratorTech3)
+        local level2Node = techTree:GetTechNode(kTechId.ShieldGeneratorTech2)
+        local level1Node = techTree:GetTechNode(kTechId.ShieldGeneratorTech)
+
+        if level3Node and level3Node:GetResearched() then
+            description =  "(level 3) " .. description
+        elseif level2Node and level2Node:GetResearched() then
+            description =  "(level 2) " .. description
+        elseif level1Node and level1Node:GetResearched() then
+            description =  "(level 1) " .. description
+        end
+        
+    end
+    
     local requieres = techTree:GetRequiresText(techId)
 
     if requieres ~= "" then

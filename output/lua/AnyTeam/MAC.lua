@@ -34,7 +34,6 @@ Script.Load("lua/NanoShieldMixin.lua")
 Script.Load("lua/DamageMixin.lua")
 Script.Load("lua/SleeperMixin.lua")
 Script.Load("lua/MapBlipMixin.lua")
-Script.Load("lua/VortexAbleMixin.lua")
 Script.Load("lua/CommanderGlowMixin.lua")
 Script.Load("lua/CombatMixin.lua")
 Script.Load("lua/CorrodeMixin.lua")
@@ -121,7 +120,6 @@ AddMixinNetworkVars(TeamMixin, networkVars)
 AddMixinNetworkVars(OrdersMixin, networkVars)
 AddMixinNetworkVars(LOSMixin, networkVars)
 AddMixinNetworkVars(NanoShieldMixin, networkVars)
-AddMixinNetworkVars(VortexAbleMixin, networkVars)
 AddMixinNetworkVars(CombatMixin, networkVars)
 AddMixinNetworkVars(SelectableMixin, networkVars)
 AddMixinNetworkVars(CorrodeMixin, networkVars)
@@ -184,7 +182,6 @@ function MAC:OnCreate()
     InitMixin(self, EntityChangeMixin)
     InitMixin(self, LOSMixin)
     InitMixin(self, DamageMixin)
-    InitMixin(self, VortexAbleMixin)
     InitMixin(self, CombatMixin)
     InitMixin(self, CorrodeMixin)
     InitMixin(self, SoftTargetMixin)
@@ -643,7 +640,7 @@ function MAC:ProcessWeldOrder(deltaTime, orderTarget, orderLocation, autoWeld)
                 ]]--
                 
                 -- If we're close enough to weld, weld (unless we must move to behind the player)
-                if not forceMove and closeEnoughToWeld and not GetIsVortexed(self) then
+                if not forceMove and closeEnoughToWeld then
 
                     orderTarget:OnWeld(self, MAC.kWeldRate)
                     self.timeOfLastWeld = time
@@ -780,10 +777,8 @@ function MAC:ProcessConstruct(deltaTime, orderTarget, orderLocation)
                 else
             
                     -- Otherwise, add build time to structure
-                    if not self:GetIsVortexed() and not GetIsVortexed(orderTarget) then
-                        orderTarget:Construct(MAC.kConstructRate * kMACConstructEfficacy, self)
-                        self.timeOfLastConstruct = time
-                    end
+                    orderTarget:Construct(MAC.kConstructRate * kMACConstructEfficacy, self)
+                    self.timeOfLastConstruct = time
                 
                 end
                 

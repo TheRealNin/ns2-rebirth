@@ -216,7 +216,23 @@ function TeamBrain:GetIsSoundAudible(sound)
     -- find all our players inside a 20m range
     -- we only do this call for sounds that belong to enemy players that are actually playing, so this
     -- should not be horribly expensive.
-    for _, friend in ipairs( GetEntitiesForTeamWithinRange("Player", self.teamNumber, sound:GetWorldOrigin(), 20) ) do
+    
+    -- here we simulate how "loud" a sound is
+    local soundName = sound:GetSoundName()
+    local dist = 20
+    if string.match(soundName, "draw") then
+        dist = 5
+    elseif string.match(soundName, "deploy") then
+        dist = 5
+    elseif string.match(soundName, "land") then
+        dist = 10
+    elseif string.match(soundName, "jump") then
+        dist = 10
+    elseif string.match(soundName, "idle") then
+        dist = 3
+    end
+    
+    for _, friend in ipairs( GetEntitiesForTeamWithinRange("Player", self.teamNumber, sound:GetWorldOrigin(), dist) ) do
         if friend:GetIsAlive() then
             return true
         end
@@ -306,7 +322,7 @@ function TeamBrain:Update()
             
             -- we time out very old player memories because they are
             -- not very likely to be around that long
-            local veryOldPlayerMemory = ent:isa("Player") and memAge > 15
+            local veryOldPlayerMemory = ent:isa("Player") and memAge > 10
             if not veryOldPlayerMemory then
                 
                 removeIt = false                

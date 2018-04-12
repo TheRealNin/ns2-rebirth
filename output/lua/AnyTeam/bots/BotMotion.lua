@@ -2,6 +2,7 @@
 local maxDistOffPath = 0.65
 local minDistToUnstuck = 3.0
 local timeToBeStuck = 60.0
+local rotateSpeedRatio = 2.0
 
 function BotMotion:OnGenerateMove(player)
     PROFILE("BotMotion:OnGenerateMove")
@@ -188,7 +189,8 @@ function BotMotion:OnGenerateMove(player)
     
     if desiredDir then
         -- TODO: change the frametime to the actual time spent
-        local slerpSpeed = kPlayerBrainTickFrametime * 1.25
+        -- since we could be in combat doing 26fps or out of combat and doing 8fps
+        local slerpSpeed = kPlayerBrainTickFrametime * rotateSpeedRatio
         
         local currentYaw = player:GetViewAngles().yaw
         local targetYaw = GetYawFromVector(desiredDir)
@@ -294,6 +296,8 @@ function BotMotion:GetOptimalMoveDirection(from, to)
 
     if not newMoveDir and (to - from):GetLength() > 20.0 then -- first fallback
         
+        --Log("We can't path, so we need a temp path")
+                
         local pathPoints = PointArray()
         reachable = Pathing.GetPathPoints(from, GetNearest(to, "ResourcePoint"):GetOrigin(), pathPoints)
         if reachable and #pathPoints > 0 then

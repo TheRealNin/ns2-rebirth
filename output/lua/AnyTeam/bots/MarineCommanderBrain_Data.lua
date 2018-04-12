@@ -74,7 +74,7 @@ kMarineComBrainActions =
     CreateUpgradeStructureAction( kTechId.JetpackTech           , 2.0+math.random() ) ,
     CreateUpgradeStructureAction( kTechId.ExosuitTech           , 2.0+math.random() ) ,
     CreateUpgradeStructureAction( kTechId.MinesTech             , 0.5+math.random() ) ,
-    CreateUpgradeStructureAction( kTechId.AdvancedArmoryUpgrade , 1.0+math.random() ) , -- TODO: Make it so only ONE armory gets this
+    CreateUpgradeStructureAction( kTechId.AdvancedArmoryUpgrade , 1.0+math.random(), kTechId.AdvancedArmoryUpgrade) , -- TODO: Make it so only ONE armory gets this
     CreateUpgradeStructureAction( kTechId.HeavyMachineGunTech   , 1.0+math.random() ) ,
     CreateUpgradeStructureAction( kTechId.GrenadeTech           , 1.0+math.random() ) ,
 
@@ -505,7 +505,7 @@ kMarineComBrainActions =
                         
                         local target = actualTarget
                         
-                        if target and bot:GetPlayer():GetTeam():GetTeamResources() > 50 then
+                        if target and bot:GetPlayer():GetTeam():GetTeamResources() > 40 then
                             
                             
                             if target.GetHasCatpackBoost and not target:GetHasCatpackBoost() then
@@ -606,7 +606,7 @@ function CreateMarineComSenses()
             local rps = db:Get("availResPoints")
             local marines = db:Get("marines")
             local dist, rp = GetMinTableEntry( rps, function(rp)
-                return GetMinPathDistToEntities( rp, marines )
+                return GetMinDistToEntities( rp, marines )
                 end)
             return {rp = rp, dist = dist}
             end)
