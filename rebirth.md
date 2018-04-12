@@ -2,20 +2,8 @@
 title: Nin's NS2:Rebirth
 ---
 Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on the bottom of this window.
-## Latest Changes
 
-### March 24
-* Hades device cost reduced to 5 (from 10)
-* Robotics Factory cost reduced to 5 (from 10). ARC Factory increased to 10 (from 5).
-* Fade teleport energy cost increased to 17% (from 14%).
-* Hydra damage increased from 2 damage per hit to 3.
-* Major bot code upgrades for skulks and lerks
-* Fixed some bugs to do with bot view angles jerking around
-* Outlines added to marine vision for powernodes
-* Alien vision and outlines changed to red (from orange). This should make it easier to pick out enemies.
-* Fixed some bugs with auto-evolve
-
-## Rebirth Mod Summary
+## Summary
 * Each commander may choose their teams race (Marine or Alien)
 * All friendly structures, players, and equipment have a blue outline. Enemies have no outlines.
 * All marine to marine damage is increased by 33%
@@ -25,6 +13,12 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * Aliens have a new playable class: Prowler
 * Marines have new shield tech and healing fields
 
+## Latest Changes
+
+### April 8
+* Shader fixes and performance improvements
+* Some fixes for spectator mode. Please keep sending in bugs using the report button below!
+* Acid rocket has moved to biomass 6 (was biomass 7)
 
 ## Alien-specific changes
 * Skulks take an extra 30% less melee damage from aliens. (At biomass 1, it takes 1 parasite and 2 bites to kill a skulk. At biomass 2, it takes 2 parasites and 2 bites.)
@@ -37,15 +31,16 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * Alien vision needed to be re-written so that players can differenciate between friend and foe. Your enemies are always orange, and your team is always blue.
 * Lerk bite damage decreased to 50 (was 60). Poison damage has been doubled (12/s up from 6/s)
 * New alien class: Prowler. 
-* * Same HP as the skulk, and moves roughly the same but cannot climb on walls
-* * Repeatedly jumping (or bunny-hopping) can gain high speed
+* * More HP than the skulk but less than the lerk, and moves roughly the same but cannot climb on walls
+* * Repeatedly jumping (or bunny-hopping) forward can let the player gain high speed
+* * Aiming up and holding forward allows for higher jumps
 * * Takes over all drifter abilities for free, on a short cooldown simply by right-clicking
-* * Primary fire is very low damage (maximum 30 structural damage) but has range
+* * Primary fire is very low damage (maximum 30 normal) but has range
 * Fades have been reworked to be the Wraith Fade
 * * Blink has been replaced with Teleport: Hold right-click to preview where you will go, then let go to teleport there nearly instantly
 * * Metabolize is now Backtrack: Press Shift to teleport to where you were 4 seconds ago after a short delay. Has a 12 second cooldown.
 * * Advanced Metabolize is now Shadow Dance: You will automatically regenerate health when you are not visible to your enemies.
-* * Stab is now Acid Rocket: A 55 structural damage projectile with a small AOE. 
+* * Stab is now Acid Rocket: A 55 structural damage projectile with a small AOE. Requires biomass 6 (not 7, like stab)
 * Whips now have knockback.
 * Gorge Hydras have been reworked. They now autobuild, cost 1 res, have very little health, but attack very quickly.
 * Gorge Webs now prevent lerks from gliding or flapping for 4 seconds. If this happens to you, it will be the longest 4 seconds of your life.
@@ -75,8 +70,9 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * Scans and building blueprints are coloured orange if they are the enemy's.
 * Scanned players are tracked with a circle that stays on and doesn't flicker (NS2+ cheat has been disabled)
 * Marines can always see power node status. This can reveal your enemy's starting location (or race)
-* Sentries no longer require a sentry battery. Batteries can no longer be constructed.
+* Sentries no longer require a sentry battery, but now require power. Batteries can no longer be constructed. Max of 2 sentries per room.
 * Significant bot intelligence improvements
+* Robotics Factory cost reduced to 5 (from 10). ARC Factory increased to 10 (from 5).
 
 ## Extra Mods
 ### Healing field
@@ -95,7 +91,7 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 
 ### Hades Device
 * Blueprint placed by commander
-* Costs 10 res, can only be armed by a marine (not a MAC)
+* Costs 5 res, can only be armed by a marine (not a MAC)
 * Detonates after 25 seconds, and does massive damage to all units in a radius (including allies)
 * Only damages things within line of sight!
 
@@ -107,7 +103,8 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * If you spot an enemy building, it will stay on your minimap until it is destroyed
 
 ### Machine Gun Rebalance
-* Machine guns now reloads twice as fast, but firing it lowers your move speed by 20%. All other values remain the same as vanilla.
+* Machine guns now reloads twice as fast, but firing it lowers your move speed by 50%.
+* Machine gun is now more accurate when firing on the ground, but far less accurate in the air.
 
 ### Crouch Fix
 * Players can no longer crouch to clip into ceilings and vents.
