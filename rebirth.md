@@ -15,9 +15,10 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 
 ## Latest Changes
 
-### April 8
-* Shader fixes and performance improvements
-* Some fixes for spectator mode. Please keep sending in bugs using the report button below!
+### April 14
+* Fixed commander bot perf problems
+* Fixed a vanilla issue where tracers and ricochets were not exactly where your bullets were hitting
+* Fixed some alien upgrades not working. Please keep sending in bugs using the report button below!
 * Acid rocket has moved to biomass 6 (was biomass 7)
 
 ## Alien-specific changes
