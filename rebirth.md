@@ -15,11 +15,11 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 
 ## Latest Changes
 
-### April 14
-* Fixed commander bot perf problems
-* Fixed a vanilla issue where tracers and ricochets were not exactly where your bullets were hitting
-* Fixed some alien upgrades not working. Please keep sending in bugs using the report button below!
-* Acid rocket has moved to biomass 6 (was biomass 7)
+### April 18
+* Bot improvements (and reaction time increase! You might be able to dodge these skulk bots now...)
+* New cloak shader method. Now, cloaked enemies will appear perfectly invisible if they are 7+ meters away, but they will appear *very* visible if they are closer to you.
+* Bullet damage falloff against enemy structures has been removed
+* Prowler now deals more damage with less pellets, but has a slightly increased cone of fire and increased res cost of 5 (was 3) 
 
 ## Alien-specific changes
 * Skulks take an extra 30% less melee damage from aliens. (At biomass 1, it takes 1 parasite and 2 bites to kill a skulk. At biomass 2, it takes 2 parasites and 2 bites.)
@@ -36,7 +36,7 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * * Repeatedly jumping (or bunny-hopping) forward can let the player gain high speed
 * * Aiming up and holding forward allows for higher jumps
 * * Takes over all drifter abilities for free, on a short cooldown simply by right-clicking
-* * Primary fire is very low damage (maximum 30 normal) but has range
+* * Primary fire is very low damage (maximum 45 normal) but has range
 * Fades have been reworked to be the Wraith Fade
 * * Blink has been replaced with Teleport: Hold right-click to preview where you will go, then let go to teleport there nearly instantly
 * * Metabolize is now Backtrack: Press Shift to teleport to where you were 4 seconds ago after a short delay. Has a 12 second cooldown.
