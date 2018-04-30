@@ -16,10 +16,9 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 ## Latest Changes
 
 ### April 18
-* Bot improvements (and reaction time increase! You might be able to dodge these skulk bots now...)
 * New cloak shader method. Now, cloaked enemies will appear perfectly invisible if they are 7+ meters away, but they will appear *very* visible if they are closer to you.
-* Bullet damage falloff against enemy structures has been removed
-* Prowler now deals more damage with less pellets, but has a slightly increased cone of fire and increased res cost of 5 (was 3) 
+* Pulse grenades now explode on impact of anything
+* Many pulse grenade bugs are now fixed
 
 ## Alien-specific changes
 * Skulks take an extra 30% less melee damage from aliens. (At biomass 1, it takes 1 parasite and 2 bites to kill a skulk. At biomass 2, it takes 2 parasites and 2 bites.)
@@ -74,6 +73,7 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * Sentries no longer require a sentry battery, but now require power. Batteries can no longer be constructed. Max of 2 sentries per room.
 * Significant bot intelligence improvements
 * Robotics Factory cost reduced to 5 (from 10). ARC Factory increased to 10 (from 5).
+* Pulse grenades now explode on impact of anything
 
 ## Extra Mods
 ### Healing field
