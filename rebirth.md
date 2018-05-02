@@ -15,7 +15,9 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 
 ## Latest Changes
 
-### April 18
+### May 2
+* Railgun charge time is decreased to 1.5 seconds (was 2.0 seconds). 
+* Onos melee damage increased to 100 from 90
 * New cloak shader method. Now, cloaked enemies will appear perfectly invisible if they are 7+ meters away, but they will appear *very* visible if they are closer to you.
 * Pulse grenades now explode on impact of anything
 * Many pulse grenade bugs are now fixed
@@ -24,7 +26,8 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * Skulks take an extra 30% less melee damage from aliens. (At biomass 1, it takes 1 parasite and 2 bites to kill a skulk. At biomass 2, it takes 2 parasites and 2 bites.)
 * Onos deals double damage to Onos
 * Onos smash enemy eggs under their feet
-* Onons melee attacks are AOE, and hit all enemies in their melee "cone"
+* Onos melee attacks are AOE, and hit all enemies in their melee "cone"
+* Onos melee attack is now 100 damage (was 90)
 * You can't climb on enemy hives anymore.
 * Aliens can press Reload (default R) to go third-person
 * Infestation is only partially shared. While buildings can be nourished from enemy infestation, alien commanders cannot build or echo structures to enemy infestation.
@@ -52,6 +55,7 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * Marine backwards walk speed increased
 * Exosuits takes 33% less damage from all sources, and an additional 45% less damage from bullets
 * Railguns now have a smaller projectile (making it harder to hit players)
+* Railgun charge time is decreased to 1.5 seconds (was 2.0 seconds). 
 * Pulse grenades slow exosuits
 * Cluster grenades do 40% extra damage
 * Shotguns have a much smaller spread, but their bullets also drop in damage very quickly.
