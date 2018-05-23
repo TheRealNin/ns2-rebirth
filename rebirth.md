@@ -15,12 +15,10 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 
 ## Latest Changes
 
-### May 2
-* Railgun charge time is decreased to 1.5 seconds (was 2.0 seconds). 
-* Onos melee damage increased to 100 from 90
-* New cloak shader method. Now, cloaked enemies will appear perfectly invisible if they are 7+ meters away, but they will appear *very* visible if they are closer to you.
-* Pulse grenades now explode on impact of anything
-* Many pulse grenade bugs are now fixed
+### May 23
+* Many bugs fixed!
+* Skulk movement changed!
+* Shotgun automatically reloads!
 
 ## Alien-specific changes
 * Skulks take an extra 30% less melee damage from aliens. (At biomass 1, it takes 1 parasite and 2 bites to kill a skulk. At biomass 2, it takes 2 parasites and 2 bites.)
@@ -48,6 +46,7 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * Gorge Hydras have been reworked. They now autobuild, cost 1 res, have very little health, but attack very quickly.
 * Gorge Webs now prevent lerks from gliding or flapping for 4 seconds. If this happens to you, it will be the longest 4 seconds of your life.
 * Skulks will spawn with their previous upgrades
+* Skulks have a faster ground move speed but slower acceleration. Their top speed while wall jumping is the same.
 * Alien players respawn 2 seconds faster, but gestate in their egg for +2 seconds.
 
 
