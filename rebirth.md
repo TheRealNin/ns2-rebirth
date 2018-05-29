@@ -15,12 +15,13 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 
 ## Latest Changes
 
-### May 28
+### May 29
 * Prowler health increased, and attack cone narrowed
-* All grenades will no longer detonate on impact after bouncing
-* Many bugs fixed!
+* All grenades will no longer detonate on impact after bouncing.
+* Grenade launcher thus rebalanced: Lower damage, faster reload, no detonation delay. It is now affected by weapon upgrades.
+* Many bugs fixed.
 * Skulk movement changed! Faster but slower ground acceleration.
-* Shotgun automatically reloads!
+* Shotgun automatically reloads now. You could always shoot while reloading.
 
 ## Alien-specific changes
 * Skulks take an extra 30% less melee damage from aliens. (At biomass 1, it takes 1 parasite and 2 bites to kill a skulk. At biomass 2, it takes 2 parasites and 2 bites.)
@@ -80,6 +81,7 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * Robotics Factory cost reduced to 5 (from 10). ARC Factory increased to 10 (from 5).
 * Pulse grenades now explode on impact of anything
 * All grenades will no longer detonate on impact after bouncing
+* Grenade launcher rebalanced: Lower damage, faster reload, no detonation delay. It is now affected by weapon upgrades.
 
 ## Extra Mods
 ### Healing field
