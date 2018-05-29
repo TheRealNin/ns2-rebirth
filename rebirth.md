@@ -15,9 +15,11 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 
 ## Latest Changes
 
-### May 23
+### May 28
+* Prowler health increased, and attack cone narrowed
+* All grenades will no longer detonate on impact after bouncing
 * Many bugs fixed!
-* Skulk movement changed!
+* Skulk movement changed! Faster but slower ground acceleration.
 * Shotgun automatically reloads!
 
 ## Alien-specific changes
@@ -32,7 +34,7 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * Alien vision needed to be re-written so that players can differenciate between friend and foe. Your enemies are always orange, and your team is always blue.
 * Lerk bite damage decreased to 50 (was 60). Poison damage has been doubled (12/s up from 6/s)
 * New alien class: Prowler. 
-* * More HP than the skulk but less than the lerk, and moves roughly the same but cannot climb on walls
+* * More effective HP than the skulk but less than the lerk, and moves roughly the same but cannot climb on walls
 * * Repeatedly jumping (or bunny-hopping) forward can let the player gain high speed
 * * Aiming up and holding forward allows for higher jumps
 * * Takes over all drifter abilities for free, on a short cooldown simply by right-clicking
@@ -77,6 +79,7 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * Significant bot intelligence improvements
 * Robotics Factory cost reduced to 5 (from 10). ARC Factory increased to 10 (from 5).
 * Pulse grenades now explode on impact of anything
+* All grenades will no longer detonate on impact after bouncing
 
 ## Extra Mods
 ### Healing field
