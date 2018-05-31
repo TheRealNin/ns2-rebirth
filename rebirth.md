@@ -15,13 +15,15 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 
 ## Latest Changes
 
-### May 29
+### May31
 * Prowler health increased, and attack cone narrowed
 * All grenades will no longer detonate on impact after bouncing.
 * Grenade launcher thus rebalanced: Lower damage, faster reload, no detonation delay. It is now affected by weapon upgrades.
 * Many bugs fixed.
 * Skulk movement changed! Faster but slower ground acceleration.
 * Shotgun automatically reloads now. You could always shoot while reloading.
+* Pistol auto-firing speed reduced slightly
+* Shield generator bonus armor doubled. You can now get up to +60 armor from a shield generator!
 
 ## Alien-specific changes
 * Skulks take an extra 30% less melee damage from aliens. (At biomass 1, it takes 1 parasite and 2 bites to kill a skulk. At biomass 2, it takes 2 parasites and 2 bites.)
@@ -79,6 +81,7 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * Sentries no longer require a sentry battery, but now require power. Batteries can no longer be constructed. Max of 2 sentries per room.
 * Significant bot intelligence improvements
 * Robotics Factory cost reduced to 5 (from 10). ARC Factory increased to 10 (from 5).
+* Pistol now auto-fires but has a slightly slower max firing speed.
 * Pulse grenades now explode on impact of anything
 * All grenades will no longer detonate on impact after bouncing
 * Grenade launcher rebalanced: Lower damage, faster reload, no detonation delay. It is now affected by weapon upgrades.
@@ -92,7 +95,7 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 ### New armory GUI and shield tech
 * Shield generator boosts armor utility, giving +10 armor and auto-welding after a 10 second delay. Costs 10 res and 45 seconds to research.
 * It also better protects against GL, Miniguns, and Railgun, giving 25% reduction to damage from those sources as long as you have armor.
-* Shield generator can be upgraded to provide +10 armor per level (max +30), and can have the regeneration delay reduced to 5 and then 3 seconds at max level
+* Shield generator can be upgraded to provide +20 armor per level (max +60), and can have the regeneration delay reduced to 5 and then 3 seconds at max level
 
 ### Exosuit boombox 
 * Press 1-3 on your keyboard
