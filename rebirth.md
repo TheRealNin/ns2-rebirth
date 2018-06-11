@@ -17,6 +17,7 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 
 ### June 11
 * Adrenaline now provides double the energy pool but does not increase the rate you regenerate energy
+* Cat packs now provide +50 HP to marines (like the old medpacks)
 * Cloak shader improved
 * New marine bot behaviour: they will follow you around
 * Bug fixes
