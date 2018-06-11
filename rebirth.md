@@ -15,15 +15,11 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 
 ## Latest Changes
 
-### May31
-* Prowler health increased, and attack cone narrowed
-* All grenades will no longer detonate on impact after bouncing.
-* Grenade launcher thus rebalanced: Lower damage, faster reload, no detonation delay. It is now affected by weapon upgrades.
-* Many bugs fixed.
-* Skulk movement changed! Faster but slower ground acceleration.
-* Shotgun automatically reloads now. You could always shoot while reloading.
-* Pistol auto-firing speed reduced slightly
-* Shield generator bonus armor doubled. You can now get up to +60 armor from a shield generator!
+### June 11
+* Adrenaline now provides double the energy pool but does not increase the rate you regenerate energy
+* Cloak shader improved
+* New marine bot behaviour: they will follow you around
+* Bug fixes
 
 ## Alien-specific changes
 * Skulks take an extra 30% less melee damage from aliens. (At biomass 1, it takes 1 parasite and 2 bites to kill a skulk. At biomass 2, it takes 2 parasites and 2 bites.)
@@ -53,6 +49,7 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * Skulks will spawn with their previous upgrades
 * Skulks have a faster ground move speed but slower acceleration. Their top speed while wall jumping is the same.
 * Alien players respawn 2 seconds faster, but gestate in their egg for +2 seconds.
+* Adrenaline now provides double the energy pool but does not increase the rate you 
 
 
 ## Marine-specific changes
