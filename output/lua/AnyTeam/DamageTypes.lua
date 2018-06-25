@@ -46,23 +46,10 @@
 --
 -- ========= For more information, visit us at http://www.unknownworlds.com =====================
 
-
 --globals for balance-extension tweaking
-kAlienVampirismNotHealArmor = true 
-kAlienCrushDamagePercentByLevel = 0.07  --Max 21%
-kAlienFocusDamageBonusAtMax = 0.5
-kGorgeSpitDamageBonusAtMax = 0.5 -- spit does 1.5 damage instead of 2, but will fire faster to compensate
-kStabDamageBonusAtMax = kAlienFocusDamageBonusAtMax -- anticipating this will need tweaking later
-kAlienVampirismHealingScalarPerLevel = 0.3334
-kDamageMarinesLessScalar = 0.25
+kAlienVampirismNotHealArmor = false
 
-kLifeformVampirismScalars = {} --FIXME change to Weapon/Doer classnames, not lifeform
-kLifeformVampirismScalars["Skulk"] = 14
-kLifeformVampirismScalars["Gorge"] = 15
-kLifeformVampirismScalars["LerkBite"] = 10
-kLifeformVampirismScalars["LerkSpikes"] = 2
-kLifeformVampirismScalars["Fade"] = 20
-kLifeformVampirismScalars["Onos"] = 40  --Stomp?
+kDamageMarinesLessScalar = 0.25
 
 
 -- utility functions
@@ -109,84 +96,62 @@ function NS2Gamerules_GetUpgradedDamage(attacker, doer, damage, damageType, hitP
     
 end
 
---TODO Clean up / simplify
-function NS2Gamerules_GetAlienVampiricLeechFactor( attacker, doer, damageType, veilLevel )
-    
-    local leechFactor = 0
-    local attackerClass = attacker:GetClassName()
-    local doerClassName = doer:GetClassName()
-    
-    if attackerClass == "Lerk" then
-        
-        attackerClass = doerClassName
-        
-        if attackerClass == "SporeCloud" then
-            return 0
-        end
-        
-        --Note: this will need to be adjusted should Lerk Spikes damage type ever change
-        if attackerClass == "LerkBite" and damageType == kDamageType.Puncture then --Spikes
-            attackerClass = "LerkSpikes"
-        end
-        
-    elseif attackerClass == "Gorge" then
-        if doerClassName == "DotMarker" or doerClassName == "Babbler" or doerClassName == "Hydra" or damageType == kDamageType.Biological then
-            return 0
-        end
-    elseif attackerClass == "Onos" and doerClassName == "Shockwave" then
-        return 0
-    elseif attackerClass == "Skulk" and ( doerClassName == "Parasite" or doerClassName == "XenocideLeap" )then
-        return 0
-    end
-    
-    local baseLeechAmount = kLifeformVampirismScalars[attackerClass]
-    if baseLeechAmount ~= nil and type(baseLeechAmount) == "number" then
-        leechFactor = baseLeechAmount * ( veilLevel * kAlienVampirismHealingScalarPerLevel )
-    end
-    
-    return leechFactor
-    
-end
+
 
 --Utility function to apply chamber-upgraded modifications to alien damage
 --Note: this should _always_ be called BEFORE damage-type specific modifications are done (i.e. Light vs Normal vs Structural, etc)
 function NS2Gamerules_GetUpgradedAlienDamage( target, attacker, doer, damage, armorFractionUsed, healthPerArmor, damageType, hitPoint, weapon )
-    
-    if attacker:GetHasUpgrade( kTechId.Crush ) then --CragHive
-        
-        local shellLevel = GetShellLevel( kTeam2Index )
-        if shellLevel > 0 then
+
+    if not doer then return damage, armorFractionUsed end
+
+    local teamNumber = attacker:GetTeamNumber()
+
+    local isAffectedByCrush = doer.GetIsAffectedByCrush and attacker:GetHasUpgrade( kTechId.Crush ) and doer:GetIsAffectedByCrush()
+    local isAffectedByVampirism = doer.GetVampiricLeechScalar and attacker:GetHasUpgrade( kTechId.Vampirism )
+    local isAffectedByFocus = doer.GetIsAffectedByFocus and attacker:GetHasUpgrade( kTechId.Focus ) and doer:GetIsAffectedByFocus()
+
+    if isAffectedByCrush then --Crush
+        local crushLevel = attacker:GetSpurLevel()
+        if crushLevel > 0 then
             if target:isa("Exo") or target.GetReceivesStructuralDamage and target:GetReceivesStructuralDamage(damageType) then
-                damage = damage + ( damage * ( shellLevel * kAlienCrushDamagePercentByLevel ) )
+                damage = damage + ( damage * ( crushLevel * kAlienCrushDamagePercentByLevel ) )
             elseif target:isa("Player") then
-                armorFractionUsed = kBaseArmorUseFraction + ( shellLevel * kAlienCrushDamagePercentByLevel )
+                armorFractionUsed = kBaseArmorUseFraction + ( crushLevel * kAlienCrushDamagePercentByLevel )
             end
         end
         
     end
     
     if Server then
-        
-        if attacker:GetHasUpgrade( kTechId.Vampirism ) and target:isa("Player") then --ShadeHive
-            local veilLevel = GetVeilLevel( kTeam2Index )
-            if veilLevel > 0 then
-                local leechedHealth = NS2Gamerules_GetAlienVampiricLeechFactor( attacker, doer, damageType, veilLevel )
-                if attacker:GetIsAlive() then
-                    attacker:AddHealth( leechedHealth, true, kAlienVampirismNotHealArmor ) --TODO Find better method/location to perform this
+
+        -- Vampirism
+        if isAffectedByVampirism then
+            local vampirismLevel = attacker:GetShellLevel()
+            if vampirismLevel > 0 then
+                if attacker:GetIsHealable() and target:isa("Player") then
+                    local scalar = doer:GetVampiricLeechScalar()
+                    if scalar > 0 then
+
+                        local focusBonus = 1
+                        if isAffectedByFocus then
+                            focusBonus = 1 + doer:GetFocusAttackCooldown()
+                        end
+
+                        local maxHealth = attacker:GetMaxHealth()
+                        local leechedHealth =  maxHealth * vampirismLevel * scalar * focusBonus
+                        attacker:AddHealth( leechedHealth, true, kAlienVampirismNotHealArmor )
+
+                    end
                 end
             end
         end
         
     end
-    
-    if attacker:GetHasUpgrade( kTechId.Focus ) and DoesFocusAffectAbility(weapon) then
-        local veilLevel = GetVeilLevel( kTeam2Index )
-        local damageBonus = kAlienFocusDamageBonusAtMax
-        if weapon == kTechId.Spit then -- gorge spit is a special case
-            damageBonus = kGorgeSpitDamageBonusAtMax
-        elseif weapon == kTechId.Stab then -- preparing for anticipated changes...
-            damageBonus = kStabDamageBonusAtMax
-        end
+
+    --Focus
+    if isAffectedByFocus then
+        local veilLevel = attacker:GetVeilLevel()
+        local damageBonus = doer:GetMaxFocusBonusDamage()
         damage = damage * (1 + (veilLevel/3) * damageBonus) --1.0, 1.333, 1.666, 2
     end
     
@@ -461,7 +426,7 @@ local function IgnoreHealth(target, attacker, doer, damage, armorFractionUsed, h
 end
 
 local function ReduceGreatlyForPlayers(target, attacker, doer, damage, armorFractionUsed, healthPerArmor, damageType, hitPoint)
-    if target:isa("Exo") or target:isa("Exosuit") then
+    if target:isa("Exo") or target:isa("Exosuit") or target:isa("Onos") then
         damage = damage * kCorrodeDamageExoArmorScalar
     elseif target:isa("Player") then
         damage = damage * kCorrodeDamagePlayerArmorScalar

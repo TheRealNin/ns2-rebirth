@@ -7,7 +7,8 @@ Script.Load("lua/DamageMixin.lua")
 class 'AcidRocket' (PredictedProjectile)
 
 AcidRocket.kMapName            = "acidrocket"
-AcidRocket.kProjectileCinematic = PrecacheAsset("cinematics/acidrocket_projectile.cinematic")
+AcidRocket.kProjectileCinematic = PrecacheAsset("cinematics/acidrocket_projectile2.cinematic")
+--AcidRocket.kProjectileCinematic = PrecacheAsset("cinematics/alien/fade/trail_glow_1.cinematic")
 
 AcidRocket.kRadius             = 0.05
 AcidRocket.kDetonateRadius     = 0.35
@@ -37,7 +38,7 @@ function AcidRocket:GetDamageType()
     return kAcidRocketDamageType
 end
 function AcidRocket:GetDeathIconIndex()
-    return kDeathMessageIcon.BileBomb
+    return kDeathMessageIcon.EMPBlast
 end
 
 function AcidRocket:ProcessNearMiss( targetHit, endPoint )

@@ -1,4 +1,4 @@
 modEntry = {
 FileHooks = "lua/WeaponSwitch/FileHooks.lua",
-Priority = 65
+Priority = 25
 }

@@ -234,31 +234,36 @@ function Blink:SetEthereal(player, state)
               
 
         if player.ethereal then
-          player:DeductAbilityEnergy(kFadeTeleportEnergyCost)
-          player.etherealStartTime = Shared.GetTime()
-          TriggerBlinkOutEffects(self, player)
-          self:TriggerEffects("shadow_step", { effecthostcoords = Coords.GetLookIn(player:GetOrigin(),  player:GetViewAngles():GetCoords().zAxis) })
-          
-          player.startBlinkLocation = player:GetOrigin() 
-          player.startVelocity = Vector(player:GetVelocity().x, math.max(player:GetVelocity().y, 0), player:GetVelocity().z)
-          player.endBlinkLocation = BlinkEndTarget(self).origin
-          
+            player:DeductAbilityEnergy(kFadeTeleportEnergyCost)
+            player.etherealStartTime = Shared.GetTime()
+            TriggerBlinkOutEffects(self, player)
+            self:TriggerEffects("shadow_step", { effecthostcoords = Coords.GetLookIn(player:GetOrigin(),  player:GetViewAngles():GetCoords().zAxis) })
+
+            player.startBlinkLocation = player:GetOrigin() 
+            player.startVelocity = Vector(player:GetVelocity().x, math.max(player:GetVelocity().y, 0), player:GetVelocity().z)
+            local endTarget = BlinkEndTarget(self)
+            if endTarget and endTarget.origin then
+                player.endBlinkLocation = endTarget.origin
+            else
+                player.endBlinkLocation = player:GetOrigin()
+            end
+
         elseif player.OnBlinkEnd then
-        -- A case where OnBlinkEnd() does not exist is when a Fade becomes Commanders and
-        -- then a new ability becomes available through research which calls AddWeapon()
-        -- which calls OnHolster() which calls this function. The Commander doesn't have
-        -- a OnBlinkEnd() function but the new ability is still added to the Commander for
-        -- when they log out and become a Fade again.
-          player:OnBlinkEnd()
-          player.etherealEndTime = Shared.GetTime()
-          TriggerBlinkInEffects(self, player)
-          
-          if Client and Client.GetLocalPlayer() == player and player:GetIsFirstPerson() then
+            -- A case where OnBlinkEnd() does not exist is when a Fade becomes Commanders and
+            -- then a new ability becomes available through research which calls AddWeapon()
+            -- which calls OnHolster() which calls this function. The Commander doesn't have
+            -- a OnBlinkEnd() function but the new ability is still added to the Commander for
+            -- when they log out and become a Fade again.
+            player:OnBlinkEnd()
+            player.etherealEndTime = Shared.GetTime()
+            TriggerBlinkInEffects(self, player)
+
+            if Client and Client.GetLocalPlayer() == player and player:GetIsFirstPerson() then
               
               local cinematic = Client.CreateCinematic(RenderScene.Zone_ViewModel)
               cinematic:SetCinematic(kCreateVortex)
               
-          end
+            end
         end
         
     end

@@ -12,6 +12,8 @@
 	
 	<code>
 	<![CDATA[
+        
+        
 		float3 DecodeNormal(const float4 texNormal)
 		{
 			float4 n = texNormal * 2 - 1;
@@ -24,23 +26,25 @@
 			float4 albedo = tex2D(albedoMap, input.texCoord);
             float greyscale = (albedo.r + albedo.g + albedo.b)*0.3;
             float specularColor = saturate(pow(greyscale, 0.6)*0.1);
-			float glossiness = 10;
+			float glossiness = 20;
             
-			float3 ssDir = normalize(input.vsPosition);
-            float intensity = -dot(ssDir, input.vsNormal);
+            float intensity = 0;
+            float3 ssDir = normalize(input.vsPosition);
+            intensity = -dot(ssDir, input.vsNormal);
             intensity = 1.0 - saturate(intensity);
             intensity = intensity * intensity * intensity * intensity * intensity;
+            /*
             albedo += albedo * intensity * 0.2;
+            albedo += intensity * 0.3;
+            */
 			
 			float shininess  = 5;
-            
-            albedo += intensity * 0.3;
             
 		
 			material.albedo 	= pow(albedo.rgb, 0.8);
 			material.tsNormal 	= DecodeNormal( tex2D(normalMap, input.texCoord) );
 			material.specular	= saturate((float3)specularColor * shininess);
-			material.gloss		= glossiness / 255.0;
+			material.gloss		= glossiness / 255.0 * (intensity + 0.5);
             
             
             

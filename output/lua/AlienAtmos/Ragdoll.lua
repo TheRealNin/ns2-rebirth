@@ -32,6 +32,7 @@ function CreateRagdoll(fromEntity)
         local ragdoll = CreateEntity(Ragdoll.kMapName, fromEntity:GetOrigin())
         ragdoll:SetCoords(fromEntity:GetCoords())
         ragdoll:SetModel(useModelName, useGraphName)
+        ragdoll:SetPhysicsType(PhysicsType.Dynamic)
         
         --if fromEntity.GetPlayInstantRagdoll and fromEntity:GetPlayInstantRagdoll() then
         ragdoll:SetPhysicsGroup(PhysicsGroup.RagdollGroup)

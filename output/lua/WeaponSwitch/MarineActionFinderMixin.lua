@@ -53,16 +53,25 @@ local function GetWeaponClosestToViewCenter(self, weaponTable)
     local closestDot = 0
     
     for i=1, #weaponTable do
-        local toWeaponVec = (weaponTable[i]:GetOrigin() - self:GetEyePos()):GetUnit()
-        local dot = coords.zAxis:DotProduct(toWeaponVec)
-        if dot >= kConeTolerance then
-            if not closest then
-                closest = weaponTable[i]
-                closestDot = dot
-            else
-                if closestDot < dot then
+        -- we only want primaries!
+        if weaponTable[i]:GetHUDSlot() == 1 then
+            local toWeaponVec = (weaponTable[i]:GetOrigin() - self:GetEyePos()):GetUnit()
+            local dot = coords.zAxis:DotProduct(toWeaponVec)
+            if dot >= kConeTolerance then
+            
+                -- make us very unlikely to pick up weapons we already have...
+                if self:GetWeapon(weaponTable[i].kMapName) then
+                    dot = dot - 1000
+                end
+                
+                if not closest then
                     closest = weaponTable[i]
                     closestDot = dot
+                else
+                    if closestDot < dot then
+                        closest = weaponTable[i]
+                        closestDot = dot
+                    end
                 end
             end
         end

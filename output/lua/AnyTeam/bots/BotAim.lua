@@ -27,7 +27,7 @@ local function IsPointInCone(point, cone_origin, cone_dir, angle)
 end
 
 BotAim.viewAngle = math.rad(47)
-BotAim.reactionTime = 0.3 -- was 0.3
+BotAim.reactionTime = 0.35 -- was 0.3
 
 function BotAim:UpdateAim(target, targetAimPoint)
     PROFILE("BotAim:UpdateAim")

@@ -57,7 +57,7 @@ function PitchTargetFilter(attacker, minPitchDegree, maxPitchDegree)
         local distY = Math.DotProduct(viewCoords.yAxis, v)
         local distZ = Math.DotProduct(viewCoords.zAxis, v)
         local pitch = 180 * math.atan2(distY,distZ) / math.pi
-        result = pitch >= minPitchDegree and pitch <= maxPitchDegree
+        local result = pitch >= minPitchDegree and pitch <= maxPitchDegree
         -- Log("filter %s for %s, v %s, pitch %s, result %s (%s,%s)", target, attacker, v, pitch, result, minPitchDegree, maxPitchDegree)
         return result
     end
@@ -111,7 +111,7 @@ end
 -- Selects everything
 --
 function AllPrioritizer()
-    return function(target) return true end
+    return function(target) return target:GetIsAlive() end
 end
 
 
@@ -139,10 +139,11 @@ function TargetType:Init(name, teamNumber, tag)
 
     -- the entities that have been selected by their TargetType. A proper hashtable, not a list.
     self.entityIdMap = {}
+    self.entityIdList = {}
     
     -- wonder how much this slows down lookups?
     self.teamFilterFunction = function (entity) 
-        return entity:GetTeamNumber() == teamNumber
+        return entity:GetTeamNumber() == self.teamNumber
     end
         
     return self
@@ -153,9 +154,11 @@ end
 -- Notification that a new entity id has been added
 --
 function TargetType:EntityAdded(entity)
-    if self:ContainsType(entity) and not self.entityIdMap[entity:GetId()] and self.teamFilterFunction(entity) then
+    local entId = entity:GetId()
+    if self:ContainsType(entity) and not self.entityIdMap[entId] and self.teamFilterFunction(entity) then
         -- Log("%s: added %s, teamNumber: %s", self.name, entity, entity:GetTeamNumber())
-        self.entityIdMap[entity:GetId()] = true
+        table.insert(self.entityIdList, entId)
+        self.entityIdMap[entId] = #self.entityIdList
         self:OnEntityAdded(entity)
     end
 end
@@ -173,8 +176,10 @@ end
 -- Notification that an entity id has been removed.
 --
 function TargetType:EntityRemoved(entity)
-    if entity and self.entityIdMap[entity:GetId()] then
-        self.entityIdMap[entity:GetId()] = nil
+    local entId = entity:GetId()
+    if entity and self.entityIdMap[entId] then
+        table.remove(self.entityIdList, self.entityIdMap[entId])
+        self.entityIdMap[entId] = nil
         -- Log("%s: removed %s", self.name, entity)
         self:OnEntityRemoved(entity)    
     end
@@ -238,30 +243,37 @@ end
 
 function StaticTargetType:AttachSelector(selector)
     -- each selector gets its own cache of non-moving entities. The selector must be detached when the owning entitiy dies
-    self.cacheMap[selector] = StaticTargetCache():Init(self, selector)
+    if not self.cacheMap[selector] then
+        table.insert(self.cacheMap, selector)
+        self.cacheMap[selector] = StaticTargetCache():Init(self, selector)
+    end
+
     return self.cacheMap[selector]
 end
 
 -- detach the selector. Must be called when the entity owning the selector dies
 function StaticTargetType:DetachSelector(selector)
+    table.removevalue(self.cacheMap, selector)
     self.cacheMap[selector] = nil
 end
 
 function StaticTargetType:OnEntityAdded(entity)
-    for id,cache in pairs(self.cacheMap) do
+    for _,selector in ipairs(self.cacheMap) do
+        local cache = self.cacheMap[selector]
         cache:OnEntityAdded(entity)
     end
 end
 
 function StaticTargetType:OnEntityMoved(entity)
-    for id,cache in pairs(self.cacheMap) do
-        cache:OnEntityMoved(entity) 
+    for _,selector in ipairs(self.cacheMap) do
+        local cache = self.cacheMap[selector]
+        cache:OnEntityMoved(entity)
     end
 end
 
 function StaticTargetType:OnEntityRemoved(entity)
-    for id,cache in pairs(self.cacheMap) do
-        cache:OnEntityRemoved(entity)
+    for _,selector in ipairs(self.cacheMap) do
+        local cache = self.cacheMap[selector]
     end
 end
 
@@ -270,8 +282,8 @@ class 'StaticTargetCache'
 function StaticTargetCache:Init(targetType, selector)
     self.targetType = targetType
     self.selector = selector
-    self.targetIdToRangeMap = nil 
-
+    self.targetIds = nil
+    self.targetIdToRangeMap = nil
     return self
 end
 
@@ -291,7 +303,9 @@ end
 -- just clear any info we might have had on that id
 function StaticTargetCache:InvalidateDataFor(entity)
     if self.targetIdToRangeMap then
-        self.targetIdToRangeMap[entity:GetId()] = nil
+        local entId = entity:GetId()
+        table.removevalue(self.targetIds, entId)
+        self.targetIdToRangeMap[entId] = nil
     end
 end
 
@@ -309,10 +323,11 @@ end
 function StaticTargetCache:ValidateCache()
     if not self.targetIdToRangeMap then 
         self.targetIdToRangeMap = {}
+        self.targetIds = {}
         local eyePos = self.selector.attacker:GetEyePos()
         local targets = self.targetType:GetAllPossibleTargets(eyePos, self.selector.range)
         for _, target in ipairs(targets) do
-            if target:GetTeamNumber() == self.targetType.teamNumber or target:GetTeamNumber() == kNeutralTeamType then
+            if target:GetTeamNumber() == self.targetType.teamNumber then
                 self:MaybeAddTarget(target, eyePos)
             end
         end
@@ -327,18 +342,19 @@ function StaticTargetCache:AddPossibleTargets(selector, result)
     
     self:ValidateCache(selector)
 
-    local count = 0
-    for targetId, range in pairs(self.targetIdToRangeMap) do
+    for _, targetId in ipairs(self.targetIds) do
         PROFILE("StaticTargetCache:AddPossibleTargets/loop")
         local target = Shared.GetEntity(targetId)
+        local range = self.targetIdToRangeMap[targetId]
         
-            if target and target:GetIsAlive() and target:GetCanTakeDamage() then 
-                PROFILE("StaticTargetCache:AddPossibleTargets/_ApplyFilters")
-                if selector:_ApplyFilters(target, target:GetEngagementPoint()) then
-                    table.insert(result,target)
-                    --Log("%s: static target %s at range %s", selector.attacker, target, range)
-                end
+        
+        if target and target.GetIsAlive and target:GetIsAlive() and target:GetCanTakeDamage() then 
+            PROFILE("StaticTargetCache:AddPossibleTargets/_ApplyFilters")
+            if selector:_ApplyFilters(target, target:GetEngagementPoint()) then
+                table.insert(result,target)
+--                Log("%s: static target %s at range %s", selector.attacker, target, range)
             end
+        end
     end
 
 end
@@ -347,7 +363,8 @@ end
 -- If the attacker moves, the cache has to be invalidated.
 --
 function StaticTargetCache:AttackerMoved()
-    self.targetIdToRangeMap = nil    
+    self.targetIdToRangeMap = nil
+    self.targetIds = nil
 end
 
 --
@@ -385,13 +402,18 @@ function StaticTargetCache:MaybeAddTarget(target, origin)
     end
     if inRange and visible then 
         -- save the target and the range to it
+        
+        local entId = target:GetId()
+        if not self.targetIdToRangeMap[entId] then
+            table.insert(self.targetIds, entId)
+        end
         self.targetIdToRangeMap[target:GetId()] = range
 --        self:Log("%s added at range %s", target, range)
     else
         if not rightType then
-  --          self:Log("%s rejected, wrong type", target)
+--  Log("%s rejected, wrong type", target)
         else
-    --        self:Log("%s rejected, range %s, inRange %s, visible %s", target, range, inRange, visible)
+-- Log("%s rejected, range %s, inRange %s, visible %s", target, range, inRange, visible)
         end
     end  
 end
@@ -402,7 +424,7 @@ function StaticTargetCache:Debug(selector, full)
     self:ValidateCache(selector)
     local origin = GetEntityEyePos(selector.attacker)
     -- go through all static targets, showing range and curr
-    for targetId,_ in pairs(self.targetType.entityIdMap) do
+    for _, targetId in ipairs(self.targetType.entityIdList) do
         local target = Shared.GetEntity(targetId)
         if target then
             local targetPoint = target:GetEngagementPoint()
@@ -458,7 +480,7 @@ function MobileTargetType:AttackerMoved()
 end
 
 function MobileTargetType:PossibleTarget(target, origin, range)
-    local r = nil
+    local r
     if self.entityIdMap[target:GetId()] then
         r = (origin - target:GetEngagementPoint()):GetLength()
     end
@@ -588,7 +610,7 @@ class "TargetSelector"
 
 local function DestroyTargetSelector(targetSelector)
 
-    for targetType,_ in pairs(targetSelector.targetTypeMap) do
+    for _, targetType in ipairs(targetSelector.targetTypeList) do
         targetType:DetachSelector(targetSelector)
     end
     
@@ -608,7 +630,10 @@ function TargetSelector:Init(attacker, range, visibilityRequired, targetTypeList
     local attackerTeamNumber = attacker:GetTeamNumber()
     local attackerTeamType = attacker:GetTeamType()
     
-    self.targetTypeMap = { }
+    self.targetTypeMap = {}
+    
+    self.targetTypeList = {}
+    
     for _, targetType in ipairs(targetTypeList) do
         local fixedTargetType = targetType
         -- this fixes the targets
@@ -646,13 +671,14 @@ function TargetSelector:Init(attacker, range, visibilityRequired, targetTypeList
             end
         end
         self.targetTypeMap[fixedTargetType] = fixedTargetType:AttachSelector(self)
+        table.insert(self.targetTypeList, fixedTargetType)
     end
     
     -- This will allow target selectors to be cleaned up when the attack is destroyed.
     -- targetSelectorsToDestroy comes from TargetCacheMixin.
     table.insert(attacker.targetSelectorsToDestroy, function() DestroyTargetSelector(self) end)
     
-    self.debug = true 
+    self.debug = false 
     
     return self
     
@@ -711,7 +737,8 @@ function TargetSelector:_PossibleTarget(target)
         local origin = self.attacker:GetEyePos()
         
         local possible = false
-        for tc,tcCache in pairs(self.targetTypeMap) do
+        for _, tc in ipairs(self.targetTypeList) do
+            local tcCache = self.targetTypeMap[tc]
             possible = possible or tcCache:PossibleTarget(target, origin, self.range) 
         end
         if possible then
@@ -794,13 +821,14 @@ function TargetSelector:_GetRawTargetList()
     local result = {}
 
     -- get potential targets from all targetTypees
-    for tc,tcCache in pairs(self.targetTypeMap) do
+    for _, tc in ipairs(self.targetTypeList) do
+        local tcCache = self.targetTypeMap[tc]
         tcCache:AddPossibleTargets(self, result)
     end
 
     if (true) then
-       PROFILE("TargetSelector:_GetRawTargetList")
-       Shared.SortEntitiesByDistance(self.attacker:GetEyePos(),result)
+        PROFILE("TargetSelector:_GetRawTargetList")
+        Shared.SortEntitiesByDistance(self.attacker:GetEyePos(),result)
     end
     
     return result
@@ -819,7 +847,7 @@ function TargetSelector:_InsertTargets(foundTargetsList, checkedTable, prioritiz
     for _, target in ipairs(targets) do
         -- Log("%s: check %s, ct %s, prio %s", self.attacker, target, checkedTable[target], prioritizer(target))
         local include = false
-        if not checkedTable[target] and prioritizer(target) then
+        if not checkedTable[target] and prioritizer(target) and target:GetIsAlive() then
             if self.visibilityRequired then 
                 include = GetCanAttackEntity(self.attacker, target) 
             else
@@ -842,8 +870,9 @@ end
 -- if the location of the unit doing the target selection changes, its static target list
 -- must be invalidated.
 --
-function TargetSelector:AttackerMoved()
-    for tc,tcCache in pairs(self.targetTypeMap) do
+function TargetSelector:AttackerMoved() 
+    for _, tc in ipairs(self.targetTypeList) do
+        local tcCache = self.targetTypeMap[tc]
         tcCache:AttackerMoved()
     end
 end
@@ -858,7 +887,8 @@ function TargetSelector:Debug(cmd)
         self:AttackerMoved()
     end
     Log("%s @ %s: target debug (full=%s, log=%s)", self.attacker, self.attacker:GetOrigin(), full, self.debug)
-    for tc,tcCache in pairs(self.targetTypeMap) do
+    for _, tc in ipairs(self.targetTypeList) do
+        local tcCache = self.targetTypeMap[tc]
         tcCache:Debug(self, full)
     end
 end

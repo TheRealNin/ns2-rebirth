@@ -1,1 +1,1 @@
-kHadesDeviceHealth = 300        -- sentry battery is 600    kHadesDeviceArmor =  300        -- sentry battery is 200    kHadesDevicePointValue = 10     -- sentry battery is 5kHadesDeviceCost = 5kHadesDeviceBuildTime = 2
+kHadesDeviceHealth = 300        -- sentry battery is 600    kHadesDeviceArmor =  300        -- sentry battery is 200    kHadesDevicePointValue = 10     -- sentry battery is 5kHadesDeviceCost = 10kHadesDeviceBuildTime = 2

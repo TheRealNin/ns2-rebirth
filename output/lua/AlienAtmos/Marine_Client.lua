@@ -30,9 +30,9 @@ function Marine:OnUpdateRender()
     origOnUpdateRender(self)
     if self.flashlightOn then
         -- Only display atmospherics for third person players.
-        local density = 0.01
+        local density =  0 -- was 0.01
         local radius = 30
-        local intensity = 9
+        local intensity = 10
         local isLocal = self:GetIsLocalPlayer()
         if isLocal and not self:GetIsThirdPerson() then
             density = 0
@@ -42,8 +42,8 @@ function Marine:OnUpdateRender()
                 
                 self._fake_reflection:SetType( RenderLight.Type_Point )
                 self._fake_reflection:SetColor( Color(1, 1, 1) )
-                self._fake_reflection:SetIntensity( 0.1 )
-                self._fake_reflection:SetRadius( 10 ) 
+                self._fake_reflection:SetIntensity( 0.15 )
+                self._fake_reflection:SetRadius( 12 ) 
                 self._fake_reflection:SetSpecular( false ) 
                 self._fake_reflection:SetCastsShadows( false )
             end
@@ -79,7 +79,6 @@ function Marine:OnUpdateRender()
         
             
             radius = 10
-            intensity = 5
             self.flashlight:SetCastsShadows( false )
             
             if self._fake_reflection ~= nil then

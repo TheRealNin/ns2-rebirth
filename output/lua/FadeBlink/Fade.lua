@@ -202,11 +202,11 @@ if Client then
             local player = self
             if Shared.GetTime() - self.etherealStartTime < kshadowStepTime and player.OnBlinkEnd and player.controller then
                 --player.blinkAmount = 1
-                local shadowStepFraction = Clamp((Shared.GetTime() - self.etherealStartTime) / kshadowStepTime, 0, 1)
+                local shadowStepFraction = Clamp((Shared.GetTime() - self.etherealStartTime) / kshadowStepTime, 0, 1) * 0.5 + 0.5
                 local newPos = self.startBlinkLocation * (1-shadowStepFraction) + self.endBlinkLocation * shadowStepFraction
                 --player:SetOrigin(newPos)
                 player:UpdateControllerFromEntity()
-                player.controller:Move(newPos - player:GetOrigin(), CollisionRep.Move, CollisionRep.Move, PhysicsMask.None)
+                player.controller:Move(newPos - player:GetOrigin(), CollisionRep.Move, CollisionRep.Default, PhysicsMask.AllButPCsAndRagdolls)
                 player:UpdateOriginFromController()
             end
         end

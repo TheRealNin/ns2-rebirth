@@ -41,13 +41,14 @@ local function PickupWeapon(self, weapon, wasAutoPickup)
     local oldWep = self:GetWeaponInHUDSlot(slot)
     
     -- perform the actual weapon pickup (also drops weapon in the slot)
-    self:AddWeapon(weapon, not wasAutoPickup)
+    self:AddWeapon(weapon, false) -- not wasAutoPickup
     StartSoundEffectAtOrigin(Marine.kGunPickupSound, self:GetOrigin())
     
     -- switch to the active weapon if the player deliberately (non-automatically) picked up the weapon,
     -- or if the weapon they were picking up automatically replaced the currently held weapon
     -- or if we recently dropped a weapon (maybe to pick up this one?) so you can "juggle" weapons
-    if not wasAutoPickup or replacedActiveWeapon or (Shared.GetTime() < self.timeOfLastPickUpWeapon + Marine.kPickupWeaponTimeLimit) then
+    if (not wasAutoPickup or replacedActiveWeapon or (Shared.GetTime() < self.timeOfLastPickUpWeapon + Marine.kPickupWeaponTimeLimit)) 
+        and weapon:GetHUDSlot() == 1 then
         self:SetHUDSlotActive(weapon:GetHUDSlot())
     end
     
@@ -102,9 +103,15 @@ function Marine:HandleButtons(input)
             self._lastUsedPressed = usePressed
             
             -- search for weapons to auto-pickup nearby.
+            -- this is actually ONLY an NS2+ setting
             local autopickupWeapon = self:FindNearbyAutoPickupWeapon()
             if autopickupWeapon then
-                PickupWeapon(self, autopickupWeapon, true)
+                -- yes, it was an autopickup, and we might not want to switch to it
+                if (Shared.GetTime() > self.timeOfLastPickUpWeapon + Marine.kPickupWeaponTimeLimit) then
+                    PickupWeapon(self, autopickupWeapon, true)
+                else
+                    PickupWeapon(self, autopickupWeapon, false)
+                end
             end
                 
             

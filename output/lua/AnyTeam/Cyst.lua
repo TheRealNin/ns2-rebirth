@@ -4,6 +4,16 @@ local kPointOffset = Vector(0, 0.1, 0)
 local kParentSearchRange = 400
 
 
+local networkVars = {}
+AddMixinNetworkVars(ParasiteMixin, networkVars)
+local oldOnCreate = Cyst.OnCreate
+function Cyst:OnCreate()
+    oldOnCreate(self)
+    InitMixin(self, ParasiteMixin)
+end
+
+Shared.LinkClassToMap("Cyst", Cyst.kMapName, networkVars)
+
 --
 -- To avoid problems with minicysts on walls connection to each other through solid rock,
 -- we need to move the start/end points a little bit along the start/end normals

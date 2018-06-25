@@ -299,7 +299,7 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
         
         if (not bot.lastHostilesTime or bot.lastHostilesTime < Shared.GetTime() - 45) and isDodgeable then
             CreateVoiceMessage( player, kVoiceId.MarineHostiles )
-            bot:SendTeamMessage("Enemy contact!", 60)
+            --bot:SendTeamMessage("Enemy contact!", 60)
             bot.lastHostilesTime = Shared.GetTime()
         end
         
@@ -1087,7 +1087,7 @@ kMarineBrainActions =
             kTechId.HeavyMachineGun,
             kTechId.Shotgun,
             kTechId.Flamethrower,
-            --kTechId.GrenadeLauncher,
+            kTechId.GrenadeLauncher,
         })
 
         --Update this with techtree updates
@@ -1291,6 +1291,67 @@ kMarineBrainActions =
 
     end,
 
+    function(bot, brain)
+
+        local name = "guardHumans"
+        local marine = bot:GetPlayer()
+        local sdb = brain:GetSenses()
+        local weight = 0.0
+
+
+        local targetData = sdb:Get("nearestHuman")
+        local target = targetData.player
+        local dist = targetData.distance
+        
+        if target and dist < 15 then
+            local targetId = target:GetId()
+            if targetId then
+                local numOthers = brain.teamBrain:GetNumOthersAssignedToEntity( targetId, bot )
+                if (numOthers == nil) or numOthers >= 1 then
+                    weight = 0.0
+                else
+                    weight = 0.20 --  above buildThings
+                end
+            end
+        end
+        
+        weight = weight + weight * bot.helpAbility
+
+        return { name = name, weight = weight,
+            perform = function(move)
+                if target then 
+                
+                    SwitchToPrimary(marine)
+                    brain.teamBrain:UnassignBot(bot)
+                    brain.teamBrain:AssignBotToEntity( bot, target:GetId() )
+
+                    local touchDist = GetDistanceToTouch( marine:GetEyePos(), target )
+                    if touchDist > 5.0 then
+                        PerformMove( marine:GetOrigin(), target:GetEngagementPoint(), bot, brain, move )
+                    else
+                        bot:GetMotion():SetDesiredMoveTarget( nil )
+                        if not bot.lastLookAround or bot.lastLookAround + 2 < Shared.GetTime() then
+                            bot.lastLookAround = Shared.GetTime()
+                            local viewTarget = GetRandomDirXZ()
+                            viewTarget.y = math.random()
+                            viewTarget:Normalize()
+                            bot.lastLookTarget = marine:GetEyePos()+viewTarget*30
+                        end
+                        if bot.lastLookTarget then
+                            bot:GetMotion():SetDesiredViewTarget(bot.lastLookTarget)
+                        end
+                        if (not bot.lastCoveringTime or bot.lastCoveringTime < Shared.GetTime() - 120) and target:isa("Player") then
+                            CreateVoiceMessage( bot:GetPlayer(), kVoiceId.MarineCovering )
+                            bot.lastCoveringTime = Shared.GetTime()
+                        end
+                        
+                    end
+                    
+                    
+                end
+            end }
+    end,
+    
     
     function(bot, brain)
 
@@ -1322,6 +1383,7 @@ kMarineBrainActions =
             perform = function(move)
                 if target then 
                     brain.teamBrain:UnassignBot(bot)
+                    brain.teamBrain:AssignBotToEntity( bot, target:GetId() )
                     PerformUse( marine, target, bot, brain , move )
                     bot:SendTeamMessage("I'll build the " .. target:GetMapName() .. " in " .. target:GetLocationName(), 120)
                     move.commands = AddMoveCommand( move.commands, Move.MovementModifier )
@@ -1393,6 +1455,7 @@ local function GetAttackUrgency(bot, mem)
     local passiveUrgencies =
     {
         [kMinimapBlipType.Crag] = numOthers >= 2           and 0.2 or 0.95, -- kind of a special case
+        [kMinimapBlipType.SentryBattery] = numOthers >= 2  and 0.2 or 0.95,
         [kMinimapBlipType.Hive] = numOthers >= 6           and 0.5 or 0.9,
         [kMinimapBlipType.Harvester] = numOthers >= 2      and 0.4 or 0.9,
         [kMinimapBlipType.Egg] = numOthers >= 1            and 0.2 or 0.5,
@@ -1415,6 +1478,10 @@ local function GetAttackUrgency(bot, mem)
         [kMinimapBlipType.ArmsLab] =            numOthers >= 3 and 0.2 or 0.6,
         [kMinimapBlipType.MAC] =                numOthers >= 1 and 0.2 or 0.4,
     }
+    
+    if table.contains(kMinimapBlipType, "HadesDevice") then
+        passiveUrgencies[kMinimapBlipType.HadesDevice] = numOthers >= 2  and 0.2 or 0.95
+    end
 
     if bot.brain.debug then
         if mem.btype == kMinimapBlipType.Hive then
@@ -1566,7 +1633,7 @@ function CreateMarineBrainSenses()
             local marine = db.bot:GetPlayer()
             return marine:GetHealthFraction()
             end)
-
+            
     s:Add("biggestThreat", function(db)
             local marine = db.bot:GetPlayer()
             local memories = GetTeamMemories( marine:GetTeamNumber() )
@@ -1610,6 +1677,25 @@ function CreateMarineBrainSenses()
 
             if armory ~= nil then db.lastNearestArmoryId = armory:GetId() end
             return {armory = armory, distance = dist}
+
+            end)
+            
+    s:Add("nearestHuman", function(db)
+
+            local marine = db.bot:GetPlayer()
+            local players = GetEntitiesForTeam( "Player", marine:GetTeamNumber() )
+
+            local dist, player = GetMinTableEntry( players,
+                function(player)
+                    assert( player ~= nil )
+                    if not player.is_a_robot  then
+                        local dist,_ = GetPhaseDistanceForMarine( marine, player:GetOrigin(), db.bot.brain.lastGateId )
+
+                        return dist
+                    end
+                end)
+
+            return {player = player, distance = dist}
 
             end)
             
@@ -1670,9 +1756,7 @@ function CreateMarineBrainSenses()
 
             local dist, power = GetMinTableEntry( powers,
                 function(power)
-                    if power:GetIsBuilt() then
-                        return marinePos:GetDistance( power:GetOrigin() )
-                    end
+                    return marinePos:GetDistance( power:GetOrigin() )
                 end)
 
             return {entity = power, distance = dist}
@@ -1749,7 +1833,7 @@ function CreateMarineBrainSenses()
             local marine = db.bot:GetPlayer()
             local cyst = db:Get("nearestCyst")
             local power = db:Get("nearestPower")
-            if cyst.entity ~= nil and power.entity ~= nil then
+            if cyst.entity ~= nil and power.entity ~= nil and power.entity:GetIsBuilt() then
                 local cystPos = cyst.entity:GetOrigin()
                 local powerPos = power.entity:GetOrigin()
                 --DebugLine( cystPos, powerPos, 0.0, 1,1,0,1,  true )

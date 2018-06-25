@@ -1,4 +1,29 @@
 
+
+function Infestation:GetIsPointOnInfestation(point)
+
+    local onInfestation = false
+    
+    -- Check radius
+    local radius = point:GetDistanceTo(self.coords.origin)
+    if radius <= self:GetRadius() then
+    
+        -- we remove this weird dotproduct thing... it causes a TON of bugs
+        --[[
+        -- Check dot product
+        local toPoint = point - self.coords.origin
+        local verticalProjection = math.abs( self.coords.yAxis:DotProduct( toPoint ) )
+        
+        onInfestation = (verticalProjection < 1)
+        ]]--
+        
+        onInfestation = true
+    end
+    
+    return onInfestation
+   
+end
+
 function CreateStructureInfestation(parent, coords, teamNumber, infestationRadius, blobMultiplier)
 
     local infestation = Infestation()

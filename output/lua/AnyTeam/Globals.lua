@@ -133,6 +133,9 @@ kGameState = enum( {'NotStarted', 'WarmUp', 'PreGame', 'Countdown', 'Started', '
 -- How far from the order location must units be to complete it.
 kPlayerMoveOrderCompleteDistance = 3.0
 
+kChatTextColor = { [kNeutralTeamType] = kNeutralFontColor,
+    [kMarineTeamType] = kNeutralFontColor,
+    [kAlienTeamType] = kNeutralFontColor }
 
 local function AppendToEnum( tbl, key )
 	if rawget(tbl,key) ~= nil then

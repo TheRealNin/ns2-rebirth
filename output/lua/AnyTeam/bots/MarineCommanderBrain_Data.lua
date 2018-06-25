@@ -482,7 +482,7 @@ kMarineComBrainActions =
                     elseif alertPiority > weight then
                         techId = targetTechId
                         weight = alertPiority
-                        targetPos = target:GetOrigin() --Todo Add jitter to position
+                        targetPos = target:GetOrigin() + Vector(math.random() - 0.5, 0, math.random() -0.5)
                         targetId = target:GetId()
                         actualTarget = target
                     end
@@ -503,6 +503,7 @@ kMarineComBrainActions =
                         bot.lastServedDropPack[targetId].time = Shared.GetTime()
                         bot.lastServedDropPack[targetId].count = count + 1
                         
+                        --[[
                         local target = actualTarget
                         
                         if target and bot:GetPlayer():GetTeam():GetTeamResources() > 40 then
@@ -516,6 +517,7 @@ kMarineComBrainActions =
                             end
                             
                         end
+                        ]]--
                     end
                 end
             end}
@@ -585,31 +587,31 @@ function CreateMarineComSenses()
             
     s:Add("techPointToTake", function(db)
         local tps = GetAvailableTechPoints()
-            local stations = db:Get("stations")
-            local dist, tp = GetMinTableEntry( tps, function(tp)
-                return GetMinPathDistToEntities( tp, stations )
-                end)
-            return tp
+        local stations = db:Get("stations")
+        local dist, tp = GetMinTableEntry( tps, function(tp)
+            return GetMinPathDistToEntities( tp, stations )
             end)
+        return tp
+        end)
 
 
     s:Add("resPointToTake", function(db)
-            local rps = db:Get("availResPoints")
-            local stations = db:Get("stations")
-            local dist, rp = GetMinTableEntry( rps, function(rp)
-                return GetMinPathDistToEntities( rp, stations )
-                end)
-            return rp
+        local rps = db:Get("availResPoints")
+        local stations = db:Get("stations")
+        local dist, rp = GetMinTableEntry( rps, function(rp)
+            return GetMinPathDistToEntities( rp, stations )
             end)
+        return rp
+        end)
             
     s:Add("resPointWithNearbyMarines", function(db)
-            local rps = db:Get("availResPoints")
-            local marines = db:Get("marines")
-            local dist, rp = GetMinTableEntry( rps, function(rp)
-                return GetMinDistToEntities( rp, marines )
-                end)
-            return {rp = rp, dist = dist}
+        local rps = db:Get("availResPoints")
+        local marines = db:Get("marines")
+        local dist, rp = GetMinTableEntry( rps, function(rp)
+            return GetMinDistToEntities( rp, marines )
             end)
+        return {rp = rp, dist = dist}
+        end)
 
     return s
 

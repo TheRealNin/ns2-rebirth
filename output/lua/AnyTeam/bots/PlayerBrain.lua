@@ -35,7 +35,7 @@ function PlayerBrain:Update(bot, move)
     self.debug = self:GetShouldDebug(bot)
 
     if self.debug then
-        DebugPrint("-- BEGIN BRAIN UPDATE, player name = %s --", bot:GetPlayer():GetName())
+        Log("-- BEGIN BRAIN UPDATE, player name = %s --", bot:GetPlayer():GetName())
     end
 
     self.teamBrain = GetTeamBrain( bot:GetPlayer():GetTeamNumber() )
@@ -48,25 +48,27 @@ function PlayerBrain:Update(bot, move)
 
     for actionNum, actionEval in ipairs( self:GetActions() ) do
 
-        self:GetSenses():ResetDebugTrace()
-
+        if self.debug then
+            self:GetSenses():ResetDebugTrace()
+        end
+        
         local action = actionEval(bot, self)
         assert( action.weight ~= nil )
 
-        if true or self.debug then
-            DebugPrint("weight(%s) = %0.2f. trace = %s",
+        if self.debug then
+            Log("weight(%s) = %0.2f. trace = %s",
                     action.name, action.weight, self:GetSenses():GetDebugTrace())
         end
 
-        if bestAction == nil or action.weight > bestAction.weight then
+        if not bestAction or action.weight > bestAction.weight then
             bestAction = action
         end
     end
 
     if bestAction ~= nil then
-        -- Log(bestAction.name)
+    
         if self.debug then
-            DebugPrint("-- chose action: " .. bestAction.name)
+            Log("-- chose action: " .. bestAction.name)
         end
 
         bestAction.perform(move)

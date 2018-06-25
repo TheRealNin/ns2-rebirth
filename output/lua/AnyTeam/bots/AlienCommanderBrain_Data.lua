@@ -459,45 +459,63 @@ function CreateAlienComSenses()
 
     s:Add("numHarvsForHive", function(db)
 
-            if db:Get("numHives") == 1 then
-                return 4
-            elseif db:Get("numHives") == 2 then
-                return 6
-            else
-                return 8
-            end
-            
-            return 0
+        if db:Get("numHives") == 1 then
+            return 4
+        elseif db:Get("numHives") == 2 then
+            return 6
+        else
+            return 8
+        end
+        
+        return 0
 
-            end)
+        end)
 
     s:Add("overdueForHive", function(db)
 
-            if db:Get("numHives") == 1 then
-                return db:Get("gameMinutes") > 7
-            elseif db:Get("numHives") == 2 then
-                return db:Get("gameMinutes") > 14
-            else
-                return false
-            end
+        if db:Get("numHives") == 1 then
+            return db:Get("gameMinutes") > 7
+        elseif db:Get("numHives") == 2 then
+            return db:Get("gameMinutes") > 14
+        else
+            return false
+        end
 
-            end)
+        end)
 
     s:Add("numHives", function(db)
-            return GetNumEntitiesOfType("Hive", db.bot:GetTeamNumber())
-            end)
+        return GetNumEntitiesOfType("Hive", db.bot:GetTeamNumber())
+        end)
     s:Add("numDrifters", function(db)
         return GetNumEntitiesOfType( "Drifter", db.bot:GetTeamNumber() ) + GetNumEntitiesOfType( "DrifterEgg", db.bot:GetTeamNumber() )
         end)
 
     s:Add("techPointToTake", function(db)
         local tps = GetAvailableTechPoints()
-            local hives = db:Get("cysts")
-            local dist, tp = GetMinTableEntry( tps, function(tp)
-                return GetMinDistToEntities( tp, hives )
-                end)
-            return tp
+        local memories = GetTeamMemories( db.bot:GetTeamNumber() )
+        local avail_tps = {}
+        for i, tp in ipairs(tps) do -- search through list of available techpoints
+            local tp_safe = true
+            for _,mem in ipairs(memories) do
+                local target = Shared.GetEntity(mem.entId)
+                if HasMixin(target, "Live") and target:GetIsAlive() and db.bot:GetTeamNumber() ~= target:GetTeamNumber() then
+                    local dist = tp:GetOrigin():GetDistance( mem.lastSeenPos )
+                    if dist < 25 then
+                        tp_safe = false
+                        break
+                    end
+                end
+            end
+            if tp_safe then
+                table.insert(avail_tps, tp)
+            end
+        end
+        local cysts = db:Get("cysts")
+        local dist, tp = GetMinTableEntry( avail_tps, function(tp)
+            return GetMinDistToEntities( tp, cysts )
             end)
+        return tp
+        end)
 
     -- RPs that are not taken, not necessarily good or on infestation
     s:Add("availResPoints", function(db)

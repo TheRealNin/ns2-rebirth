@@ -9,7 +9,7 @@ cp -R ../EggSpawn/output/* $dest
 cp -R ../FadeBlink/output/* $dest
 cp -R ../HadesDevice/output/* $dest
 cp -R ../HealingField/output/* $dest
-cp -R ../ModPanels/output/* $dest
+#cp -R ../ModPanels/output/* $dest
 cp -R ../Prowler/output/* $dest
 cp -R ../ThirdPerson/output/* $dest
 cp -R ../WhipRebalance/output/* $dest

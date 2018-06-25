@@ -27,7 +27,7 @@
 			float shininess  = albedo.a * 20;
             float greyscale = (albedo.r + albedo.g + albedo.b)*0.3;
             float specularColor = saturate(pow(greyscale, 0.6)*0.1);
-			float glossiness = 10;
+			float glossiness = 20;
 			
 			float3 ssDir = normalize(input.vsPosition);
             float intensity = -dot(ssDir, input.vsNormal);
@@ -39,7 +39,7 @@
 		
 			material.albedo 	= albedo.rgb;
 			material.tsNormal 	= DecodeNormal( tex2D(normalMap, input.texCoord) );
-			material.specular	= saturate((float3)specularColor * shininess);
+			material.specular	= saturate((float3)specularColor * shininess  * (intensity + 0.8));
 			material.gloss		= glossiness / 255.0;
 			material.opacity    = tex2D(opacityMap, input.texCoord).r;
             

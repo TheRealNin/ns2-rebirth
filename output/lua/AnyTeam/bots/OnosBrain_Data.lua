@@ -2,98 +2,46 @@
 Script.Load("lua/bots/CommonActions.lua")
 Script.Load("lua/bots/BrainSenses.lua")
 
-local kUpgrades = {
-    kTechId.Crush,
-    kTechId.Carapace,
-    kTechId.Regeneration,
-    
-    kTechId.Vampirism,
-    kTechId.Aura,
-    kTechId.Focus,
-    
-    kTechId.Silence,
-    kTechId.Celerity,
-    kTechId.Adrenaline,
-}
-
 ------------------------------------------
 --  More urgent == should really attack it ASAP
 ------------------------------------------
 local function GetAttackUrgency(bot, mem)
 
+    local teamBrain = bot.brain.teamBrain
+
     -- See if we know whether if it is alive or not
-    local ent = Shared.GetEntity(mem.entId)
-    if not HasMixin(ent, "Live") or not ent:GetIsAlive() or (ent.GetTeamNumber and ent:GetTeamNumber() == bot:GetTeamNumber()) then
-        return 0.0
+    local target = Shared.GetEntity(mem.entId)
+    if not HasMixin(target, "Live") or not target:GetIsAlive() or (target.GetTeamNumber and target:GetTeamNumber() == bot:GetTeamNumber()) then
+        return nil
     end
 
-    local botPos = bot:GetPlayer():GetOrigin()
-    local targetPos = ent:GetOrigin()
-    local distance = botPos:GetDistance(targetPos)
+    -- for load-balancing
+    local numOthers = teamBrain:GetNumAssignedTo( mem,
+            function(otherId)
+                if otherId ~= bot:GetPlayer():GetId() then
+                    return true
+                end
+                return false
+            end)
 
-    if mem.btype == kMinimapBlipType.PowerPoint then
-        local powerPoint = ent
-        if powerPoint ~= nil and powerPoint:GetIsSocketed() then
-            return 0.55
-        else
-            return 0
-        end
+    -- Closer --> more urgent
+
+    local closeBonus = 0
+    local dist = bot:GetPlayer():GetOrigin():GetDistance( mem.lastSeenPos )
+
+    if dist < 15 then
+        -- Do not modify numOthers here
+        closeBonus = 10/math.max(1.0, dist)
     end
 
-    local immediateThreats = {
-        [kMinimapBlipType.Marine] = true,
-        [kMinimapBlipType.JetpackMarine] = true,
-        [kMinimapBlipType.Exo] = true,    
-        [kMinimapBlipType.Sentry] = true,
-        [kMinimapBlipType.Embryo] = true,
-        [kMinimapBlipType.Hydra]  = true,
-        [kMinimapBlipType.Whip]   = true,
-        [kMinimapBlipType.Skulk]  = true,
-        [kMinimapBlipType.Gorge]  = true,
-        [kMinimapBlipType.Lerk]   = true,
-        [kMinimapBlipType.Fade]   = true,
-        [kMinimapBlipType.Onos]   = true
-    }
-    if table.contains(kMinimapBlipType, "Prowler") then
-        immediateThreats[kMinimapBlipType.Prowler] = true
-    end
-
-    if distance < 15 and immediateThreats[mem.btype] then
-        -- Attack the nearest immediate threat (urgency will be 1.1 - 2)
-        return 3 + 1 / math.max(distance, 1)
-    end
-
-    -- No immediate threat - load balance!
-    local numOthers = bot.brain.teamBrain:GetNumAssignedTo( mem,
-        function(otherId)
-            if otherId ~= bot:GetPlayer():GetId() then
-                return true
-            end
-            return false
-        end)
-
-    --Other urgencies do not rank anything here higher than 1!
-    local urgencies = {
-        [kMinimapBlipType.ARC] =                numOthers >= 2 and 0.4 or 0.9,
-        [kMinimapBlipType.CommandStation] =     numOthers >= 2 and 0.3 or 0.75,
-        [kMinimapBlipType.PhaseGate] =          numOthers >= 2 and 0.2 or 0.9,
-        [kMinimapBlipType.Observatory] =        numOthers >= 2 and 0.2 or 0.8,
-        [kMinimapBlipType.Extractor] =          numOthers >= 1 and 0.2 or 0.7,
-        [kMinimapBlipType.InfantryPortal] =     numOthers >= 2 and 0.2 or 0.6,
-        
-        -- from marine
-        [kMinimapBlipType.Embryo] = numOthers >= 1 and 0.1 or 1.0,
-        [kMinimapBlipType.Hydra] = numOthers >= 2  and 0.1 or 2.0,
-        [kMinimapBlipType.Whip] = numOthers >= 2   and 0.1 or 3.0,
-        [kMinimapBlipType.Skulk] = numOthers >= 2  and 0.1 or 4.0,
-        [kMinimapBlipType.Gorge] =  numOthers >= 2  and 0.1 or 3.0,
-        [kMinimapBlipType.Lerk] = numOthers >= 2   and 0.1 or 0.1,
-        [kMinimapBlipType.Fade] = numOthers >= 3   and 0.1 or 6.0,
-        [kMinimapBlipType.Onos] =  numOthers >= 4  and 0.1 or 7.0,
-        
+    ------------------------------------------
+    -- Passives - not an immediate threat, but attack them if you got nothing better to do
+    ------------------------------------------
+    local passiveUrgencies =
+    {
         [kMinimapBlipType.Crag] = numOthers >= 2           and 0.2 or 0.95, -- kind of a special case
-        [kMinimapBlipType.Hive] = numOthers >= 6           and 0.5 or 0.9,
-        [kMinimapBlipType.Harvester] = numOthers >= 2      and 0.4 or 0.8,
+        [kMinimapBlipType.Hive] = numOthers >= 6           and 0.5 or 0.85,
+        [kMinimapBlipType.Harvester] = numOthers >= 2      and 0.4 or 0.9,
         [kMinimapBlipType.Egg] = numOthers >= 1            and 0.2 or 0.5,
         [kMinimapBlipType.Shade] = numOthers >= 2          and 0.2 or 0.5,
         [kMinimapBlipType.Shift] = numOthers >= 2          and 0.2 or 0.5,
@@ -101,16 +49,83 @@ local function GetAttackUrgency(bot, mem)
         [kMinimapBlipType.Veil] = numOthers >= 2           and 0.2 or 0.5,
         [kMinimapBlipType.Spur] = numOthers >= 2           and 0.2 or 0.5,
         [kMinimapBlipType.TunnelEntrance] = numOthers >= 1 and 0.2 or 0.5,
+        -- from skulk
+        [kMinimapBlipType.ARC] =                numOthers >= 2 and 0.4 or 0.9,
+        [kMinimapBlipType.CommandStation] =     numOthers >= 4 and 0.3 or 0.85,
+        [kMinimapBlipType.PhaseGate] =          numOthers >= 2 and 0.2 or 0.9,
+        [kMinimapBlipType.Observatory] =        numOthers >= 2 and 0.2 or 0.8,
+        [kMinimapBlipType.Extractor] =          numOthers >= 2 and 0.2 or 0.9,
+        [kMinimapBlipType.InfantryPortal] =     numOthers >= 2 and 0.2 or 0.6,
+        [kMinimapBlipType.PrototypeLab] =       numOthers >= 1 and 0.2 or 0.55,
+        [kMinimapBlipType.Armory] =             numOthers >= 2 and 0.2 or 0.5,
+        [kMinimapBlipType.RoboticsFactory] =    numOthers >= 2 and 0.2 or 0.5,
+        [kMinimapBlipType.ArmsLab] =            numOthers >= 3 and 0.2 or 0.6,
+        [kMinimapBlipType.MAC] =                numOthers >= 1 and 0.2 or 0.4,
     }
 
-    if urgencies[ mem.btype ] ~= nil then
-        return urgencies[ mem.btype ]
+    if bot.brain.debug then
+        if mem.btype == kMinimapBlipType.Hive then
+            Print("got Hive, urgency = %f", passiveUrgencies[mem.btype])
+        end
+    end
+    
+
+    if passiveUrgencies[ mem.btype ] ~= nil then
+        -- ignore blueprints unless extractors or ccs, since those block your team
+        if target.GetIsGhostStructure and target:GetIsGhostStructure() and 
+            (mem.btype ~= kMinimapBlipType.Extractor and mem.btype ~= kMinimapBlipType.CommandStation) then
+            return nil
+        end
+        return passiveUrgencies[ mem.btype ] + closeBonus * 0.3
     end
 
-    return 0.0
+    ------------------------------------------
+    --  Active threats - ie. they can hurt you
+    --  Only load balance if we cannot see the target
+    ------------------------------------------
+    function EvalActiveUrgenciesTable(numOthers)
+        local activeUrgencies =
+        {
+            [kMinimapBlipType.Embryo] = numOthers >= 1 and 0.1 or 1.0,
+            [kMinimapBlipType.Hydra] = numOthers >= 2  and 0.1 or 2.0,
+            [kMinimapBlipType.Whip] = numOthers >= 2   and 0.1 or 3.0,
+            [kMinimapBlipType.Skulk] = numOthers >= 2  and 0.1 or 4.0,
+            [kMinimapBlipType.Gorge] =  numOthers >= 2  and 0.1 or 3.0,
+            [kMinimapBlipType.Drifter] = numOthers >= 1  and 0.1 or 1.0,
+            [kMinimapBlipType.Lerk] = numOthers >= 1   and 0.1 or 2.0,
+            [kMinimapBlipType.Fade] = numOthers >= 1   and 0.1 or 2.0,
+            [kMinimapBlipType.Onos] =  numOthers >= 4  and 0.1 or 7.0,
+            [kMinimapBlipType.Marine] = numOthers >= 2 and 0.1 or 6.0,
+            [kMinimapBlipType.JetpackMarine] = numOthers >= 1 and 0.1 or 4.0,
+            [kMinimapBlipType.Exo] =  numOthers >= 4  and 0.1 or 4.0,
+            [kMinimapBlipType.Sentry]  = numOthers >= 3   and 0.1 or 4.0
+        }
+        if table.contains(kMinimapBlipType, "Prowler") then
+            activeUrgencies[kMinimapBlipType.Prowler] = numOthers >= 2 and 0.1 or 3.0
+        end
+        
+        return activeUrgencies
+    end
+
+    -- Optimization: we only need to do visibilty check if the entity type is active
+    -- So get the table first with 0 others
+    local urgTable = EvalActiveUrgenciesTable(0)
+
+    if urgTable[ mem.btype ] then
+
+        -- For nearby active threads, respond no matter what - regardless of how many others are around
+        if dist < 15 then
+            numOthers = 0
+        end
+
+        urgTable = EvalActiveUrgenciesTable(numOthers)
+        return urgTable[ mem.btype ] + closeBonus
+
+    end
+    
+    return nil
 
 end
-
 
 local function PerformAttackEntity( eyePos, bestTarget, bot, brain, move )
 
@@ -119,11 +134,25 @@ local function PerformAttackEntity( eyePos, bestTarget, bot, brain, move )
     local marinePos = bestTarget:GetOrigin()
 
     local doFire = false
-    bot:GetMotion():SetDesiredMoveTarget( marinePos )
+    
+    
+    local retreating = false
+    local sdb = brain:GetSenses()
+    local minFraction = sdb:Get("healthFraction")
+    local hiveData = sdb:Get("nearestHive")
+    local hiveEnt = hiveData.entity
+    local hiveDist = hiveData.distance
+    
+    if hiveEnt and minFraction < 0.5 then
+        bot:GetMotion():SetDesiredMoveTarget( hiveEnt:GetOrigin() )
+        move.commands = AddMoveCommand( move.commands, Move.MovementModifier )
+    else
+        bot:GetMotion():SetDesiredMoveTarget( marinePos )
+    end
     
     local distance = GetDistanceToTouch(eyePos, bestTarget)
                 
-    if distance < 3 then
+    if distance < 4 then
         -- jitter view target a little bit
         -- local jitter = Vector( math.random(), math.random(), math.random() ) * 0.1
         bot:GetMotion():SetDesiredViewTarget( bestTarget:GetEngagementPoint() )
@@ -223,11 +252,15 @@ kOnosBrainActions =
             if not avaibleUpgrades then
                 avaibleUpgrades = {}
 
-                
-                for i = 0, 2 do
-                    table.insert(avaibleUpgrades, kUpgrades[math.random(1,3) + i * 3])
+                local kUpgradeStructureTable = AlienTeam.GetUpgradeStructureTable()
+                for i = 1, #kUpgradeStructureTable do
+                    local upgrades = kUpgradeStructureTable[i].upgrades
+                    table.insert(avaibleUpgrades, table.random(upgrades))
                 end
 
+                if player.lifeformEvolution then
+                    table.insert(avaibleUpgrades, player.lifeformEvolution)
+                end
 
                 player.lifeformUpgrades = avaibleUpgrades
             end
@@ -424,8 +457,9 @@ kOnosBrainActions =
         local player = bot:GetPlayer()
         local sdb = brain:GetSenses()
 
-        local hive = sdb:Get("nearestHive")
-        local hiveDist = hive and player:GetOrigin():GetDistance(hive:GetOrigin()) or 0
+        local hiveData = sdb:Get("nearestHive")
+        local hiveDist = hiveData and hiveData.distance or 200
+        local hive = hiveData.entity
         local healthFraction = sdb:Get("healthFraction")
 
         -- If we are pretty close to the hive, stay with it a bit longer to encourage full-healing, etc.
@@ -439,8 +473,8 @@ kOnosBrainActions =
         if hive then
 
             weight = EvalLPF( healthFraction, {
-                { 0.0, 30.0 },
-                { 0.3, 20.0 },
+                { 0.0, 3.0 },
+                { 0.3, 3.0 },
                 { 0.6, 0.0 },
                 { 1.0, 0.0 }
             })
@@ -516,26 +550,20 @@ function CreateOnosBrainSenses()
         end)
 
     s:Add("nearestHive", function(db)
-        local player = db.bot:GetPlayer()
-        local playerPos = player:GetOrigin()
 
-        local hives = GetEntitiesForTeam("Hive", player:GetTeamNumber())
+            local skulk = db.bot:GetPlayer()
+            local skulkPos = skulk:GetOrigin()
+            local hives = GetEntitiesForTeam( "Hive", skulk:GetTeamNumber() )
 
-        local builtHives = {}
+            local dist, hive = GetMinTableEntry( hives,
+                function(hive)
+                    if hive:GetIsBuilt() then
+                        return skulkPos:GetDistance( hive:GetOrigin() )
+                    end
+                end)
 
-        -- retreat only to built hives
-        for _, hive in ipairs(hives) do
-
-            if hive:GetIsBuilt() and hive:GetIsAlive() then
-                table.insert(builtHives, hive)
-            end
-
-        end
-
-        Shared.SortEntitiesByDistance(playerPos, builtHives)
-
-        return builtHives[1]
-    end)
+            return {entity = hive, distance = dist}
+            end)
 
     s:Add("healthFraction", function(db)
         local player = db.bot:GetPlayer()

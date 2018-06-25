@@ -311,6 +311,14 @@ if Server then
         self.lastCountdownPlayed = nil
         
     end
+    local oldResetGame = NS2Gamerules.ResetGame
+    function NS2Gamerules:ResetGame()
+        oldResetGame(self)
+        
+        -- TODO: Fix this hack so it isn't needed
+        kTeamIndexToType[kTeam1Index] = kTeam1Type
+        kTeamIndexToType[kTeam2Index] = kTeam2Type
+    end
     
     function NS2Gamerules:CheckGameStart()
     

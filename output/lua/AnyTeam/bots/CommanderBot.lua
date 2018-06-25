@@ -57,7 +57,7 @@ end
 ------------------------------------------
 function CommanderBot:_LazilyInitBrain()
 
-    if self.brain == nil then
+    if self.brain == nil and self.GetPlayer and self:GetPlayer().GetClassName then
 
         local brainClass = kCommander2BrainClass[ self:GetPlayer():GetClassName() ]
 
@@ -103,9 +103,9 @@ function CommanderBot:GenerateMove()
     local move = Move()
 
     ------------------------------------------
-    --  Take commander chair/hive if we are not
+    --  Take commander chair/hive if we are not in it already
     ------------------------------------------
-    if stationClass and not self:GetIsPlayerCommanding() and not team:GetHasCommander() then
+    if stationClass and not self:GetIsPlayerCommanding() and not team:GetHasCommander() and player:GetIsAlive() then
 
         Print("trying to log %s into %s", player:GetName(), stationClass)
 
@@ -123,7 +123,7 @@ function CommanderBot:GenerateMove()
     else
         -- Brain will modify move.commands
         self:_LazilyInitBrain()
-        if self.brain and GetGamerules():GetGameStarted() then
+        if self.brain and GetGamerules():GetGameStarted() and player:GetIsAlive() then
             self.brain:Update(self,  move)
         else
             -- must be waiting to join a team and game to start

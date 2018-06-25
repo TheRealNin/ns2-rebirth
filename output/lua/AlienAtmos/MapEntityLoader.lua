@@ -475,7 +475,16 @@ local function LoadStaticProp(className, groupName, values)
         if renderModelCommAlpha < 1 or blocksPlacement then
             physicsModel:SetGroup(PhysicsGroup.CommanderPropsGroup)
         end
-
+        
+        -- NOTE that CollisionGeometryGroup is also filtered by commander alpha stuff
+        if string.find(values.model, "models/props/tram/tram_railing") or
+           string.find(values.model, "models/props/refining/refining_railing") or
+           string.find(values.model, "models/props/refinery/mining_rails") then
+            
+            physicsModel:SetGroup(PhysicsGroup.CollisionGeometryGroup)
+        end
+           
+           
     end
     
     -- Only create Pathing objects if we are told too

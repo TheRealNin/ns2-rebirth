@@ -297,6 +297,7 @@ if Client then
     end
     
     function HadesDevice:OnUpdate()
+        self:UpdateStrobe()
         if self:GetIsBuilt() then
             if self:ShouldHaveDetonated() then
                 if not self.hasDetonated then
@@ -324,14 +325,13 @@ if Client then
         end
     end
 
-    function HadesDevice:OnUpdateRender()
+    function HadesDevice:UpdateStrobe()
         
         if self:GetIsBuilt() and not self:ShouldHaveDetonated() then
             if not self.strobeLight then
             
                 self.strobeLight = Client.CreateRenderLight()
                 self.strobeLight:SetType( RenderLight.Type_Point )
-                self.strobeLight:SetAtmosphericDensity(0.2)
                 self.strobeLight:SetCastsShadows(false)
                 self.strobeLight:SetRadius( HadesDevice.kRange * 0.5 )
                 self.strobeLight:SetIsVisible(true)
@@ -342,7 +342,7 @@ if Client then
             self.strobeLight:SetCoords(coords)
             
             -- if you get math.cos of sirenTime, it will hit 1 ever 1 second. Adjust to fit interval
-            local sirenTime = Shared.GetTime() * math.pi
+            local sirenTime = (Shared.GetTime() - self.detonateTime) * math.pi
             
             if self:GetIsDetonating() then
                 if (self:GetDetonateRatio() > 0.90) then

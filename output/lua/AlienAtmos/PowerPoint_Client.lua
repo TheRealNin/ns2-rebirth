@@ -5,9 +5,9 @@ local kBuildMeSound = PrecacheAsset("sound/NS2.fev/common/door_unlock")
 Client.PrecacheLocalSound(kPrimedSound)
 Client.PrecacheLocalSound(kBuildMeSound)
 
-PowerPoint.kDisabledColor = Color(0.02, 0.18, 0.75)
+PowerPoint.kDisabledColor = Color(40/255, 100/255, 237/255)
 PowerPoint.kDisabledSpotlight = Color(0.02, 0.18, 1.0)
-PowerPoint.kDisabledProbeColor = Color(0.04, 0.28, 0.75)
+PowerPoint.kDisabledProbeColor = Color(51/255, 120/255, 237/255)
 
 PowerPoint.kDisabledCommanderColor = Color(0.02, 0.18, 1.0)
 PowerPoint.kAuxPowerCycleTime = 1

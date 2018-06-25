@@ -13,6 +13,10 @@ function Whip:GetCanAttackTarget(selector, targetEntity, rangeSquared)
         Log("Warning! Whip target is using GetOrigin() instead of an engagement point! If whips are missing, this is why.")
     end
     
+    if targetEntity.GetIsAlive and not targetEntity:GetIsAlive() then
+        return false
+    end
+    
     local targetOrigin = HasMixin(targetEntity, "Target") and targetEntity:GetEngagementPoint() or targetEntity:GetOrigin()
     local eyePos = self:GetEyePos()
     

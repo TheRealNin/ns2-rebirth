@@ -23,6 +23,17 @@ local function GetSightedMapBlips(keepFunc, enemyTeamNum)
         local isEnemy = ent.GetTeamNumber and ent:GetTeamNumber() == enemyTeamNum
         -- if it is an enemy, we need it to be sighted, otherwise we keep it
         local valid = validEnt and (not isEnemy or blip:GetIsSighted())
+        
+        -- special case for various other states
+        if validEnt then
+            if blip.GetIsSpotted and blip:GetIsSpotted() then
+                valid = true
+            end
+            if blip.GetIsParasited and blip:GetIsParasited() then
+                valid = true
+            end
+        end
+        
         if valid and (keepFunc == nil or keepFunc(blip)) then
             table.insert( blips, blip )
         end
@@ -57,7 +68,7 @@ local function UpdateMemory(mem, ent, fromSound)
 
     -- this works as long as this is run as part of the server, as we will always have full
     -- information about entities.
-    if ent  and ent.GetMapBlipInfo and (fromSound or (ent.GetIsSighted and ent:GetIsSighted())) then
+    if ent  and ent.GetMapBlipInfo and (fromSound or (ent.GetIsSighted and ent:GetIsSighted()) or (ent.GetIsSpotted and ent:GetIsSpotted())) then
         local success, blipType, blipTeam, isAttacked, isParasited = ent:GetMapBlipInfo()
         mem.btype = blipType
         mem.lastSeenPos = ent:GetOrigin()
@@ -266,24 +277,24 @@ function TeamBrain:Update()
     -- find all resource towers within range of a player
     for _, enemyResourceTower in ipairs( GetEntitiesForTeam("ResourceTower", GetEnemyTeamNumber(self.teamNumber)) ) do
         if #GetEntitiesForTeamWithinRange("Player", self.teamNumber, enemyResourceTower:GetOrigin(), 30) > 0 then
-            self:UpdateMemoryOfEntity(enemyResourceTower)    
+            self:UpdateMemoryOfEntity(enemyResourceTower, true)    
         end
     end
     -- find all command structures within range of a player
     for _, enemyCommandStructure in ipairs( GetEntitiesForTeam("CommandStructure", GetEnemyTeamNumber(self.teamNumber)) ) do
         if #GetEntitiesForTeamWithinRange("Player", self.teamNumber, enemyCommandStructure:GetOrigin(), 30) > 0 then
-            self:UpdateMemoryOfEntity(enemyCommandStructure)    
+            self:UpdateMemoryOfEntity(enemyCommandStructure, true)    
         end
     end
     
     -- find all things that recently dealt damage to this team
     local time = Shared.GetTime()
-    for _, player in ipairs( GetEntitiesForTeam("Player", self.teamNumber) ) do
-        if player:GetTimeOfLastDamage() and 
-            player:GetTimeOfLastDamage() + 1 > time then
-            local entity = Shared.GetEntity(player:GetAttackerIdOfLastDamage())
+    for _, ent in ipairs( GetEntitiesWithMixinForTeam("Live", self.teamNumber) ) do
+        if ent:GetTimeOfLastDamage() and ent:GetIsAlive() and 
+            ent:GetTimeOfLastDamage() + 1 > time then
+            local entity = Shared.GetEntity(ent:GetAttackerIdOfLastDamage())
             if entity and entity.GetIsAlive and entity:GetIsAlive() and entity.GetMapBlipInfo then
-                self:UpdateMemoryOfEntity(entity)
+                self:UpdateMemoryOfEntity(entity, true)
             end
         end
     end

@@ -30,3 +30,12 @@ end
 function Commander:SetCommanderReady(teamType)
     Shared.ConsoleCommand("commanderready " .. teamType)
 end
+
+
+local oldOnInitLocalClient = Commander.OnInitLocalClient
+function Commander:OnInitLocalClient()
+    oldOnInitLocalClient(self)
+    
+    -- this fixes the wrong GetTeamType
+    self.production:SetTeam(self:GetTeamNumber())
+end

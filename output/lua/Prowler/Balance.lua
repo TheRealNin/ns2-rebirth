@@ -1,12 +1,13 @@
 
-kProwlerCost = 3
-kProwlerHealth = kSkulkHealth + 40 -- more than skulk
+kProwlerCost = 5
+kProwlerHealth = 180 -- lerk is 150, but they have 45 armor
 kProwlerArmor  = 10 -- skulk is 10
+kProwlerArmorFullyUpgradedAmount  = 50 -- skulk is 30
 kProwlerEggCost = 6
 kProwlerGestateTime = 3
 kProwlerPointValue = 10
 kProwlerUpgradeCost = 1
-kProwlerDamagePerPellet = 2.5 -- if set to 5, it deals as much damage as a skulk
+kProwlerDamagePerPellet = 5 -- there are 9 pellets
 kBiteHowlDamageType = kDamageType.Normal
 
 kHallucinationLifeTime = 5 -- was 30

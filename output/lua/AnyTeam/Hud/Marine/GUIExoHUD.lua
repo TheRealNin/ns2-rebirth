@@ -195,7 +195,8 @@ local function UpdateTargets(self)
         local player = Client.GetLocalPlayer()
         local inFront = player:GetViewCoords().zAxis:DotProduct(GetNormalizedVector(trackEntity:GetModelOrigin() - player:GetEyePos())) > 0
         -- Only really looks good on Skulks currently.
-        if inFront and trackEntity:GetIsAlive() and not (trackEntity.GetIsCloaked and trackEntity:GetIsCloaked()) then
+        if inFront and trackEntity:GetIsAlive() and not (trackEntity.GetIsCloaked and trackEntity:GetIsCloaked())
+            and not trackEntity:isa("Embryo") then
         
             local trace = Shared.TraceRay(player:GetEyePos(), trackEntity:GetModelOrigin(), CollisionRep.Move, PhysicsMask.All, EntityFilterOne(player))
             if trace.entity == trackEntity then

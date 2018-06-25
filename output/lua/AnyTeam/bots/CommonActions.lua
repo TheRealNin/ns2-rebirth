@@ -1,4 +1,17 @@
 
+function GetAliveEntitiesForTeam(class, teamNumber)
+    local ents = GetEntitiesForTeam( class, teamNumber )
+    
+    for _,ent in ipairs(ents) do
+        if ent.GetIsAlive and not ent:GetIsAlive() then
+            table.remove(ents, _)
+        end
+    end
+    
+    return ents
+end
+
+
 function CreateBuildStructureActionForEach( techId, className, numExistingToWeightLPF, buildNearClass, maxDist)
 
     return function(bot, brain)
@@ -11,7 +24,7 @@ function CreateBuildStructureActionForEach( techId, className, numExistingToWeig
         local coms = doables[techId]
 
         -- find structures we can build near
-        local hosts = GetEntitiesForTeam( buildNearClass, com:GetTeamNumber() )
+        local hosts = GetAliveEntitiesForTeam( buildNearClass, com:GetTeamNumber() )
         local mainHost
         if coms ~= nil and #coms > 0
         and hosts ~= nil and #hosts > 0 then

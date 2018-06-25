@@ -9,8 +9,8 @@ ModLoader.SetupFileHook( "lua/AlienTechMap.lua", "lua/FadeAcidRocket/AlienTechMa
 
 if Client then
     local stringMapping = {
-        ["STAB_BLINK"] = 'Acid Rocket',
-        ["HELP_SCREEN_STAB"] = 'Acid Rocket',
+        ["STAB_BLINK"] = 'Void Rocket',
+        ["HELP_SCREEN_STAB"] = 'Void Rocket',
         ['STAB_TOOLTIP'] = 'Fires a medium-damage projectile after a short delay. Has a small AOE.',
         ['HELP_SCREEN_STAB_DESCRIPTION'] = 'Fires a medium-damage projectile after a short delay. Has a small AOE.',
     }

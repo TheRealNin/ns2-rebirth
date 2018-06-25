@@ -9,38 +9,51 @@ kLerkBiteDamage = 50 -- was 60
 kBitePoisonDamage = 12 -- was 6 -- per second
 kPoisonBiteDuration = 6
 
+kGoreDamage = 100 -- was 90
+
 
 -- marine changes
 
-kGrenadeLauncherGrenadeDamageRadius = 3.6 -- was 4.8
+kGrenadeLauncherGrenadeDamage = 114 -- was 165, but this number is also reduced by 20%.
+kGrenadeLauncherGrenadeDamageAfterBounce = 70 
+kGrenadeLauncherGrenadeDamageRadius = 4.0 -- was 4.8
+kGrenadeLifetime = 2.5 -- was 2.0
 
 --kWelderDamagePerSecond = 30 -- was 30
 kAxeDamage = 30 -- was 25
 
 kNanoShieldDamageReductionDamage = 0.5 -- was 0.68
 
-kBulletDamageFalloffStart = 6
-kBulletDamageFalloffEnd = 25
+kPistolRateOfFire = 0.115-- was  0.1
+
+kBulletDamageFalloffStart = 15
+kBulletDamageFalloffEnd = 35
 kBulletDamageFalloffFraction = 0.5
 
-kShotgunDamageFalloffStart = 4
-kShotgunDamageFalloffEnd = 15
+kShotgunDamageFalloffStart = 8
+kShotgunDamageFalloffEnd = 20
 kShotgunDamageFalloffFraction = 0.25
 kShotgunFireRate = 0.88 -- was 0.88
 kShotgunDamage = 18 -- was 10 for 17 pellets
 kShotgunSpreadDistance = 25 -- was 8.5 --Gets used as z-axis value for spread vectors before normalization
 kShotgunBulletsPerShot = 9 -- was 17
 
-kMinigunDamageFalloffStart = 12
-kMinigunDamageFalloffEnd = 35
+kMinigunDamageFalloffStart = 20
+kMinigunDamageFalloffEnd = 40
 kMinigunDamageFalloffFraction = 0.6
 
 kClusterGrenadeDamage = 55 * 1.4
 kClusterFragmentDamage = 20 * 1.4
+
+kPulseGrenadeDamage = 95 -- was 110
 
 
 kRoboticsFactoryCost = 5 -- was 10
 kUpgradeRoboticsFactoryCost = 10 -- was 5
 
 
---kRailgunDamageType = kDamageType.Normal -- was kDamageType.Structural
+--kTeamResourceFlatRate = 1.0 -- new value
+--kTeamResourcePerTick = 0.8 -- has to be in increments of 0.1
+
+
+kGorgeTunnelBuildTime = 20 -- was 10

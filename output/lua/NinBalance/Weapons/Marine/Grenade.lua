@@ -1,56 +1,53 @@
 
+Grenade.kMinLifeTime = 0.0
+Grenade.kRadius = 0.02-- was 0.05
+local kGrenadeCameraShakeDistance = 15
+local kGrenadeMinShakeIntensity = 0.02
+local kGrenadeMaxShakeIntensity = 0.13
 
-Grenade.kMinLifeTime = 0.0 -- this is a lie. We handle the min lifetime in ProcessHit
-local actualMinLifetime = 0.15
-Grenade.kRadius = nil -- geez this was large before
-Grenade.kClearOnEnemyImpact = false
-
-local oldOnCreate = Grenade.OnCreate
-function Grenade:OnCreate()
-
-    oldOnCreate(self)
-    self.hasNotBounced = true
-    self.creationTime = Shared.GetTime()
+function Grenade:GetIsAffectedByWeaponUpgrades()
+    return true
+end
+if Client then
     
-end
-
-function Grenade:ProcessNearMiss( targetHit, endPoint )
-
-    local oldEnough = actualMinLifetime + self.creationTime <= Shared.GetTime()
-    if targetHit and GetAreEnemies(self, targetHit) and self.hasNotBounced and oldEnough then
+    function Grenade:StopSimulationCallback(targetHit)
+            
+        -- TODO: use what is defined in the material file
+        local surface = GetSurfaceFromEntity(targetHit)
         
-        if Server then
-            self:Detonate( targetHit )
-        end
-        self.clearOnImpact = true
-        return true
+        local params = { surface = surface }
+        params[kEffectHostCoords] = Coords.GetLookIn( self:GetOrigin(), self:GetCoords().zAxis)
+        
+        GetEffectManager():TriggerEffects("grenade_explode", params)
+        
+        self.stoppedSimulating = true
     end
-    self.clearOnImpact = false
-    self.hasNotBounced = false
 end
-
 
 if Server then
+    function Grenade:Detonate(targetHit)
+    
+        -- Do damage to nearby targets.
+        local hitEntities = GetEntitiesWithMixinWithinRange("Live", self:GetOrigin(), kGrenadeLauncherGrenadeDamageRadius)
         
-    function Grenade:ProcessHit(targetHit, surface, normal, endPoint )
-
-        local oldEnough = actualMinLifetime + self.creationTime <= Shared.GetTime()
+        -- Remove grenade and add firing player.
+        table.removevalue(hitEntities, self)
         
-        if targetHit and GetAreEnemies(self, targetHit) and self.hasNotBounced and oldEnough then
-            
-            self.clearOnImpact = true
-            self:Detonate(targetHit, hitPoint )
-                
-        else
-            self.hasNotBounced = false
-            self.clearOnImpact = false
-            
-            if self:GetVelocity():GetLength() > 2 then
-                
-                self:TriggerEffects("grenade_bounce")
-                
-            end
+        local damage = self.hasBounced and kGrenadeLauncherGrenadeDamageAfterBounce or kGrenadeLauncherGrenadeDamage
+        
+        -- full damage on direct impact
+        if targetHit then
+            table.removevalue(hitEntities, targetHit)
+            self:DoDamage(damage, targetHit, self:GetOrigin(), GetNormalizedVector(targetHit:GetOrigin() - self:GetOrigin()), "none")
         end
+
+        RadiusDamage(hitEntities, self:GetOrigin(), kGrenadeLauncherGrenadeDamageRadius, damage, self)
+        
+        CreateExplosionDecals(self)
+        
+        TriggerCameraShake(self, kGrenadeMinShakeIntensity, kGrenadeMaxShakeIntensity, kGrenadeCameraShakeDistance)
+        
+        DestroyEntity(self)
         
     end
 end

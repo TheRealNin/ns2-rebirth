@@ -11,7 +11,7 @@ local kBiteHowlTracer = PrecacheAsset("cinematics/prowler/1p_tracer_residue.cine
 local kAttackDuration = Shared.GetAnimationLength("models/alien/skulk/skulk_view.model", "bite_attack")
 
 -- higher numbers reduces the spread
-local kSpreadDistance = 10.0
+local kSpreadDistance = 9.0
 local kSpreadVertMult = 0.4
 BiteHowl.kSpreadVectors =
 {
@@ -26,16 +26,6 @@ BiteHowl.kSpreadVectors =
     GetNormalizedVector(Vector(1, 0, kSpreadDistance)),
     GetNormalizedVector(Vector(0, -1, kSpreadDistance)),
     GetNormalizedVector(Vector(0, 1, kSpreadDistance)),
-    
-    --GetNormalizedVector(Vector(-0.35, 0, kSpreadDistance)),
-    --GetNormalizedVector(Vector(0.35, 0, kSpreadDistance)),
-    GetNormalizedVector(Vector(0, -0.35, kSpreadDistance)),
-    GetNormalizedVector(Vector(0, 0.35, kSpreadDistance)),
-    
-    GetNormalizedVector(Vector(-0.8, -0.8, kSpreadDistance)),
-    GetNormalizedVector(Vector(-0.8, 0.8, kSpreadDistance)),
-    GetNormalizedVector(Vector(0.8, 0.8, kSpreadDistance)),
-    GetNormalizedVector(Vector(0.8, -0.8, kSpreadDistance)),
     
 }
 

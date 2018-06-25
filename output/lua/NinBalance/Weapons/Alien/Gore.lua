@@ -35,3 +35,7 @@ function Gore:Attack(player)
     return didHit, impactPoint, target
     
 end
+
+function Gore:IsAffectedBySilence()
+    return false
+end

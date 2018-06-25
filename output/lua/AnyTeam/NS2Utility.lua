@@ -136,3 +136,8 @@ function GetInfestationRequirementsMet(techId, position, teamNumber)
     return requirementsMet
 
 end
+
+
+function GetPlayerSkillTier(skill, isRookie, adagradSum)
+    return 7, "SKILLTIER_SANJISURVIVOR"
+end

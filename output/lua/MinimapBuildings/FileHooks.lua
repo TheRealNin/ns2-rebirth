@@ -1,6 +1,6 @@
 
 
-ModLoader.SetupFileHook( "lua/LOSMixin.lua", "lua/MinimapBuildings/LOSMixin.lua" , "replace" )
+ModLoader.SetupFileHook( "lua/LOSMixin.lua", "lua/MinimapBuildings/LOSMixin.lua" , "post" )
 
 ModLoader.SetupFileHook( "lua/MapBlip.lua", "lua/MinimapBuildings/MapBlip.lua" , "post" )
 ModLoader.SetupFileHook( "lua/Harvester.lua", "lua/MinimapBuildings/Harvester.lua" , "post" )

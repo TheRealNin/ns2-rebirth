@@ -11,6 +11,7 @@ function BotMotion:OnGenerateMove(player)
     local onGround = player.GetIsOnGround and player:GetIsOnGround()
     local eyePos = player:GetEyePos()
     local isSneaking = (player.GetCrouching and player:GetCrouching() and player:isa("Marine")) or (player:isa("Skulk") and player.movementModiferState)
+    local isGroundMover = player:isa("Marine") or player:isa("Exo") or player:isa("Onos")
     local doJump = false
     local groundPoint = Pathing.GetClosestPoint(currentPos)
 
@@ -38,7 +39,7 @@ function BotMotion:OnGenerateMove(player)
             local unstuckDuration = 0.4
             local isStuck = delta:GetLength() < 1e-2 or self.unstuckUntil > now
             
-            if self.desiredMoveTarget  then
+            if self.desiredMoveTarget and isGroundMover then
                 local moveTargetDelta = self.desiredMoveTarget - player:GetOrigin()
                 local vertDist = math.abs(moveTargetDelta.y)
                 if vertDist > 3.5 and vertDist > moveTargetDelta:GetLengthXZ() then

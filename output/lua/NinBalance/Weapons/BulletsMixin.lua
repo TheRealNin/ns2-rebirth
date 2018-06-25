@@ -19,7 +19,7 @@ function BulletsMixin:ApplyBulletGameplayEffects(player, target, endPoint, direc
     local falloffEnd = self:GetBulletFalloffEnd()
     local falloffFraction = self:GetBulletFalloffFraction()
     
-    if (player and endPoint) then
+    if player and endPoint and target and target:isa("Player") then
         local distance = (player:GetOrigin() - endPoint):GetLength()
         if distance >= falloffEnd then
             damage = damage * falloffFraction

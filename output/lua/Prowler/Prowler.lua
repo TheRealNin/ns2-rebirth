@@ -24,8 +24,8 @@ class 'Prowler' (Alien)
 
 Prowler.kMapName = "prowler"
 
-Prowler.kMaxSpeed = 7.25 -- skulk is 7.25
-Prowler.kWallJumpForce = 3.1 -- skulk was 6.4 -- scales down the faster you are
+Prowler.kMaxSpeed = 8.25 -- skulk is 7.25, but 8.25 in Nin's Balance Mod
+Prowler.kWallJumpForce = 6.0 -- skulk was 6.4 -- scales down the faster you are
 Prowler.kWallJumpMaxSpeed = 11 -- skulk is 11
 Prowler.kMinWallJumpForce = 0.1
 Prowler.kWallJumpMaxSpeedCelerityBonus = 1.2 -- skulk is 1.2
@@ -483,7 +483,7 @@ if Server then
 end
 
 function Prowler:GetArmorFullyUpgradedAmount()
-    return kSkulkArmorFullyUpgradedAmount
+    return kProwlerArmorFullyUpgradedAmount
 end
 
 function Prowler:GetAnimateDeathCamera()

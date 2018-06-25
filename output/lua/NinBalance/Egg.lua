@@ -5,15 +5,15 @@
 
 --Todo: Receive this via a alienteam method
 local kUpgrades = {
-	[kTechId.Shell] = { kTechId.Carapace, kTechId.Regeneration, kTechId.Crush },
+	[kTechId.Shell] = { kTechId.Carapace, },
 	[kTechId.Carapace] = kTechId.Shell,
 	[kTechId.Regeneration] = kTechId.Shell,
 	[kTechId.Crush] = kTechId.Shell,
-	[kTechId.Veil] = { kTechId.Aura, kTechId.Vampirism},
+	[kTechId.Veil] = { kTechId.Aura, },
 	[kTechId.Vampirism] = kTechId.Veil,
 	[kTechId.Aura] = kTechId.Veil,
 	[kTechId.Focus] = kTechId.Veil,
-	[kTechId.Spur] = { kTechId.Silence, kTechId.Celerity, kTechId.Adrenaline },
+	[kTechId.Spur] = { kTechId.Silence, kTechId.Celerity},
 	[kTechId.Silence] = kTechId.Spur,
 	[kTechId.Celerity] = kTechId.Spur,
 	[kTechId.Adrenaline] = kTechId.Spur,
@@ -48,9 +48,11 @@ function Egg:PickUpgrades(newPlayer)
 			if GetIsTechUseable(upgrade, teamNumber) then
 				newPlayer:GiveUpgrade(upgrade)
 			end
-
-			newPlayer.lastUpgradeList = newPlayer.lastUpgradeList or {}
-			table.insert(newPlayer.lastUpgradeList, upgrade)
+            
+            if newPlayer:isa("Skulk") then
+                newPlayer.lastUpgradeList = newPlayer.lastUpgradeList or {}
+                table.insert(newPlayer.lastUpgradeList, upgrade)
+            end
 		end
 	end
 end
@@ -109,5 +111,45 @@ function Egg:SpawnPlayer(player)
 	end
 
 	return false, nil
+
+end
+
+
+if Server then
+    --
+    -- Takes the queued player from this Egg and placed them back in the
+    -- respawn queue to be spawned elsewhere.
+    --
+    -- This modification reduces the respawn time for players when killed as an egg
+    --
+    local function RequeuePlayer(self)
+
+        if self.queuedPlayerId then
+        
+            local player = Shared.GetEntity(self.queuedPlayerId)
+            local team = self:GetTeam()
+            -- There are cases when the player or team is no longer valid such as
+            -- when Egg:OnDestroy() is called during server shutdown.
+            if player and team then
+            
+                if not player:isa("AlienSpectator") then
+                    error("AlienSpectator expected, instead " .. player:GetClassName() .. " was in queue")
+                end
+                
+                player:SetEggId(Entity.invalidId)
+                player:SetIsRespawning(false)
+                player.spawnReductionTime = 7
+                team:PutPlayerInRespawnQueue(player)
+                
+            end
+            
+        end
+        
+        -- Don't spawn player
+        self:SetEggFree()
+        
+    end
+
+    debug.replaceupvalue( Egg.OnKill, "RequeuePlayer", RequeuePlayer, true)
 
 end

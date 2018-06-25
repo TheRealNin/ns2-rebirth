@@ -3,7 +3,11 @@ local kRailgunSpread = Math.Radians(0)
 local kRailgunRange = 400
 local kBulletSize = 0.20 -- was 0.3
 local kPenetrationSize = 0.3
-local kChargeTime = 2
+local kChargeTime = 1.5
+
+function Railgun:GetChargeAmount()
+    return self.railgunAttacking and math.min(1, (Shared.GetTime() - self.timeChargeStarted) / kChargeTime) or 0
+end
 
 local function TriggerSteamEffect(self, player)
 

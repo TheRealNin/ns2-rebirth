@@ -17,5 +17,13 @@ function BuildTechData()
 
     end
     
+    table.insert(techData, {
+            [kTechDataId] = kTechId.Silence,
+            [kTechDataCategory] = kTechId.ShiftHive,
+            [kTechDataDisplayName] = "SILENCE",
+            [kTechDataSponitorCode] = "S",
+            [kTechDataTooltipInfo] = "Make no sound when moving.",
+            [kTechDataCostKey] = kSilenceCost
+    })
     return techData
 end

@@ -3,8 +3,9 @@ newAlienWeaponEffects["acidrocket_hit"] =
     {
         acidRocketHitEffects = 
         {
-            {cinematic = "cinematics/acidrocket_impact.cinematic"},
-            {sound = "sound/NS2.fev/alien/gorge/spit_hit", done = true},
+            --{cinematic = "cinematics/acidrocket_impact.cinematic"},
+            {cinematic = "cinematics/alien/fade/vortex_destroy.cinematic"},
+            {sound = "sound/NS2.fev/alien/fade/vortex_start", done = true},
         },
     }
     

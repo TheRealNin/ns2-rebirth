@@ -19,6 +19,10 @@ end
 
 function CommandStation:LoginPlayer(player, forced )
 
+    if player:GetTeam() == nil then
+        return player
+    end
+    
     local newPlayer = CommandStructure.LoginPlayer(self, player, forced )
     
     if GetTeamHasCommander(self:GetTeamNumber()) then

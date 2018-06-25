@@ -26,3 +26,13 @@ end
 function Shotgun:GetBulletFalloffFraction()
     return kShotgunDamageFalloffFraction
 end
+
+local oldOnTag = Shotgun.OnTag
+function Shotgun:OnTag(tagName)
+    oldOnTag(self, tagName)
+    
+    if tagName == "shoot" then
+        local player = self:GetParent()
+        player:Reload()
+    end
+end

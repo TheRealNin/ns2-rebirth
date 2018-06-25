@@ -2,20 +2,6 @@
 Script.Load("lua/bots/CommonActions.lua")
 Script.Load("lua/bots/BrainSenses.lua")
 
-local kUpgrades = {
-    kTechId.Crush,
-    kTechId.Carapace,
-    kTechId.Regeneration,
-    
-    kTechId.Vampirism,
-    kTechId.Aura,
-    kTechId.Focus,
-    
-    kTechId.Silence,
-    kTechId.Celerity,
-    kTechId.Adrenaline,
-}
-
 ------------------------------------------
 --  More urgent == should really attack it ASAP
 ------------------------------------------
@@ -261,10 +247,15 @@ kFadeBrainActions =
             if not avaibleUpgrades then
                 avaibleUpgrades = {}
 
-                for i = 0, 2 do
-                    table.insert(avaibleUpgrades, kUpgrades[math.random(1,3) + i * 3])
+                local kUpgradeStructureTable = AlienTeam.GetUpgradeStructureTable()
+                for i = 1, #kUpgradeStructureTable do
+                    local upgrades = kUpgradeStructureTable[i].upgrades
+                    table.insert(avaibleUpgrades, table.random(upgrades))
                 end
 
+                if player.lifeformEvolution then
+                    table.insert(avaibleUpgrades, player.lifeformEvolution)
+                end
 
                 player.lifeformUpgrades = avaibleUpgrades
             end

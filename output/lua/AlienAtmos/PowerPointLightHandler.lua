@@ -204,9 +204,9 @@ function NoPowerLightWorker:Run()
         local intensity = math.sin(Clamp(timePassed / kPowerDownTime, 0, 1) * math.pi / 2)
         probeTint = Color(intensity, intensity, intensity, 1)
     else
-        probeTint = Color(PowerPoint.kDisabledProbeColor.r * kNoPowerIntensity,
-                          PowerPoint.kDisabledProbeColor.g * kNoPowerIntensity,
-                          PowerPoint.kDisabledProbeColor.b * kNoPowerIntensity,
+        probeTint = Color(PowerPoint.kDisabledProbeColor.r,
+                          PowerPoint.kDisabledProbeColor.g,
+                          PowerPoint.kDisabledProbeColor.b,
                           1)
         self.activeProbes = false
     end

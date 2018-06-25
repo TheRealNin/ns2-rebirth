@@ -45,11 +45,10 @@
 			float textureSpeed  = 2;
 			float destroySpeed  = 2.5;
 		
-			float4 specularGloss = tex2D(specularMap, input.texCoord) * 5.0 + 0.1;
+			float4 specularGloss = tex2D(specularMap, input.texCoord);
 			material.tsNormal 	= DecodeNormal( tex2D(normalMap, input.texCoord) );
             
-            float specAmount    = (specularGloss.r + specularGloss.g + specularGloss.b) * 0.5f;
-			material.specular	= (float3)specAmount;
+            float specAmount    = (specularGloss.r + specularGloss.g + specularGloss.b) * 3.5 + 0.1;
 			material.gloss		= specularGloss.a;
 			
 			float opacity       = paramSlow(param,destroySpeed);
@@ -71,9 +70,10 @@
 			float3 ssDir = normalize(input.vsPosition);
             float intensity = -dot(ssDir, input.vsNormal);
             intensity = 1.0 - intensity;
-            intensity = intensity * intensity * intensity * intensity * intensity * intensity;
-            float shine = saturate( specularGloss.a * 20);
-            material.albedo += intensity * 0.25 * shine;
+            intensity = intensity * intensity * intensity * intensity * intensity;
+            float shine = saturate( specularGloss.a * 2);
+            material.albedo += intensity *  shine;
+			material.specular	= (float3)specAmount * intensity;
             
 			material.id = 1*highlightId; // To make it show up on alien vision
 			material.outline = outline;

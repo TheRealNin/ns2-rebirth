@@ -4,9 +4,6 @@ kExoAllMarineDmagmageModifier = 0.66
 
 kMarineRailgunModifier =  1.0 -- was 0.94 
 
-kMedpackHeal = 0 -- was 25, now you regen slowly instead of "suddenly health!"
-kMarineRegenerationHeal = 50 --"Amount of hp per second" was the comment???, was 25. This is actually how much you heal as "regen"
-
 kTeamVsTeamDamage = {}
 kTeamVsTeamDamage[kMarineTeamType] = {}
 kTeamVsTeamDamage[kMarineTeamType][kMarineTeamType]  = 1.33

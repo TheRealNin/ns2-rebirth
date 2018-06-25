@@ -21,3 +21,15 @@ function Marine:DropAllWeapons()
     
     oldDropAllWeapons(self) -- this will drop everything that can be dropped
 end
+
+-- cat packs now act as health packs
+local oldApplyCatPack = Marine.ApplyCatPack
+function Marine:ApplyCatPack()
+    oldApplyCatPack(self)
+    
+    self:AddHealth(MedPack.kHealth, false, true)
+    self:AddRegeneration()
+    self.timeLastMedpack = Shared.GetTime()
+    StartSoundEffectAtOrigin(MedPack.kHealthSound, self:GetOrigin())
+
+end

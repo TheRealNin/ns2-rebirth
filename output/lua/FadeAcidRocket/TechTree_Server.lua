@@ -1,4 +1,4 @@
-
+--[[
 local oldAddResearchNode = TechTree.AddResearchNode
 function TechTree:AddResearchNode(techId, prereq1, prereq2, addOnTechId)
 
@@ -8,3 +8,4 @@ function TechTree:AddResearchNode(techId, prereq1, prereq2, addOnTechId)
     end
     oldAddResearchNode(self, techId, prereq1, prereq2, addOnTechId)
 end
+]]--

@@ -2,7 +2,7 @@
 ModLoader.SetupFileHook( "lua/Server.lua", "lua/AnyTeam/Server.lua", "post" )
 
 --- CORE CHANGES
-ModLoader.SetupFileHook( "lua/Mixins/BaseModelMixin.lua", "lua/AnyTeam/Mixins/BaseModelMixin.lua", "replace" )
+ModLoader.SetupFileHook( "lua/Mixins/BaseModelMixin.lua", "lua/AnyTeam/Mixins/BaseModelMixin.lua", "post" )
 ModLoader.SetupFileHook( "lua/Mixins/CameraHolderMixin.lua", "lua/AnyTeam/Mixins/CameraHolderMixin.lua", "post" )
 
 -- NS2+ fixes
@@ -180,6 +180,7 @@ ModLoader.SetupFileHook( "lua/TeamMessenger.lua", "lua/AnyTeam/TeamMessenger.lua
 ModLoader.SetupFileHook( "lua/GhostStructureMixin.lua", "lua/AnyTeam/GhostStructureMixin.lua", "replace" )
 ModLoader.SetupFileHook( "lua/PhysicsGroups.lua", "lua/AnyTeam/PhysicsGroups.lua", "replace" )
 ModLoader.SetupFileHook( "lua/Weapons/Alien/BileBomb.lua", "lua/AnyTeam/Weapons/Alien/BileBomb.lua", "replace" )
+ModLoader.SetupFileHook( "lua/Chat.lua", "lua/AnyTeam/Chat.lua", "replace" )
 
 -- UI stuff is horrible for filehooking. About 100 times easier to just replace!!
 -- if you have a suggestion on how to not replace these without introducing bugs, let me know...

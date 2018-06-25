@@ -558,17 +558,21 @@ function GUIUnitStatus:UpdateUnitStatusBlip( blipIndex, localPlayerIsCommander, 
     if teamType == kMarineTeamType and (blipData.Status == kUnitStatus.Unrepaired or blipData.Status == kUnitStatus.Damaged) then
         local color
         
-        if true then
-            local percentage = blipData.IsPlayer and blipData.ArmorFraction or (blipData.HealthFraction + blipData.ArmorFraction)/2
-            color = (percentage < 0.5 and LerpColor(kYellow, kWhite, percentage*2)) or (percentage >= 0.5 and LerpColor(kWhite, kGreen, (percentage-0.5)*2))
-        else 
-            if blipData.Status == kUnitStatus.Unrepaired then
-                color = kYellow
-            else
-                color = kWhite
-            end
+        local percentage
+        
+        if blipData.IsPlayer then
+            percentage = blipData.ArmorFraction
+        else
+            percentage = (blipData.HealthFraction + blipData.ArmorFraction)/2
         end
+        color = (percentage < 0.5 and LerpColor(kRed, kYellow, percentage*2)) or (percentage >= 0.5 and LerpColor(kYellow, kWhite, (percentage-0.5)*2))
+ 
         color.a = updateBlip.GraphicsItem:GetColor().a -- to not override the pulsate
+        
+        if percentage > 0.95 then
+            color.a = color.a * 0.25
+        end
+        
         
         updateBlip.GraphicsItem:SetColor(color)
         --updateBlip.OverLayGraphic:SetColor(color)
