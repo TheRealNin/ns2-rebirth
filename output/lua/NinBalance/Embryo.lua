@@ -114,3 +114,17 @@ local function UpdateGestation(self)
 end
 
 debug.replaceupvalue( Embryo.OnInitialized, "UpdateGestation", UpdateGestation, true)
+
+
+
+
+
+local oldSetGestationData =  Embryo.SetGestationData
+function Embryo:SetGestationData(techIds, previousTechId, healthScalar, armorScalar)
+    oldSetGestationData(self, techIds, previousTechId, healthScalar, armorScalar)
+    
+    -- was setting it to a very weird number before
+    self:SetMaxHealth(kEggHealth)
+    self:SetHealth(kEggHealth * healthScalar)
+    
+end

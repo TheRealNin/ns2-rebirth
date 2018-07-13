@@ -8,21 +8,6 @@ local kGrenadeMaxShakeIntensity = 0.13
 function Grenade:GetIsAffectedByWeaponUpgrades()
     return true
 end
-if Client then
-    
-    function Grenade:StopSimulationCallback(targetHit)
-            
-        -- TODO: use what is defined in the material file
-        local surface = GetSurfaceFromEntity(targetHit)
-        
-        local params = { surface = surface }
-        params[kEffectHostCoords] = Coords.GetLookIn( self:GetOrigin(), self:GetCoords().zAxis)
-        
-        GetEffectManager():TriggerEffects("grenade_explode", params)
-        
-        self.stoppedSimulating = true
-    end
-end
 
 if Server then
     function Grenade:Detonate(targetHit)
@@ -46,6 +31,15 @@ if Server then
         CreateExplosionDecals(self)
         
         TriggerCameraShake(self, kGrenadeMinShakeIntensity, kGrenadeMaxShakeIntensity, kGrenadeCameraShakeDistance)
+        
+            
+        -- TODO: use what is defined in the material file
+        local surface = GetSurfaceFromEntity(targetHit)
+        
+        local params = { surface = surface }
+        params[kEffectHostCoords] = Coords.GetLookIn( self:GetOrigin(), self:GetCoords().zAxis)
+        
+        GetEffectManager():TriggerEffects("grenade_explode", params)
         
         DestroyEntity(self)
         

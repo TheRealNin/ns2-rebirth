@@ -45,7 +45,7 @@ function StabBlink:DoAttack()
             CreateRocketProjectile(self, player)
         end
         
-        self:DoAbilityFocusCooldown(player, kAttackDuration * StabBlink.cooldownInfluence)
+        self:OnAttack(player)
     end
 end
 

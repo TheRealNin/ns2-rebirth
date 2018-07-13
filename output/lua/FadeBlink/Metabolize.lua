@@ -168,6 +168,9 @@ function Metabolize:OnTag(tagName)
                 player:SetOffsetAngles(newAngles)
                 
                 player.crouching = state.crouching
+                
+                -- this is meant for marines... but it works for aliens too lol
+                player:OnTeleportEnd()
 
                 --[[
                 --if player:GetCanMetabolizeHealth() then

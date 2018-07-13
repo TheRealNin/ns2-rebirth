@@ -32,8 +32,9 @@ local function FireBullets(self, player)
         local direction = (trace.endPoint - startPoint):GetUnit()
         local hitOffset = direction * kHitEffectOffset
         local impactPoint = trace.endPoint - hitOffset
-        --local effectFrequency = self:GetTracerEffectFrequency()
-        local showTracer = true --math.random() < effectFrequency
+        
+        -- support NS2+ disabling tracers, but otherwise always show tracers
+        local showTracer = self:GetTracerEffectFrequency() > 0
 
         local numTargets = #targets
         

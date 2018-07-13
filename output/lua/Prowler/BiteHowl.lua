@@ -42,6 +42,12 @@ function BiteHowl:OnCreate()
     self.primaryAttacking = false
 
 end
+function BiteHowl:GetVampiricLeechScalar()
+    return kBiteHowlVampirismScalar
+end
+function BiteHowl:GetIsAffectedByFocus()
+    return true
+end
 function BiteHowl:GetTracerEffectName()
     return kBiteHowlTracer
 end

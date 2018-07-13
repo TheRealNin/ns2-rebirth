@@ -8,6 +8,7 @@ local kUpgrades = {
 	[kTechId.Shell] = { kTechId.Carapace, },
 	[kTechId.Carapace] = kTechId.Shell,
 	[kTechId.Regeneration] = kTechId.Shell,
+	[kTechId.Camouflage] = kTechId.Shell,
 	[kTechId.Crush] = kTechId.Shell,
 	[kTechId.Veil] = { kTechId.Aura, },
 	[kTechId.Vampirism] = kTechId.Veil,

@@ -16,7 +16,7 @@ function Commander:SetIsReady(ready)
 end
 
 function Commander:GetIsReady()
-    return self.isReady or kForceMvM or kForceAvA
+    return self.isReady or kForceMvM or kForceAvA or kForcedByConfig
 end
 
 

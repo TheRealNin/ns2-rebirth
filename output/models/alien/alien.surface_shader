@@ -49,7 +49,7 @@
 			material.tsNormal 	= DecodeNormal( tex2D(normalMap, input.texCoord) );
             
             float specAmount    = (specularGloss.r + specularGloss.g + specularGloss.b) * 3.5 + 0.1;
-			material.gloss		= specularGloss.a;
+			material.gloss		= specularGloss.a * 0.5;
 			
 			float opacity       = paramSlow(param,destroySpeed);
 			float blend         = paramQuick(param,textureSpeed);

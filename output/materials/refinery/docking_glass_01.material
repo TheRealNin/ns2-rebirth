@@ -1,0 +1,7 @@
+shader = "materials/refinery/docking_glass.surface_shader"
+albedoMap = "materials/refinery/docking_glass_01.dds"
+specularMap = "materials/refinery/docking_glass_01_spec.dds"
+normalMap = "materials/refinery/docking_glass_01_normal.dds"
+opacityMap = "materials/refinery/docking_glass_01_alpha.dds"
+emissiveMap = "materials/refinery/docking_glass_01_illum.dds"
+surface = "thin_metal"

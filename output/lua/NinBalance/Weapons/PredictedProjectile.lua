@@ -58,11 +58,10 @@ function PredictedProjectileShooterMixin:CreatePredictedProjectile(className, st
     local detonateRadius = _G[className].kDetonateRadius
 
     local minLifeTime = _G[className].kMinLifeTime
-    local stopSimulationCallback = _G[className].StopSimulationCallback
 
     local projectile
     local projectileController = ProjectileController()
-    projectileController:Initialize(startPoint, velocity, _G[className].kRadius, self, bounce, friction, gravity, detonateWithTeam, clearOnImpact, minLifeTime, detonateRadius, stopSimulationCallback)
+    projectileController:Initialize(startPoint, velocity, _G[className].kRadius, self, bounce, friction, gravity, detonateWithTeam, clearOnImpact, minLifeTime, detonateRadius)
     projectileController.projectileId = self.nextProjectileId
     projectileController.modelName = _G[className].kModelName
 
@@ -262,10 +261,6 @@ function PredictedProjectileShooterMixin:SetProjectileDestroyed(projectileId)
         end
 
         if entry.Controller then
-            
-            if not entry.Controller.stopSimulation and entry.Controller.stopSimulationCallback then
-                entry.Controller:stopSimulationCallback()
-            end
 
             entry.Controller:Uninitialize()
         end
@@ -281,7 +276,7 @@ end
 
 class 'ProjectileController'
 
-function ProjectileController:Initialize(startPoint, velocity, radius, predictor, bounce, friction, gravity, detonateWithTeam, clearOnImpact, minLifeTime, detonateRadius, stopSimulationCallback)
+function ProjectileController:Initialize(startPoint, velocity, radius, predictor, bounce, friction, gravity, detonateWithTeam, clearOnImpact, minLifeTime, detonateRadius)
 
     self.creationTime = Shared.GetTime()
 
@@ -299,7 +294,6 @@ function ProjectileController:Initialize(startPoint, velocity, radius, predictor
 
     self.minLifeTime = minLifeTime or 0
     self.detonateRadius = detonateRadius or nil
-    self.stopSimulationCallback = stopSimulationCallback or nil
     self.detonateWithTeam = detonateWithTeam
     self.clearOnImpact = clearOnImpact
 
@@ -414,12 +408,14 @@ function ProjectileController:Update(deltaTime, projectile, predict)
             self.stopSimulation = self.clearOnImpact or (not self.hasBounced and hitEntity ~= nil and HasMixin(hitEntity, "Team") and hitEntity:GetTeamNumber() == self.detonateWithTeam )
             self.stopSimulation = self.stopSimulation and oldEnough
             
-            self.hasBounced = true
+            if not Shared.GetIsRunningPrediction() then
+                self.hasBounced = true
+            end
 
         else
 
 
-            if projectile and oldEnough and self.detonateRadius and projectile.ProcessNearMiss and not hasBounced then
+            if not Shared.GetIsRunningPrediction() and projectile and oldEnough and self.detonateRadius and projectile.ProcessNearMiss and not hasBounced then
 
                 local startPoint = projectile:GetOrigin()
                 local endPoint = self:GetOrigin()
@@ -440,9 +436,6 @@ function ProjectileController:Update(deltaTime, projectile, predict)
             VectorCopy(velocity, self.velocity)
         end
         
-        if self.stopSimulation then
-            projectile:StopSimulationCallback(hitEntity)
-        end
 
     end
 
@@ -567,10 +560,6 @@ function PredictedProjectile:OnDestroy()
     end
 
     if Client then
-
-        if not self.stoppedSimulating then
-            self:StopSimulationCallback()
-        end
         
         local owner = Shared.GetEntity(self.ownerId)
         
@@ -581,10 +570,6 @@ function PredictedProjectile:OnDestroy()
     
     end
 
-end
-
-function PredictedProjectile:StopSimulationCallback(hitEntity)
-    self.stoppedSimulating = true
 end
 
 function PredictedProjectile:GetVelocity()

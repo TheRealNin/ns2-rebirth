@@ -1,7 +1,7 @@
 
 local kHMGReloadAnimationSpeedIncrease = 2
 local kHMGSpeedModifier = 0.5
-local kHMGAimTransitionTime = 1.5
+local kHMGAimTransitionTime = 0.5
 -- kHeavyMachineGunSpread is Math.Radians(4)
 
 local kHeavyMachineGunGroundSpread = Math.Radians(2.5) --rifle is 2.8

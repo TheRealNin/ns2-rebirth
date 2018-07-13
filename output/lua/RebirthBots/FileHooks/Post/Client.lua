@@ -1,0 +1,1 @@
+Client.SetDebugText = function(...) end

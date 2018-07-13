@@ -4,6 +4,7 @@ function OnCommandSwitchTeamTypes(message)
     
     kTeam1Type = message.team1Type
     kTeam2Type = message.team2Type
+    kForcedByConfig = message.forced
     
     kTeamIndexToType[kTeam1Index] = kTeam1Type
     kTeamIndexToType[kTeam2Index] = kTeam2Type

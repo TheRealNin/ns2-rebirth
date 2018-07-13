@@ -19,3 +19,5 @@ kShieldGenerator3ResearchCost = 20
 kShieldGenerator3TechResearchTime = 45
 kPersonalShield3ArmorBonus = 60.0
 kPersonalShield3RepairDelay = 3.0
+
+kPersonalShieldWeight = 0.1 -- same as a grenade

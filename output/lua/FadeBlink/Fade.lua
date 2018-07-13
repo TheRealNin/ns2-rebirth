@@ -8,8 +8,8 @@ local kFadeScanDuration = 4
 
 
 local kFadeShadowDanceHealthRegen = 8
-local kFadeShadowDanceEnergyRegen = 3
-local kFadeShadowDanceDelay = 1.0
+local kFadeShadowDanceEnergyRegen = 6
+local kFadeShadowDanceDelay = 0.5
 
 local kViewOffsetHeight = 1.4
 Fade.YExtents = 0.80 -- was 1.05
@@ -24,7 +24,7 @@ local networkVars =
 
 function SwipeBlink:GetMeleeBase()
     -- Width of box, height of box
-    return 1.4, 1.6
+    return 1.6, 1.6
     
 end
 

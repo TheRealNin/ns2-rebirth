@@ -8,11 +8,9 @@ function LOSMixin:__initmixin()
     old__initmixin(self)
     
     if Server then
-    
         self.spotted = false
     end
 end
-
 function LOSMixin:GetIsSpottable()
     return self:isa("Hive") or 
     self:isa("CommandStation") or 
@@ -45,8 +43,8 @@ function LOSMixin:GetIsSpotted()
     end
 end
 
-function LOSMixin:OnSighted()
-    if self:GetIsSpottable() then
+function LOSMixin:OnSighted(sighted)
+    if sighted and self:GetIsSpottable() then
         self.spotted = true
     end
 end

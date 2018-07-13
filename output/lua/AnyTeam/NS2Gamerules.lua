@@ -181,7 +181,8 @@ if Server then
         
         local netmsg = {
             team1Type = kTeam1Type,
-            team2Type = kTeam2Type
+            team2Type = kTeam2Type,
+            forced = kForcedByConfig
         }
         
         -- Send new team info
@@ -201,7 +202,8 @@ if Server then
     
         local netmsg = {
             team1Type = kTeam1Type,
-            team2Type = kTeam2Type
+            team2Type = kTeam2Type,
+            forced = kForcedByConfig
         }
         
         Server.SendNetworkMessage(player, "SwitchTeamTypes", netmsg, true)
@@ -249,6 +251,28 @@ if Server then
         self.techPointRandomizer:randomseed(Shared.GetSystemTime())
 
         self.botTeamController = BotTeamController()
+        
+        local config = LoadConfigFile("AnyTeam.json")
+        local teams = config.teams and config.teams:lower()
+        if teams == "mvm" then
+            kForceMvM = true
+            kForcedByConfig = true
+            kTeam1Type = kMarineTeamType
+            kTeam2Type = kMarineTeamType
+        elseif teams == "avm" or teams == "mva" then
+            kForcedByConfig = true
+            kTeam1Type = kMarineTeamType
+            kTeam2Type = kAlienTeamType
+        elseif teams == "ava" then
+            kForceAvA = true
+            kForcedByConfig = true
+            kTeam1Type = kAlienTeamType
+            kTeam2Type = kAlienTeamType
+        elseif teams then
+            Print "WARNING: Invalid team settings. Defaulting teams to random and commander's choice."
+        else
+            -- leave defaults
+        end
         
         -- Create team objects
         self.team1 = self:BuildTeam(kTeam1Type)
@@ -318,6 +342,17 @@ if Server then
         -- TODO: Fix this hack so it isn't needed
         kTeamIndexToType[kTeam1Index] = kTeam1Type
         kTeamIndexToType[kTeam2Index] = kTeam2Type
+        
+        local netmsg = {
+            team1Type = kTeam1Type,
+            team2Type = kTeam2Type,
+            forced = kForcedByConfig
+        }
+        
+        -- Send new team info
+        for index, player in ientitylist(Shared.GetEntitiesWithClassname("Player")) do
+            Server.SendNetworkMessage(player, "SwitchTeamTypes", netmsg, true)
+        end
     end
     
     function NS2Gamerules:CheckGameStart()
@@ -393,44 +428,6 @@ if Server then
         
     end
     
-    -- No enforced balanced teams on join as the auto team balance system balances teams.
-    function NS2Gamerules:GetCanJoinTeamNumber(player, teamNumber)
-
-            
-        if player:isa("Commander") then
-            return true
-        end
-        
-        local forceEvenTeams = Server.GetConfigSetting("force_even_teams_on_join")
-        if forceEvenTeams then
-
-            local team1Players, _, team1Bots = self.team1:GetNumPlayers()
-            local team2Players, _, team2Bots = self.team2:GetNumPlayers()
-            --Log("player.is_a_robot: %s", player.is_a_robot)
-            
-            if not player.is_a_robot then
-              team1Players = team1Players - team1Bots
-              team2Players = team2Players - team2Bots
-            end
-            
-            if (team1Players > team2Players) and (teamNumber == self.team1:GetTeamNumber()) then
-                return false, 0
-            elseif (team2Players > team1Players) and (teamNumber == self.team2:GetTeamNumber()) then
-                return false, 0
-            end
-
-        end
-
-        if not Shared.GetCheatsEnabled() and Server.IsDedicated() and
-                not self.botTraining and player:GetPlayerLevel() ~= -1 then
-            if self.gameInfo:GetRookieMode() and player:GetPlayerLevel() >= kRookieAllowedLevel then
-                return false, 2
-            end
-        end
-        
-        return true
-        
-    end
     
     function NS2Gamerules:GetPregameLength()
     

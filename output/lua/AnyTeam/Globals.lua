@@ -11,6 +11,9 @@ if AddModPanel then
     AddModPanel(kAvaMaterial, url)
 end
 
+
+
+
 -- Team types - corresponds with teamNumber in editor_setup.xml
 kNeutralTeamType = 0 -- same as ready room, sadly
 kMarineTeamType = 1
@@ -23,8 +26,8 @@ kEnemyTeamType = 6
 
 kNeutralTeamNumber = 0
 
-kTeam1Type = kMarineTeamType
-kTeam2Type = kAlienTeamType
+kTeam1Type = ConditionalValue(math.random()<0.5, kMarineTeamType, kAlienTeamType)
+kTeam2Type = ConditionalValue(math.random()<0.5, kMarineTeamType, kAlienTeamType)
 
 --kTeam1Type = kPrecursorTeamType
 --kTeam2Type = kPrecursorTeamType

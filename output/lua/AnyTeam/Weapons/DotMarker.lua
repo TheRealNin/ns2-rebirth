@@ -177,6 +177,7 @@ function DotMarker:OnCreate()
     self.timeLastUpdate = Shared.GetTime()
     self.deathIconIndex = kDeathMessageIcon.None
     self.targetIds = {}
+    self.affectedByCrush = false
 
 end
 
@@ -237,6 +238,14 @@ end
 
 function DotMarker:GetDeathIconIndex()
     return self.deathIconIndex
+end
+
+function DotMarker:SetIsAffectedByCrush(affectedByCrush)
+    self.affectedByCrush = affectedByCrush
+end
+
+function DotMarker:GetIsAffectedByCrush()
+    return self.affectedByCrush
 end
 
 function DotMarker:SetAttachToTarget(target, impactPoint)

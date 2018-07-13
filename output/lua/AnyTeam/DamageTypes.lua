@@ -350,8 +350,9 @@ local function ApplyTargetModifiers(target, attacker, doer, damage, armorFractio
 end
 
 local function ApplyFriendlyFireModifier(target, attacker, doer, damage, armorFractionUsed, healthPerArmor,  damageType, hitPoint)
-
-    if target and attacker and target ~= attacker and HasMixin(target, "Team") and HasMixin(attacker, "Team") and target:GetTeamNumber() == attacker:GetTeamNumber() then
+    
+    -- changed from vanilla: no longer excludes self
+    if target and attacker and HasMixin(target, "Team") and HasMixin(attacker, "Team") and target:GetTeamNumber() == attacker:GetTeamNumber() then
         damage = damage * kFriendlyFireScalar
     end
     

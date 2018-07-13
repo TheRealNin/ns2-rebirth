@@ -65,6 +65,8 @@ ModLoader.SetupFileHook( "lua/CloakableMixin.lua", "lua/NinBalance/CloakableMixi
 -- fix backwards move scalar
 ModLoader.SetupFileHook( "lua/Mixins/GroundMoveMixin.lua", "lua/NinBalance/GroundMoveMixin.lua", "post" )
 
+-- fix radius damage
+ModLoader.SetupFileHook( "lua/Entity.lua", "lua/NinBalance/Entity.lua", "post" )
 
 -- Silence!!
 ModLoader.SetupFileHook( "lua/TechData.lua", "lua/NinBalance/TechData.lua", "post" )

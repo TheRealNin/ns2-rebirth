@@ -3,6 +3,7 @@
 	<inputs>
 		<input name="albedoMap" type="texture" address="wrap" />
 		<input name="normalMap" type="texture" address="wrap" />
+        <input name="noiseMap"  type="texture" address="wrap" >materials/effects/mesh_effects/fire_tile_01.dds</input>
 	</inputs>
 	
 	<params>
@@ -42,7 +43,7 @@
             
 		
 			material.albedo 	= pow(albedo.rgb, 0.8);
-			material.tsNormal 	= DecodeNormal( tex2D(normalMap, input.texCoord) );
+			material.tsNormal 	= DecodeNormal( tex2D(normalMap, input.texCoord) + tex2D(noiseMap, input.texCoord*20.0)*0.01 );
 			material.specular	= saturate((float3)specularColor * shininess);
 			material.gloss		= glossiness / 255.0 * (intensity + 0.5);
             

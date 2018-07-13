@@ -37,6 +37,10 @@ function Blink:GetShadowStepDistance()
     return shadowStepDistance + (player.celeritySpeedScalar or 0) * maxShadowStepBonus
 end
 
+local function EntityFilterFriendlyAndSelf(entity)
+    return function(test) return test == entity or GetAreFriends(test, entity) end
+end
+
 function OldBlinkEndTarget(self)
   local player = self:GetParent()
   
@@ -55,18 +59,18 @@ function OldBlinkEndTarget(self)
   local traceEnd = lookedAtPoint  + Vector(0, capsuleRadius * 0.5, 0)
   
   
-  local trace = Shared.TraceCapsule( traceStart, traceEnd, capsuleRadius, capsuleHeight, CollisionRep.Move, PhysicsMask.Movement, EntityFilterOne(player))
+  local trace = Shared.TraceCapsule( traceStart, traceEnd, capsuleRadius, capsuleHeight, CollisionRep.Move, PhysicsMask.Movement, EntityFilterFriendlyAndSelf(player))
   
   local coords = self:GetCoords()
   
   -- did we fail to find any points?
   if trace.fraction <= 0.01 then
     coords.origin = player:GetOrigin() 
-    return coords
+    return coords, trace.entity
   end
   
   coords.origin = traceStart * (1-trace.fraction) + traceEnd * trace.fraction - center
-  return coords
+  return coords, trace.entity
 end
 
 function BlinkEndTarget(self)  
@@ -96,7 +100,7 @@ function BlinkEndTarget(self)
         return OldBlinkEndTarget(self)
     end
     
-    local trace = Shared.TraceCapsule( traceStart, traceEnd, capsuleRadius * 1.0, 0, CollisionRep.Move, PhysicsMask.All, EntityFilterOneAndIsa(player, "Babbler"))
+    local trace = Shared.TraceCapsule( traceStart, traceEnd, capsuleRadius * 1.0, 0, CollisionRep.Move, PhysicsMask.All, EntityFilterFriendlyAndSelf(player))
     -- trace is now the furthest point we can see with the mini sphere
     
     local coords = self:GetCoords()
@@ -117,23 +121,23 @@ function BlinkEndTarget(self)
       local sphereStart = spherePoint + center
       local sphereBottomEnd = spherePoint - center
       local sphereEnd = spherePoint
-      local capsuleTrace = Shared.TraceCapsule(sphereStart, sphereEnd, capsuleRadius, capsuleHeight, CollisionRep.Move, PhysicsMask.Movement, EntityFilterOneAndIsa(player, "Babbler"))
+      local capsuleTrace = Shared.TraceCapsule(sphereStart, sphereEnd, capsuleRadius, capsuleHeight, CollisionRep.Move, PhysicsMask.Movement, EntityFilterFriendlyAndSelf(player))
       if capsuleTrace.fraction > 0.05 then
         local newOrigin = sphereStart * (1-capsuleTrace.fraction) + sphereEnd * capsuleTrace.fraction  - center
         coords.origin =newOrigin
-        return coords
+        return coords, capsuleTrace.entity
       end
-      local capsuleBottomTrace = Shared.TraceCapsule(sphereStart, sphereBottomEnd, capsuleRadius, capsuleHeight, CollisionRep.Move, PhysicsMask.Movement,  EntityFilterOneAndIsa(player, "Babbler"))
+      local capsuleBottomTrace = Shared.TraceCapsule(sphereStart, sphereBottomEnd, capsuleRadius, capsuleHeight, CollisionRep.Move, PhysicsMask.Movement,  EntityFilterFriendlyAndSelf(player))
       if capsuleBottomTrace.fraction > 0.05 then
         local newOrigin = sphereStart * (1-capsuleBottomTrace.fraction) + sphereBottomEnd * capsuleBottomTrace.fraction  - center
         coords.origin =newOrigin
-        return coords
+        return coords, capsuleBottomTrace.entity
       end
-      capsuleBottomTrace = Shared.TraceCapsule(sphereBottomEnd, sphereStart, capsuleRadius, capsuleHeight, CollisionRep.Move, PhysicsMask.Movement,  EntityFilterOneAndIsa(player, "Babbler"))
+      capsuleBottomTrace = Shared.TraceCapsule(sphereBottomEnd, sphereStart, capsuleRadius, capsuleHeight, CollisionRep.Move, PhysicsMask.Movement,  EntityFilterFriendlyAndSelf(player))
       if capsuleBottomTrace.fraction > 0.05 then
         local newOrigin = sphereBottomEnd * (1-capsuleBottomTrace.fraction) + sphereStart * capsuleBottomTrace.fraction  - center
         coords.origin =newOrigin
-        return coords
+        return coords, capsuleBottomTrace.entity
       end
     end
   end
@@ -209,18 +213,18 @@ function Blink:OnSecondaryAttackEnd(player)
 
     -- A case where GetRecentlyBlinked() does not exist is when a Fade becomes Commanders
     if player.GetRecentlyBlinked then
-      local minTimePassed = not player:GetRecentlyBlinked()
-      local hasEnoughEnergy = player:GetEnergy() > kFadeTeleportEnergyCost
-      if (not player.etherealStartTime or minTimePassed and player:GetBlinkAllowed() ) and hasEnoughEnergy then
-      
-        self:SetEthereal(player, true)
-  
-      end
-      
-      
-      Ability.OnSecondaryAttackEnd(self, player)
-      
-      self.secondaryAttacking = false
+        local minTimePassed = not player:GetRecentlyBlinked()
+        local hasEnoughEnergy = player:GetEnergy() > kFadeTeleportEnergyCost
+        if (not player.etherealStartTime or minTimePassed and player:GetBlinkAllowed() ) and hasEnoughEnergy then
+
+            self:SetEthereal(player, true)
+
+        end
+
+
+        Ability.OnSecondaryAttackEnd(self, player)
+
+        self.secondaryAttacking = false
     end
 end
 
@@ -241,9 +245,15 @@ function Blink:SetEthereal(player, state)
 
             player.startBlinkLocation = player:GetOrigin() 
             player.startVelocity = Vector(player:GetVelocity().x, math.max(player:GetVelocity().y, 0), player:GetVelocity().z)
-            local endTarget = BlinkEndTarget(self)
+            local endTarget, entity = BlinkEndTarget(self)
             if endTarget and endTarget.origin then
                 player.endBlinkLocation = endTarget.origin
+                if entity and entity.GetVelocity then
+                    local targetVel = entity:GetVelocity()
+                    if targetVel:DotProduct(player.startVelocity) > 0.5 and targetVel:GetLength() > player.startVelocity:GetLength()  then
+                         player.startVelocity = targetVel
+                    end
+                end
             else
                 player.endBlinkLocation = player:GetOrigin()
             end

@@ -32,7 +32,7 @@ end
 
 function GetCommanderSwitchTeamAllowed()
 
-    if kForceMvM or kForceAvA then
+    if kForceMvM or kForceAvA or kForcedByConfig then
         return false
     end
 

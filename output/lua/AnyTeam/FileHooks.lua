@@ -9,7 +9,7 @@ ModLoader.SetupFileHook( "lua/Mixins/CameraHolderMixin.lua", "lua/AnyTeam/Mixins
 ModLoader.SetupFileHook( "lua/NS2Plus/Client/CHUD_Outlines.lua", "lua/AnyTeam/NS2Plus/CHUD_Disabled.lua", "replace" )
 ModLoader.SetupFileHook( "lua/NS2Plus/Client/CHUD_GoldenMode.lua", "lua/AnyTeam/NS2Plus/CHUD_Disabled.lua", "replace" ) -- wtf is this??
 --ModLoader.SetupFileHook( "lua/NS2Plus/GUIScripts/GUIAlienHUD.lua", "lua/AnyTeam/NS2Plus/CHUD_Disabled.lua", "replace" )
-ModLoader.SetupFileHook( "lua/NS2Plus/Client/CHUDGUI_EndStats.lua", "lua/AnyTeam/NS2Plus/CHUDGUI_EndStats.lua", "replace" )
+--ModLoader.SetupFileHook( "lua/NS2Plus/Client/CHUDGUI_EndStats.lua", "lua/AnyTeam/NS2Plus/CHUDGUI_EndStats.lua", "replace" )
 
 -- GAMEPLAY CHANGES
 ModLoader.SetupFileHook( "lua/Balance.lua", "lua/AnyTeam/Balance.lua", "post" )
@@ -21,7 +21,6 @@ ModLoader.SetupFileHook( "lua/Exosuit.lua", "lua/AnyTeam/Exosuit.lua", "post" )
 -- generic fixes
 ModLoader.SetupFileHook( "lua/Globals.lua", "lua/AnyTeam/Globals.lua", "post" )
 ModLoader.SetupFileHook( "lua/PlayingTeam.lua", "lua/AnyTeam/PlayingTeam.lua", "post" )
-ModLoader.SetupFileHook( "lua/TeamJoin.lua", "lua/AnyTeam/TeamJoin.lua", "post" )
 ModLoader.SetupFileHook( "lua/Shared.lua", "lua/AnyTeam/Shared.lua", "post" )
 ModLoader.SetupFileHook( "lua/Utility.lua", "lua/AnyTeam/Utility.lua", "post" )
 ModLoader.SetupFileHook( "lua/NS2Gamerules.lua", "lua/AnyTeam/NS2Gamerules.lua", "post" )
@@ -94,9 +93,14 @@ ModLoader.SetupFileHook( "lua/Drifter.lua", "lua/AnyTeam/Drifter.lua", "post" )
 ModLoader.SetupFileHook( "lua/EvolutionChamber.lua", "lua/AnyTeam/EvolutionChamber.lua", "post" )
 ModLoader.SetupFileHook( "lua/Babbler.lua", "lua/AnyTeam/Babbler.lua", "post" )
 
--- bot fixes
-ModLoader.SetupFileHook( "lua/bots/PlayerBot.lua", "lua/AnyTeam/bots/PlayerBot.lua", "post" )
+
+-- bot fixes now in the Rebirth Bots mod
+--[[
+ModLoader.SetupFileHook( "lua/TeamJoin.lua", "lua/AnyTeam/TeamJoin.lua", "post" )
+
 ModLoader.SetupFileHook( "lua/VotingAddCommanderBots.lua", "lua/AnyTeam/VotingAddCommanderBots.lua", "post" )
+
+ModLoader.SetupFileHook( "lua/bots/PlayerBot.lua", "lua/AnyTeam/bots/PlayerBot.lua", "post" )
 ModLoader.SetupFileHook( "lua/bots/PlayerBrain.lua", "lua/AnyTeam/bots/PlayerBrain.lua", "post" )
 ModLoader.SetupFileHook( "lua/bots/MarineBrain.lua", "lua/AnyTeam/bots/MarineBrain.lua", "post" )
 ModLoader.SetupFileHook( "lua/bots/CommanderBrain.lua", "lua/AnyTeam/bots/CommanderBrain.lua", "post" )
@@ -118,6 +122,7 @@ ModLoader.SetupFileHook( "lua/bots/LerkBrain_Data.lua", "lua/AnyTeam/bots/LerkBr
 ModLoader.SetupFileHook( "lua/bots/MarineBrain_Data.lua", "lua/AnyTeam/bots/MarineBrain_Data.lua", "replace" )
 ModLoader.SetupFileHook( "lua/bots/OnosBrain_Data.lua", "lua/AnyTeam/bots/OnosBrain_Data.lua", "replace" )
 ModLoader.SetupFileHook( "lua/bots/SkulkBrain_Data.lua", "lua/AnyTeam/bots/SkulkBrain_Data.lua", "replace" )
+]]--
 
 -- GUI fixes
 ModLoader.SetupFileHook( "lua/GUIProduction.lua", "lua/AnyTeam/GUIProduction.lua", "post" )

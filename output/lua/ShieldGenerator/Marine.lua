@@ -29,6 +29,12 @@ function Marine:GetArmorAmount(armorLevels)
     return oldGetArmorAmount(self, armorLevels) + armorBonus
 end
 
+local oldGetInventorySpeedScalar = Marine.GetInventorySpeedScalar
+function Marine:GetInventorySpeedScalar()
+    local shieldWeight = self:GetIsPersonalShielded() and kPersonalShieldWeight or 0
+    return oldGetInventorySpeedScalar(self) - shieldWeight
+end
+
 --[[
 local oldGetCanBeWeldedOverride = Marine.GetCanBeWeldedOverride
 function Marine:GetCanBeWeldedOverride()

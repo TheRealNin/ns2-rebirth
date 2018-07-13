@@ -14,7 +14,7 @@ kGoreDamage = 100 -- was 90
 
 -- marine changes
 
-kGrenadeLauncherGrenadeDamage = 114 -- was 165, but this number is also reduced by 20%.
+kGrenadeLauncherGrenadeDamage = 120 -- was 165, but this number is also reduced by 20%. -- 115 will not killa skulk at w0 and bio0
 kGrenadeLauncherGrenadeDamageAfterBounce = 70 
 kGrenadeLauncherGrenadeDamageRadius = 4.0 -- was 4.8
 kGrenadeLifetime = 2.5 -- was 2.0
@@ -44,6 +44,9 @@ kMinigunDamageFalloffFraction = 0.6
 
 kClusterGrenadeDamage = 55 * 1.4
 kClusterFragmentDamage = 20 * 1.4
+
+kClusterGrenadeDamageRadius = 4 -- was 10
+kClusterFragmentDamageRadius = 4 -- was 6
 
 kPulseGrenadeDamage = 95 -- was 110
 
