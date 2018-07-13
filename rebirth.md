@@ -15,12 +15,21 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 
 ## Latest Changes
 
-### June 11
-* Adrenaline now provides double the energy pool but does not increase the rate you regenerate energy
-* Cat packs now provide +50 HP to marines (like the old medpacks)
-* Cloak shader improved
-* New marine bot behaviour: they will follow you around
-* Bug fixes
+### July 11
+* Massive bot movement and capability improvements. I need feedback!
+* HMG now does +20% structure damage, and is more accurate when standing on the ground.
+* Shield generator now adds weight. Remember that JPs no longer burn extra fuel because of weight, but they become less maneuverable
+* Grenades and mines no longer add any extra weight
+* Silence is back, bitches. It replaces crush, though. It also only makes movement and jumping silent. This may be changed in the future.
+* Wraith Fade teleport can now go through any friendly units and structures. This means you can teleport straight through hives and clog walls (and get stuck inside them!)
+* Wraith fade "shadow dance" regen when out of sight dramatically increased.
+* Wraith fade blink cost slightly increased
+* Wraith fade backtrack (teleport to where you were 4 seconds ago) energy requirement removed
+* Improved all projectile physics
+* Grenade launcher bounce and restitution code tweaked a little bit
+* Most damage radius calculations are modified. Affected sources are: ARC, Xenocide, Cluster Grenade, Grenade Launcher, Pulse Grenade, and Whip Bombard. They have gone from 100%->0% damage at max radius to 100%->50%.
+* Many blast radii reduced to compensate for the new damage calculation. 
+* Bug fixes and performance improvements.
 
 ## Alien-specific changes
 * Skulks take an extra 30% less melee damage from aliens. (At biomass 1, it takes 1 parasite and 2 bites to kill a skulk. At biomass 2, it takes 2 parasites and 2 bites.)
