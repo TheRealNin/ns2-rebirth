@@ -5,6 +5,7 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 
 ## Changes for July 27
 * Focus now does +50% instead of +33% damage
+* Lerk glide is no longer perfectly silent (unless you have silence)
 * Wraith is now a separate life form from Fade
 * Wraith left-click energy requirements reduced
 * Improved all projectile physics
