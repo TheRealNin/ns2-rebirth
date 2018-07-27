@@ -22,7 +22,7 @@ function GetBotCanSeeTarget(attacker, target)
 
 end
 
-local kDistCheckTime = 15
+local kDistCheckTime = 3
 
 -- this is also a VERY expensive function
 local origGetMinPathDistToEntities = GetMinPathDistToEntities

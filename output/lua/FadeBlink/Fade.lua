@@ -1,62 +1,117 @@
 
-local kSwipeRange = 2.1
-local kMaxSpeed = 8.0
+class 'WraithFade' (Fade)
+
+WraithFade.kMapName = "wraithfade"
+
+local kMaxSpeed = 8.5
 local kBlinkSpeed = 100
-local kshadowStepTime = 0.15
+local kShadowStepTime = 0.15
 local kMinEnterEtherealTime = 0.35
-local kFadeScanDuration = 4
+local kWraithFadeScanDuration = 4
 
 
-local kFadeShadowDanceHealthRegen = 8
-local kFadeShadowDanceEnergyRegen = 6
-local kFadeShadowDanceDelay = 0.5
+local kWraithFadeShadowDanceHealthRegen = 8
+local kWraithFadeShadowDanceEnergyRegen = 6
+local kWraithFadeShadowDanceDelay = 0.5
 
 local kViewOffsetHeight = 1.4
-Fade.YExtents = 0.80 -- was 1.05
+WraithFade.YExtents = 0.80 -- was 1.05
 
 local networkVars =
 {
+    isScanned = "boolean",
+    shadowStepping = "compensated boolean",
+    timeShadowStep = "private compensated time",
+    shadowStepDirection = "private compensated vector",
+    shadowStepSpeed = "private compensated interpolated float",
+    
+    etherealStartTime = "private time",
+    etherealEndTime = "private time",
+    
+    -- True when we're moving quickly "through the ether"
+    ethereal = "compensated boolean",
+    
+    landedAfterBlink = "private compensated boolean",  
+    
+    timeMetabolize = "private compensated time",
+    
+    timeOfLastPhase = "time",
+    
+	-- new wraith fade vars
     startBlinkLocation = "compensated vector",
     startVelocity = "compensated vector",
     endBlinkLocation = "compensated vector",
     etherealStartTime = "compensated time",
 }
 
-function SwipeBlink:GetMeleeBase()
-    -- Width of box, height of box
-    return 1.6, 1.6
+AddMixinNetworkVars(BaseMoveMixin, networkVars)
+AddMixinNetworkVars(GroundMoveMixin, networkVars)
+AddMixinNetworkVars(JumpMoveMixin, networkVars)
+AddMixinNetworkVars(CrouchMoveMixin, networkVars)
+AddMixinNetworkVars(CelerityMixin, networkVars)
+AddMixinNetworkVars(CameraHolderMixin, networkVars)
+AddMixinNetworkVars(DissolveMixin, networkVars)
+AddMixinNetworkVars(TunnelUserMixin, networkVars)
+AddMixinNetworkVars(BabblerClingMixin, networkVars)
+AddMixinNetworkVars(IdleMixin, networkVars)
+AddMixinNetworkVars(FadeVariantMixin, networkVars)
+
+-- since the fade loses some it's mobility, it gains speed
+function WraithFade:GetMaxSpeed(possible)
+
+    if possible then
+        return kMaxSpeed
+    end
+    
+    if self:GetIsBlinking() then
+        return kBlinkSpeed
+    end
+    
+    -- Take into account crouching.
+    return kMaxSpeed
     
 end
 
--- since the fade loses some it's mobility, it gains speed
-debug.setupvaluex( Fade.GetMaxSpeed, "kMaxSpeed", kMaxSpeed)
-debug.setupvaluex( Fade.GetRecentlyBlinked, "kMinEnterEtherealTime", kMinEnterEtherealTime)
-debug.setupvaluex( Fade.GetMaxViewOffsetHeight, "kViewOffsetHeight", kViewOffsetHeight )
+function Fade:GetAcceleration()
+    return 13
+end
 
+
+function WraithFade:GetRecentlyBlinked(player)
+    return Shared.GetTime() - self.etherealEndTime < kMinEnterEtherealTime
+end
+
+function WraithFade:GetMaxViewOffsetHeight()
+    return kViewOffsetHeight
+end
 -- reduce this to prevent air-dodging
-function Fade:GetAirControl()
+function WraithFade:GetAirControl()
     return 14 -- was 40
 end   
 
-function Fade:GetCrouchShrinkAmount()
+function WraithFade:GetCrouchShrinkAmount()
     return 0.6
 end
 
-function Fade:GetExtentsCrouchShrinkAmount()
+function WraithFade:GetExtentsCrouchShrinkAmount()
     return 0.5
 end
 
+function WraithFade:GetAirFriction()
+    return (self:GetIsBlinking() or self:GetRecentlyShadowStepped()) and 0 or (0.09  - (GetHasCelerityUpgrade(self) and self:GetSpurLevel() or 0) * 0.005)
+end 
+
 -- Absolute maximum which never can be exceeded. We exceeed the default 30.
-function Player:GetClampedMaxSpeed()
+function WraithFade:GetClampedMaxSpeed()
     return 100
 end
 
 
-function Fade:GetIsBlinking()
+function WraithFade:GetIsBlinking()
     return self.ethereal
 end
 
-function Fade:ModifyVelocity(input, velocity, deltaTime)
+function WraithFade:ModifyVelocity(input, velocity, deltaTime)
 
     if self.ethereal then
         local maxSpeedTable = { maxSpeed = kBlinkSpeed }
@@ -65,7 +120,7 @@ function Fade:ModifyVelocity(input, velocity, deltaTime)
 
 end
 
-function Fade:GetMaxSpeed(possible)
+function WraithFade:GetMaxSpeed(possible)
     
     if self.ethereal then
         return kBlinkSpeed
@@ -79,35 +134,29 @@ function Fade:GetMaxSpeed(possible)
     
 end
 
+function WraithFade:GetIsStabbing()
 
+    local stabWeapon = self:GetWeapon(StabTeleport.kMapName)
+    return stabWeapon and stabWeapon:GetIsStabbing()    
 
-
-function SwipeBlink:PerformMeleeAttack()
-
-    local player = self:GetParent()
-    if player then    
-        AttackMeleeCapsule(self, player, SwipeBlink.kDamage, kSwipeRange, nil, false, EntityFilterOneAndIsa(player, "Babbler"))
-    end
-    
 end
 
-
-function Fade:OnProcessMove(input)
+function WraithFade:OnProcessMove(input)
 
     local player = self
     Alien.OnProcessMove(self, input)
     
     if Server then
     
-        if self.isScanned and self.timeLastScan + kFadeScanDuration < Shared.GetTime() then
+        if self.isScanned and self.timeLastScan + kWraithFadeScanDuration < Shared.GetTime() then
             self.isScanned = false
         end
 
     end
     if self.ethereal then
-      if Shared.GetTime() - self.etherealStartTime < kshadowStepTime and player.OnBlinkEnd and self.endBlinkLocation then
+      if Shared.GetTime() - self.etherealStartTime < kShadowStepTime and player.OnBlinkEnd and self.endBlinkLocation then
         --player.blinkAmount = 1
-        local shadowStepFraction = Clamp((Shared.GetTime() - self.etherealStartTime) / kshadowStepTime, 0, 1) * 0.5 + 0.5
+        local shadowStepFraction = Clamp((Shared.GetTime() - self.etherealStartTime) / kShadowStepTime, 0, 1) * 0.5 + 0.5
         local newPos = self.startBlinkLocation * (1-shadowStepFraction) + self.endBlinkLocation * shadowStepFraction
         --player:SetOrigin(newPos)
         player:UpdateControllerFromEntity()
@@ -128,13 +177,13 @@ function Fade:OnProcessMove(input)
     end
     
     if self:GetCanMetabolizeHealth() and not self:GetIsSighted() then
-        if self.timeOfLastPhase + kFadeShadowDanceDelay < Shared.GetTime() then
+        if self.timeOfLastPhase + kWraithFadeShadowDanceDelay < Shared.GetTime() then
             self.timeOfLastPhase = Shared.GetTime()
             
-            self:AddEnergy(kFadeShadowDanceEnergyRegen)
+            self:AddEnergy(kWraithFadeShadowDanceEnergyRegen)
             
             if self:GetHealthScalar() ~= 1 then
-                local totalHealed = self:AddHealth(kFadeShadowDanceHealthRegen, false, false)
+                local totalHealed = self:AddHealth(kWraithFadeShadowDanceHealthRegen, false, false)
                 
                 if Client and totalHealed > 0 then
                     local GUIRegenerationFeedback = ClientUI.GetScript("GUIRegenerationFeedback")
@@ -147,16 +196,16 @@ function Fade:OnProcessMove(input)
     end
 end
 
-function Fade:MovementModifierChanged(newMovementModifierState, input)
+function WraithFade:MovementModifierChanged(newMovementModifierState, input)
 
     if newMovementModifierState and self:GetActiveWeapon() ~= nil then
         local weaponMapName = self:GetActiveWeapon():GetMapName()
-        local metabweapon = self:GetWeapon(Metabolize.kMapName)
+        local metabweapon = self:GetWeapon(Backtrack.kMapName)
         if metabweapon then
             if self:GetEnergy() >= metabweapon:GetEnergyCost() and not metabweapon:GetHasAttackDelay() then
-                self:SetActiveWeapon(Metabolize.kMapName)
+                self:SetActiveWeapon(Backtrack.kMapName)
                 self:PrimaryAttack()
-                if weaponMapName ~= Metabolize.kMapName then
+                if weaponMapName ~= Backtrack.kMapName then
                     self.previousweapon = weaponMapName
                 end
             else
@@ -168,8 +217,8 @@ function Fade:MovementModifierChanged(newMovementModifierState, input)
 end
 
 -- health regen comes from another passive ability now
-function Fade:GetMovementSpecialTechId()
-    return kTechId.MetabolizeEnergy
+function WraithFade:GetMovementSpecialTechId()
+    return kTechId.Backtrack
     --[[
     if self:GetCanMetabolizeHealth() then
         return kTechId.MetabolizeHealth
@@ -179,7 +228,7 @@ function Fade:GetMovementSpecialTechId()
     ]]--
 end
 
-function Fade:OnUpdateAnimationInput(modelMixin)
+function WraithFade:OnUpdateAnimationInput(modelMixin)
 
     if not self:GetHasMetabolizeAnimationDelay() then
         Alien.OnUpdateAnimationInput(self, modelMixin)
@@ -189,28 +238,59 @@ function Fade:OnUpdateAnimationInput(modelMixin)
         --end
     else
         local weapon = self:GetActiveWeapon()
-        if weapon ~= nil and weapon.OnUpdateAnimationInput and weapon:GetMapName() == Metabolize.kMapName then
+        if weapon ~= nil and weapon.OnUpdateAnimationInput and weapon:GetMapName() == Backtrack.kMapName then
             weapon:OnUpdateAnimationInput(modelMixin)
         end
     end
 
 end
 
+if Server then
+	function WraithFade:InitWeapons()
+
+		Alien.InitWeapons(self)
+		
+		self:GiveItem(SwipeTeleport.kMapName)
+		self:SetActiveWeapon(SwipeTeleport.kMapName)
+		
+	end
+
+	function WraithFade:InitWeaponsForReadyRoom()
+		
+		Alien.InitWeaponsForReadyRoom(self)
+		
+		self:GiveItem(ReadyRoomBlink.kMapName)
+		self:SetActiveWeapon(ReadyRoomBlink.kMapName)
+		
+	end
+
+	function WraithFade:GetTierOneTechId()
+		return kTechId.Backtrack
+	end
+
+	function WraithFade:GetTierTwoTechId()
+		return kTechId.MetabolizeHealth
+	end
+
+	function WraithFade:GetTierThreeTechId()
+		return kTechId.StabTeleport
+	end
+end
 if Client then
-    function Fade:OnUpdateRender()
+    function WraithFade:OnUpdateRender()
         if self.ethereal then
             local player = self
-            if Shared.GetTime() - self.etherealStartTime < kshadowStepTime and player.OnBlinkEnd and player.controller then
+            if Shared.GetTime() - self.etherealStartTime < kShadowStepTime and player.OnBlinkEnd and player.controller then
                 --player.blinkAmount = 1
-                local shadowStepFraction = Clamp((Shared.GetTime() - self.etherealStartTime) / kshadowStepTime, 0, 1) * 0.5 + 0.5
+                local shadowStepFraction = Clamp((Shared.GetTime() - self.etherealStartTime) / kShadowStepTime, 0, 1) * 0.5 + 0.5
                 local newPos = self.startBlinkLocation * (1-shadowStepFraction) + self.endBlinkLocation * shadowStepFraction
                 --player:SetOrigin(newPos)
                 player:UpdateControllerFromEntity()
-                player.controller:Move(newPos - player:GetOrigin(), CollisionRep.Move, CollisionRep.Default, PhysicsMask.AllButPCsAndRagdolls)
+                player.controller:Move(newPos - player:GetOrigin(), CollisionRep.Move, CollisionRep.Default, PhysicsMask.None)
                 player:UpdateOriginFromController()
             end
         end
     end
 end
 
-Shared.LinkClassToMap("Fade", Fade.kMapName, networkVars, true)
+Shared.LinkClassToMap("WraithFade", WraithFade.kMapName, networkVars, true)

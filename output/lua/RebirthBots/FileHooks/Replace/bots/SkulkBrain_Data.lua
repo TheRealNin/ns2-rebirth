@@ -549,7 +549,7 @@ kSkulkBrainActions =
                             { 0.0, 0.5 },
                             { 10.0, 5.0 }
                             })},
-                    { 45.0, 0.06 },
+                    { 45.0, 0.07 },
                     -- Never let it drop too low - ie. keep it around explore so that aggro bots can focus on being agressive
                     { 60.0, 0.01 } })
                     
@@ -632,6 +632,70 @@ kSkulkBrainActions =
             end }
     end,
 
+    function(bot, brain)
+
+        local name = "guardTeammate"
+        local skulk = bot:GetPlayer()
+        local sdb = brain:GetSenses()
+        local weight = 0.0
+
+
+        local targetData = sdb:Get("nearestTeammate")
+        local target = targetData.player
+        local dist = targetData.distance
+        local isBeingGuarded = brain.teamBrain:GetNumOthersAssignedToEntity( skulk:GetId(), bot )
+        local isBored = bot.boredUntil and bot.boredUntil > Shared.GetTime()
+        
+        if target and target ~= skulk and dist < 15 and not isBeingGuarded and not isBored then
+            local targetId = target:GetId()
+            if targetId then
+                local numOthers = brain.teamBrain:GetNumOthersAssignedToEntity( targetId, bot )
+                if ((numOthers == nil) or numOthers >= 1) and not brain.teamBrain:GetIsBotAssignedTo( bot, {entId=targetId} ) then
+                    weight = 0.0
+                else
+                    weight = 0.06 --  above explore
+                end
+            end
+        end
+        
+        weight = weight + weight * (bot.helpAbility or 0)
+
+        return { name = name, weight = weight,
+            perform = function(move)
+                if target then 
+                
+                    brain.teamBrain:UnassignBot(bot)
+                    brain.teamBrain:AssignBotToEntity( bot, target:GetId() )
+
+                    local touchDist = GetDistanceToTouch( skulk:GetEyePos(), target )
+                    if touchDist > 5.0 then
+                        PerformMove( skulk:GetOrigin(), target:GetEngagementPoint(), bot, brain, move )
+                    elseif touchDist < 2.0 then
+                        local diff = (skulk:GetOrigin() - target:GetEngagementPoint()):GetUnit() * 3
+                        PerformMove( skulk:GetOrigin(), target:GetEngagementPoint() + diff, bot, brain, move )
+                    else
+                        bot:GetMotion():SetDesiredMoveTarget( nil )
+                        if not bot.lastLookAround or bot.lastLookAround + 2 < Shared.GetTime() then
+                            bot.lastLookAround = Shared.GetTime()
+                            local viewTarget = GetRandomDirXZ()
+                            viewTarget.y = math.random()
+                            viewTarget:Normalize()
+                            bot.lastLookTarget = skulk:GetEyePos()+viewTarget*30
+                        end
+                        if bot.lastLookTarget then
+                            bot:GetMotion():SetDesiredViewTarget(bot.lastLookTarget)
+                        end
+                        if (not bot.lastCoveringTime or bot.lastCoveringTime < Shared.GetTime() - 120) and target:isa("Player") then
+                            CreateVoiceMessage( bot:GetPlayer(), kVoiceId.MarineCovering )
+                            bot.lastCoveringTime = Shared.GetTime()
+                        end
+                        
+                    end
+                    
+                    
+                end
+            end }
+    end,
     ------------------------------------------
     --  
     ------------------------------------------
@@ -639,11 +703,16 @@ kSkulkBrainActions =
         local name = "order"
 
         local skulk = bot:GetPlayer()
+        local pos = skulk:GetOrigin()
         local order = bot:GetPlayerOrder()
 
         local weight = 0.0
         if order ~= nil then
             weight = 3.0
+			
+			if skulk.isHallucination then
+				wight = 500.0
+			end
         end
 
         return { name = name, weight = weight,
@@ -809,6 +878,24 @@ function CreateSkulkBrainSenses()
             end
             end)
 
+    s:Add("nearestTeammate", function(db)
+
+            local skulk = db.bot:GetPlayer()
+            local skulkPos = skulk:GetOrigin()
+            local players = GetEntitiesForTeam( "Player", skulk:GetTeamNumber() )
+
+            local dist, player = GetMinTableEntry( players,
+                function(player)
+                    assert( player ~= nil )
+                    local dist,_ = skulkPos:GetDistance( player:GetOrigin() )
+
+                    return dist
+                end)
+
+            return {player = player, distance = dist}
+
+            end)
+            
 
     return s
 end

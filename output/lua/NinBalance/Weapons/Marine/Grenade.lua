@@ -1,6 +1,7 @@
 
 Grenade.kMinLifeTime = 0.0
 Grenade.kRadius = 0.02-- was 0.05
+Grenade.kDetonateRadius = 0.3 -- was 0.17
 local kGrenadeCameraShakeDistance = 15
 local kGrenadeMinShakeIntensity = 0.02
 local kGrenadeMaxShakeIntensity = 0.13

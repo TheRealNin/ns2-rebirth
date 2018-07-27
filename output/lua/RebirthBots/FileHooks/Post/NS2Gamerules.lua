@@ -27,7 +27,7 @@ if Server then
 
     
     
-    -- No enforced balanced teams on join as the auto team balance system balances teams.
+    
     function NS2Gamerules:GetCanJoinTeamNumber(player, teamNumber)
 
             
@@ -64,5 +64,16 @@ if Server then
         
         return true
         
+    end
+    
+    --TODO: Remove this hack
+    local oldUpdate = NS2Gamerules.OnUpdate
+    local lastBotUpdate = 0
+    function NS2Gamerules:OnUpdate(timePassed)
+        oldUpdate(self, timePassed)
+        if lastBotUpdate + 10 < Shared.GetTime() then
+            lastBotUpdate = Shared.GetTime()
+            self:UpdateBots()
+        end
     end
 end

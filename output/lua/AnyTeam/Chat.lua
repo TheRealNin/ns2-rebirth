@@ -193,10 +193,10 @@ end
 function ChatUI_GetChatMessageType()
 
     if teamOnlyChat then
-        return "Team: "
+        return "(Allies): "
     end
     
-    return "All: "
+    return "(All): "
     
 end
 

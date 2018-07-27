@@ -2,6 +2,8 @@
 kPlayerBrainTickrate = 6
 kPlayerBrainTickFrametime = 1 / kPlayerBrainTickrate
 
+admin_debug_bots = false
+
 function PlayerBrain:Update(bot, move)
     PROFILE("PlayerBrain:Update")
 
@@ -72,6 +74,9 @@ function PlayerBrain:Update(bot, move)
         end
 
         bestAction.perform(move)
+		if admin_debug_bots and self.lastAction and self.lastAction.name ~= bestAction.name then
+			Log("%s is switching from %s to %s", bot.botName, self.lastAction.name, bestAction.name)
+		end
         self.lastAction = bestAction
         self.nextMoveTime = time + 1 / kPlayerBrainTickrate
         
@@ -84,3 +89,4 @@ function PlayerBrain:Update(bot, move)
     end
 
 end
+

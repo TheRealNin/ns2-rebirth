@@ -1,7 +1,7 @@
 function AlienUI_GetHasShadowDance()
 
     local player = Client.GetLocalPlayer()
-    if player and player.GetCanMetabolizeHealth then
+    if player and player:isa("WraithFade") and player.GetCanMetabolizeHealth then
         return player:GetCanMetabolizeHealth()
     end
     

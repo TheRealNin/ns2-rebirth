@@ -1,12 +1,9 @@
---
--- lua\Weapons\Alien\Metabolize.lua
 
-
-class 'Metabolize' (Blink)
+class 'Backtrack' (WraithTeleport)
 
 local kVortexDestroy = PrecacheAsset("cinematics/alien/fade/vortex_destroy.cinematic")
 
-Metabolize.kMapName = "metabolize"
+Backtrack.kMapName = "backtrack"
 
 
 local kBacktrackDelay = 12.0
@@ -16,7 +13,7 @@ local kBacktrackSaveInterval = 0.25
 
 local _backtrackSaveNum = math.round(kBacktrackMaxRewind / kBacktrackSaveInterval) + 1
 
-kMetabolizeDelay = kBacktrackDelay -- was 2.0
+kBacktrackDelay = kBacktrackDelay -- was 2.0
 
 
 
@@ -29,9 +26,9 @@ local networkVars =
     backtrackPosition = "private integer (0 to " .. ToString(_backtrackSaveNum) .. ")"
 }
 
-function Metabolize:OnCreate()
+function Backtrack:OnCreate()
 
-    Blink.OnCreate(self)
+    WraithTeleport.OnCreate(self)
     
     self.primaryAttacking = false
     self.lastPrimaryAttackTime = 0
@@ -41,12 +38,12 @@ function Metabolize:OnCreate()
       self.backtrackEntries[i] = {}
     end
     -- this is supposed to make predict do the callback, but it's not
-    Entity.AddTimedCallbackActual(self, Metabolize.SaveState, kBacktrackSaveInterval, false)
-    --self:AddTimedCallbackActual(Metabolize.SaveState, kBacktrackSaveInterval, false)
+    Entity.AddTimedCallbackActual(self, Backtrack.SaveState, kBacktrackSaveInterval, false)
+    --self:AddTimedCallbackActual(Backtrack.SaveState, kBacktrackSaveInterval, false)
 end
 
-function Metabolize:SaveState()
-    --Log("%s",  "Metabolize:SaveState")
+function Backtrack:SaveState()
+    --Log("%s",  "Backtrack:SaveState")
     local player = self:GetParent()
     -- for some reason it tries to sometimes save the state when we don't have GetCrouching.
     if player and player.GetCrouching then
@@ -63,7 +60,7 @@ function Metabolize:SaveState()
     return true
 end
 
-function Metabolize:GetOldestState()
+function Backtrack:GetOldestState()
     local oldestPos = (self.backtrackPosition + 1) % _backtrackSaveNum
     local currentPos = self.backtrackPosition
     while currentPos ~= oldestPos do
@@ -80,44 +77,44 @@ function Metabolize:GetOldestState()
     return self.backtrackEntries[oldestPos]
 end
 
-function Metabolize:GetAnimationGraphName()
+function Backtrack:GetAnimationGraphName()
     return kAnimationGraph
 end
 
-function Metabolize:GetEnergyCost(player)
-    return kMetabolizeEnergyCost
+function Backtrack:GetEnergyCost(player)
+    return kBacktrackEnergyCost
 end
 
-function Metabolize:GetHUDSlot()
+function Backtrack:GetHUDSlot()
     return kNoWeaponSlot
 end
 
-function Metabolize:GetDeathIconIndex()
-    return kDeathMessageIcon.Metabolize
+function Backtrack:GetDeathIconIndex()
+    return kDeathMessageIcon.Backtrack
 end
 
-function Metabolize:GetBlinkAllowed()
+function Backtrack:GetBlinkAllowed()
     return true
 end
 
-function Metabolize:GetAttackDelay()
-    return kMetabolizeDelay
+function Backtrack:GetAttackDelay()
+    return kBacktrackDelay
 end
 
-function Metabolize:GetLastAttackTime()
+function Backtrack:GetLastAttackTime()
     return self.lastPrimaryAttackTime
 end
 
-function Metabolize:GetSecondaryTechId()
+function Backtrack:GetSecondaryTechId()
     return kTechId.Blink
 end
 
-function Metabolize:GetHasAttackDelay()
+function Backtrack:GetHasAttackDelay()
 	local parent = self:GetParent()
-    return self.lastPrimaryAttackTime + kMetabolizeDelay > Shared.GetTime() or parent and parent:GetIsStabbing()
+    return self.lastPrimaryAttackTime + kBacktrackDelay > Shared.GetTime() or parent and parent:GetIsStabbing()
 end
 
-function Metabolize:OnPrimaryAttack(player)
+function Backtrack:OnPrimaryAttack(player)
 
     if player:GetEnergy() >= self:GetEnergyCost() and not self:GetHasAttackDelay() then
         self.primaryAttacking = true
@@ -128,28 +125,28 @@ function Metabolize:OnPrimaryAttack(player)
     
 end
 
-function Metabolize:OnPrimaryAttackEnd()
+function Backtrack:OnPrimaryAttackEnd()
     
-    Blink.OnPrimaryAttackEnd(self)
+    WraithTeleport.OnPrimaryAttackEnd(self)
     self.primaryAttacking = false
     
 end
 
-function Metabolize:OnHolster(player)
+function Backtrack:OnHolster(player)
 
-    Blink.OnHolster(self, player)
+    WraithTeleport.OnHolster(self, player)
     self.primaryAttacking = false
     
 end
 
-function Metabolize:OnTag(tagName)
+function Backtrack:OnTag(tagName)
 
-    PROFILE("Metabolize:OnTag")
+    PROFILE("Backtrack:OnTag")
 
     if tagName == "metabolize" and not self:GetHasAttackDelay() then
         local player = self:GetParent()
         if player then
-            player:DeductAbilityEnergy(kMetabolizeEnergyCost)
+            player:DeductAbilityEnergy(kBacktrackEnergyCost)
             player:TriggerEffects("metabolize")
             player:TriggerEffects("vortexed_end", {effecthostcoords = Coords.GetLookIn(player:GetOrigin() + Vector(0,0.8,0),  player:GetViewAngles():GetCoords().zAxis)})
             player:SetVelocity(Vector(0,0,0)) 
@@ -170,10 +167,12 @@ function Metabolize:OnTag(tagName)
                 player.crouching = state.crouching
                 
                 -- this is meant for marines... but it works for aliens too lol
-                player:OnTeleportEnd()
+                if player.OnTeleportEnd then
+                    player:OnTeleportEnd()
+                end
 
                 --[[
-                --if player:GetCanMetabolizeHealth() then
+                --if player:GetCanBacktrackHealth() then
                   local oldHealth = player:GetHealthFraction()
                   local oldArmor = player:GetArmorScalar()
                   
@@ -217,11 +216,11 @@ function Metabolize:OnTag(tagName)
     
 end
 
-function Metabolize:OnUpdateAnimationInput(modelMixin)
+function Backtrack:OnUpdateAnimationInput(modelMixin)
 
-    PROFILE("Metabolize:OnUpdateAnimationInput")
+    PROFILE("Backtrack:OnUpdateAnimationInput")
 
-    Blink.OnUpdateAnimationInput(self, modelMixin)
+    WraithTeleport.OnUpdateAnimationInput(self, modelMixin)
     
     modelMixin:SetAnimationInput("ability", "vortex")
     
@@ -235,4 +234,4 @@ function Metabolize:OnUpdateAnimationInput(modelMixin)
     
 end
 
-Shared.LinkClassToMap("Metabolize", Metabolize.kMapName, networkVars)
+Shared.LinkClassToMap("Backtrack", Backtrack.kMapName, networkVars)

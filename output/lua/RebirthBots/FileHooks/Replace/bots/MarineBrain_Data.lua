@@ -485,9 +485,10 @@ kMarineBrainActions =
 
         local marine = bot:GetPlayer()
         local haveGoodWeapon = HasGoodWeapon(marine)
-        local weapons = GetEntitiesWithinRangeAreVisible( "Shotgun", marine:GetOrigin(), 20, true )
-        table.copy(GetEntitiesWithinRangeAreVisible( "HeavyMachineGun", marine:GetOrigin(), 20, true ), weapons, true)
-        table.copy(GetEntitiesWithinRangeAreVisible( "Flamethrower", marine:GetOrigin(), 20, true ), weapons, true)
+		-- don't use GetEntitiesWithinRangeAreVisible due to thrashing
+        local weapons = GetEntitiesWithinRange( "Shotgun", marine:GetOrigin(), 20, true )
+        table.copy(GetEntitiesWithinRange( "HeavyMachineGun", marine:GetOrigin(), 20, true ), weapons, true)
+        table.copy(GetEntitiesWithinRange( "Flamethrower", marine:GetOrigin(), 20, true ), weapons, true)
 
         -- ignore shotguns owned by someone already
         shotguns = FilterArray( weapons, function(ent) return ent:GetParent() == nil end )
@@ -698,14 +699,14 @@ kMarineBrainActions =
                             {0, 1.0},
                             {10, 25}
                             })},
-                        { 10.0, EvalLPF( threat.urgency, {
+                        { 15.0, EvalLPF( threat.urgency, {
                             {0, 0.5},
                             {10, 5} })},
                         -- Never let it drop too low - ie. keep it around explore so that aggro bots can focus on being agressive
-                        { 30.0, 0.04 } })
+                        { 45.0, 0.04 } })
             
 
-            weight = weight + weight * bot.aggroAbility
+            weight = weight + weight * (bot.aggroAbility or 0)
         end
 
 
@@ -850,7 +851,7 @@ kMarineBrainActions =
                 -- Load-balance them
                 local numOthers = teamBrain:GetNumOthersAssignedToEntity( targetId, bot )
                 if numOthers >= 1 then
-                    weight = 0.0
+                    weight = 0.13 -- do it if you have nothing better to do...
                 else
                     weight = 2.0
                 end
@@ -891,7 +892,7 @@ kMarineBrainActions =
 
                     else
 
-                        DebugPrint("unknown order type: %d", order:GetType())
+                        --DebugPrint("unknown order type: %d", order:GetType())
                         PerformMove( marine:GetOrigin(), order:GetLocation(), bot, brain, move )
 
                     end
@@ -987,6 +988,7 @@ kMarineBrainActions =
         local marine = bot:GetPlayer()
         local sdb = brain:GetSenses()
 
+        local weight = 0.0
         local armory = sdb:Get("nearestArmory").armory
         local armoryDist = sdb:Get("nearestArmory").distance
         local minFraction = math.min( sdb:Get("healthFraction"), sdb:Get("ammoFraction") )
@@ -1000,7 +1002,6 @@ kMarineBrainActions =
             minFraction = minFraction / 3.0
         end
 
-        local weight = 0.0
 
         if armory ~= nil then
 
@@ -1463,15 +1464,16 @@ kMarineBrainActions =
         if target then
             local targetId = target:GetId()
             if targetId then
+				local isAssigned = brain.teamBrain:GetIsBotAssignedTo(bot, {entId=targetId})
                 local numOthers = brain.teamBrain:GetNumOthersAssignedToEntity( targetId, bot )
-                if ((numOthers == nil) or numOthers >= 1) and not brain.teamBrain:GetIsBotAssignedTo(bot, {entId=targetId}) then
+                if ((numOthers == nil) or numOthers >= 1) and not isAssigned then
                     weight = 0.0
                 else
                     weight = 0.06 -- slighty above explore, below guard humans unless close
                     
                     -- but with a close bonus
-                    if dist < 10 then
-                        weight = 0.10
+                    if dist < 10 or isAssigned then
+                        weight = 0.12 -- above the closeBonus of guardHuman
                     end
                 end
             end
@@ -1487,6 +1489,7 @@ kMarineBrainActions =
                     PerformUse( marine, target, bot, brain , move )
                     bot:SendTeamMessage("I'll build the " .. target:GetMapName() .. " in " .. target:GetLocationName(), 120)
                     move.commands = AddMoveCommand( move.commands, Move.MovementModifier )
+					
                 end
             end }
     end,
@@ -1498,6 +1501,7 @@ kMarineBrainActions =
             if gBotDebug:Get("debugall") or brain.debug then
                 DebugLine(bot:GetPlayer():GetEyePos(), targetPos+Vector(0,1,0), 0.0,     0,0,1,1, true)
             end
+            brain.teamBrain:UnassignBot(bot)
             PerformMove(pos, targetPos, bot, brain, move)
             move.commands = AddMoveCommand( move.commands, Move.MovementModifier )
             end ),

@@ -419,8 +419,9 @@ function ProjectileController:Update(deltaTime, projectile, predict)
 
                 local startPoint = projectile:GetOrigin()
                 local endPoint = self:GetOrigin()
-
-                local trace = Shared.TraceCapsule( startPoint, endPoint, self.detonateRadius, 0, CollisionRep.Damage, PhysicsMask.PredictedProjectileGroup, EntityFilterOne(projectile) )
+				
+				-- this uses MOVE and a different filter
+                local trace = Shared.TraceCapsule( startPoint, endPoint, self.detonateRadius, 0, CollisionRep.Move, PhysicsMask.Movement, EntityFilterOne(projectile) )
 
                 if trace.fraction ~= 1 then
                     projectile:SetOrigin( trace.endPoint )

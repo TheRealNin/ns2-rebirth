@@ -397,20 +397,22 @@ kMarineComBrainActions =
                 local aTechId = alert.techId
                 local targetWeight = reactWeight[aTechId]
                 local target
-                if targetWeight and targetWeight > weight and time - alert.time < 5 then
+                if targetWeight and targetWeight > weight and time - alert.time < 5 and alert.entityId ~= Entity.InvalidId then
                     table.remove(alertqueue, i)
                     target = Shared.GetEntity(alert.entityId)
-                    if target.GetHealthScalar then
-                        targetWeight = targetWeight + targetWeight * (1 - target:GetHealthScalar())
-                    end
-                    local scans = #GetEntitiesWithMixinForTeamWithinXZRange("Scan", com:GetTeamNumber(), target:GetOrigin(), Scan.kScanDistance)
-                    if scans <= 0 then
-                        local nearbyFriendlies = #GetEntitiesForTeamWithinRange("Player", com:GetTeamNumber(), target:GetOrigin(), Scan.kScanDistance*0.4)
-                        if nearbyFriendlies <= 0 then
-                            weight = targetWeight
-                            scanTarget = target
-                        end
-                    end
+					if target then
+						if target.GetHealthScalar then
+							targetWeight = targetWeight + targetWeight * (1 - target:GetHealthScalar())
+						end
+						local scans = #GetEntitiesWithMixinForTeamWithinXZRange("Scan", com:GetTeamNumber(), target:GetOrigin(), Scan.kScanDistance)
+						if scans <= 0 then
+							local nearbyFriendlies = #GetEntitiesForTeamWithinRange("Player", com:GetTeamNumber(), target:GetOrigin(), Scan.kScanDistance*0.4)
+							if nearbyFriendlies <= 0 then
+								weight = targetWeight
+								scanTarget = target
+							end
+						end
+					end
                 elseif time - alert.time > 5 then
                     table.remove(alertqueue, i)
                 end

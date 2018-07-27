@@ -1,5 +1,5 @@
 
-local kLastRebirthUpdate = 1521923199  
+local kLastRebirthUpdate = 1532713086   
 
 local menu_was_opened = false
 local function GetShouldOpenChangelog()

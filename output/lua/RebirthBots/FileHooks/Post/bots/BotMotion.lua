@@ -259,6 +259,28 @@ function BotMotion:GetCurPathLook(eyePos)
     return lookDir
 end
 
+
+local function GetNearestPowerPoint(origin)
+
+    local nearest
+    local nearestDistance = 0
+
+    for _, ent in ientitylist(Shared.GetEntitiesWithClassname("PowerPoint")) do
+
+		local distance = (ent:GetOrigin() - origin):GetLength()
+		if nearest == nil or distance < nearestDistance then
+
+			nearest = ent
+			nearestDistance = distance
+
+		end
+		
+    end
+
+    return nearest
+
+end
+
 ------------------------------------------
 --  Expensive pathing call
 ------------------------------------------
@@ -309,14 +331,27 @@ function BotMotion:GetOptimalMoveDirection(from, to)
         end
     end
 
-    if not newMoveDir and (to - from):GetLength() > 20.0 then -- first fallback
+    if not newMoveDir and (to - from):GetLength() > 10.0 then -- first fallback
         
         --Log("We can't path, so we need a temp path")
                 
         local pathPoints = PointArray()
         local nearestResNode = GetNearest(to, "ResourcePoint")
         if nearestResNode then
-            reachable = Pathing.GetPathPoints(from, GetNearest(to, "ResourcePoint"):GetOrigin(), pathPoints)
+            reachable = Pathing.GetPathPoints(from, nearestResNode:GetOrigin(), pathPoints)
+            if reachable and #pathPoints > 0 then
+                newMoveDir = (pathPoints[1] - from):GetUnit()
+            end
+        end
+        
+    end
+
+    if not newMoveDir and (to - from):GetLength() > 10.0 then -- second fallback
+                
+        local pathPoints = PointArray()
+        local nearestPower = GetNearestPowerPoint(to)
+        if nearestPower then
+            reachable = Pathing.GetPathPoints(from, nearestPower:GetOrigin(), pathPoints)
             if reachable and #pathPoints > 0 then
                 newMoveDir = (pathPoints[1] - from):GetUnit()
             end
@@ -324,7 +359,7 @@ function BotMotion:GetOptimalMoveDirection(from, to)
         
     end
     
-    if not newMoveDir then -- second fallback
+    if not newMoveDir then -- third fallback
         newMoveDir = (to-from):GetUnit()
     end
 

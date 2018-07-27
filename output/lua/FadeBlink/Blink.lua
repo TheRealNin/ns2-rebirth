@@ -1,5 +1,11 @@
 
-local kMapName = "vortex"
+class 'WraithTeleport' (Blink)
+
+WraithTeleport.kMapName = "wraith_teleport"
+local networkVars =
+{
+}
+
 local kModelName = PrecacheAsset("models/alien/fade/vortex.model")
 local shadowStepDistance = 14
 local maxShadowStepBonus = 7
@@ -12,36 +18,37 @@ local kLandingCinematic = PrecacheAsset("cinematics/alien/fade/vortex_landing.ci
 local kCreateVortex = PrecacheAsset("cinematics/alien/fade/use_vortex.cinematic")
 
 
-local function TriggerBlinkOutEffects(self, player)
-
-    player:TriggerEffects("blink_in", { effecthostcoords = Coords.GetLookIn(player:GetOrigin(),  player:GetViewAngles():GetCoords().zAxis) })
+local function TriggerWraithTeleportOutEffects(self, player, targetOrigin)
+	coords = Coords.GetLookIn(player:GetOrigin(),  targetOrigin)
+    player:TriggerEffects("blink_in", { effecthostcoords = coords })
     
 end
 
-local function TriggerBlinkInEffects(self, player)
+local function TriggerWraithTeleportInEffects(self, player)
 
+	coords = player:GetCoords() -- Coords.GetLookIn(player:GetOrigin(),  targetOrigin)
     -- Play particle effect at vanishing position.
-    player:TriggerEffects("blink_out", {effecthostcoords = Coords.GetLookIn(player:GetOrigin(),  player:GetViewAngles():GetCoords().zAxis)})
+    player:TriggerEffects("blink_out", {effecthostcoords = coords})
     if not Shared.GetIsRunningPrediction() and not player:GetIsThirdPerson() then
         player.blinkAmount = 0.25
         if Client and player:GetIsLocalPlayer() then
-            player:TriggerEffects("blink_out_local", { effecthostcoords = Coords.GetLookIn(player:GetOrigin(),  player:GetViewAngles():GetCoords().zAxis) })
+            player:TriggerEffects("blink_out_local", { effecthostcoords = coords})
         end
         
     end
 
 end
 
-function Blink:GetShadowStepDistance()
+function WraithTeleport:GetShadowStepDistance()
     local player = self:GetParent()
     return shadowStepDistance + (player.celeritySpeedScalar or 0) * maxShadowStepBonus
 end
 
 local function EntityFilterFriendlyAndSelf(entity)
-    return function(test) return test == entity or GetAreFriends(test, entity) end
+    return function(test) return (test == entity or GetAreFriends(test, entity)) and not test:isa("Tunnel") end
 end
 
-function OldBlinkEndTarget(self)
+function OldWraithTeleportEndTarget(self)
   local player = self:GetParent()
   
   local lookedAtPoint = player:GetEyePos() + player:GetViewAngles():GetCoords().zAxis * self:GetShadowStepDistance()
@@ -53,6 +60,7 @@ function OldBlinkEndTarget(self)
   if not player.crouching then
     capsuleHeight = capsuleHeight * player:GetExtentsCrouchShrinkAmount()
   end
+  
   local center = Vector(0, capsuleHeight * 0.5 + capsuleRadius, 0)
   
   local traceStart = player:GetOrigin() + Vector(0, capsuleRadius, 0)
@@ -73,7 +81,7 @@ function OldBlinkEndTarget(self)
   return coords, trace.entity
 end
 
-function BlinkEndTarget(self)  
+function WraithTeleportEndTarget(self)  
   local player = self:GetParent()
   if not player or not player.GetEyePos then
     return
@@ -93,11 +101,11 @@ function BlinkEndTarget(self)
   
   local numStarts = 2
   for startStep=0,numStarts,1 do
-    local traceStart = player:GetEyePos() - startStep * Vector(0,capsuleHeight * 0.5,0)
+    local traceStart = player:GetEyePos()-- - startStep * Vector(0,capsuleHeight * 0.5,0)
     local traceEnd = lookedAtPoint-- + sphereCenter
     
     if (traceStart - traceEnd):GetLength() < 0.25 then
-        return OldBlinkEndTarget(self)
+        return OldWraithTeleportEndTarget(self)
     end
     
     local trace = Shared.TraceCapsule( traceStart, traceEnd, capsuleRadius * 1.0, 0, CollisionRep.Move, PhysicsMask.All, EntityFilterFriendlyAndSelf(player))
@@ -142,10 +150,10 @@ function BlinkEndTarget(self)
     end
   end
   -- we failed, so lets try the older, safer version to see if it finds a coord?
-  return OldBlinkEndTarget(self)
+  return OldWraithTeleportEndTarget(self)
 end
 
-function Blink:OnSecondaryAttack(player)
+function WraithTeleport:OnSecondaryAttack(player)
 
     local minTimePassed = not player:GetRecentlyBlinked()
     local hasEnoughEnergy = player:GetEnergy() > kFadeTeleportEnergyCost
@@ -154,7 +162,7 @@ function Blink:OnSecondaryAttack(player)
         if not self.secondaryAttacking then
         
             
-            self.timeBlinkStarted = Shared.GetTime()
+            self.timeWraithTeleportStarted = Shared.GetTime()
             
             self.secondaryAttacking = true
             
@@ -195,7 +203,7 @@ function Blink:OnSecondaryAttack(player)
 end
 
 
-function Blink:OnSecondaryAttackEnd(player)
+function WraithTeleport:OnSecondaryAttackEnd(player)
       
   
     if self.vortexCinematic then
@@ -211,7 +219,7 @@ function Blink:OnSecondaryAttackEnd(player)
         
     end
 
-    -- A case where GetRecentlyBlinked() does not exist is when a Fade becomes Commanders
+    -- A case where GetRecentlyWraithTeleported() does not exist is when a Fade becomes Commanders
     if player.GetRecentlyBlinked then
         local minTimePassed = not player:GetRecentlyBlinked()
         local hasEnoughEnergy = player:GetEnergy() > kFadeTeleportEnergyCost
@@ -229,7 +237,7 @@ function Blink:OnSecondaryAttackEnd(player)
 end
 
 
-function Blink:SetEthereal(player, state)
+function WraithTeleport:SetEthereal(player, state)
 
     -- Enter or leave ethereal mode.
     if player.ethereal ~= state then
@@ -240,18 +248,18 @@ function Blink:SetEthereal(player, state)
         if player.ethereal then
             player:DeductAbilityEnergy(kFadeTeleportEnergyCost)
             player.etherealStartTime = Shared.GetTime()
-            TriggerBlinkOutEffects(self, player)
-            self:TriggerEffects("shadow_step", { effecthostcoords = Coords.GetLookIn(player:GetOrigin(),  player:GetViewAngles():GetCoords().zAxis) })
+            --self:TriggerEffects("shadow_step", { effecthostcoords = Coords.GetLookIn(player:GetOrigin(),  player:GetViewAngles():GetCoords().zAxis) })
 
             player.startBlinkLocation = player:GetOrigin() 
             player.startVelocity = Vector(player:GetVelocity().x, math.max(player:GetVelocity().y, 0), player:GetVelocity().z)
-            local endTarget, entity = BlinkEndTarget(self)
+            local endTarget, entity = WraithTeleportEndTarget(self)
             if endTarget and endTarget.origin then
                 player.endBlinkLocation = endTarget.origin
+				TriggerWraithTeleportOutEffects(self, player, endTarget.origin)
                 if entity and entity.GetVelocity then
                     local targetVel = entity:GetVelocity()
                     if targetVel:DotProduct(player.startVelocity) > 0.5 and targetVel:GetLength() > player.startVelocity:GetLength()  then
-                         player.startVelocity = targetVel
+                        player.startVelocity = targetVel
                     end
                 end
             else
@@ -266,7 +274,7 @@ function Blink:SetEthereal(player, state)
             -- when they log out and become a Fade again.
             player:OnBlinkEnd()
             player.etherealEndTime = Shared.GetTime()
-            TriggerBlinkInEffects(self, player)
+            TriggerWraithTeleportInEffects(self, player)
 
             if Client and Client.GetLocalPlayer() == player and player:GetIsFirstPerson() then
               
@@ -280,7 +288,7 @@ function Blink:SetEthereal(player, state)
 end
 
 
-function Blink:OnUpdateAnimationInput(modelMixin)
+function WraithTeleport:OnUpdateAnimationInput(modelMixin)
 
     local player = self:GetParent()
     if player.ethereal and (not self.GetHasMetabolizeAnimationDelay or not self:GetHasMetabolizeAnimationDelay()) then
@@ -289,7 +297,7 @@ function Blink:OnUpdateAnimationInput(modelMixin)
     
     if self.vortexCinematic then
         player.blinkAmount = 0.25
-        local endTarget = BlinkEndTarget(self)
+        local endTarget = WraithTeleportEndTarget(self)
         self.vortexCinematic:SetCoords(endTarget)
         local player = self:GetParent()
         
@@ -330,7 +338,7 @@ end
 
 
 
-function Blink:OnHolster(player)
+function WraithTeleport:OnHolster(player)
 
     if self.vortexCinematic then
     
@@ -350,8 +358,27 @@ function Blink:OnHolster(player)
     
     
 end
+function WraithTeleport:OnHolsterClient()
 
-function Blink:ProcessMoveOnWeapon(player, input)
+    if self.vortexCinematic then
+    
+        Client.DestroyCinematic(self.vortexCinematic)
+        self.vortexCinematic = nil
+        
+    end
+    
+    if self.landingCinematic then
+    
+        Client.DestroyCinematic(self.landingCinematic)
+        self.landingCinematic = nil
+        
+    end
+    
+    Ability.OnHolsterClient(self)
+    
+end
+
+function WraithTeleport:ProcessMoveOnWeapon(player, input)
  
     -- End blink mode if out of energy or when dead
     if (not player:GetIsAlive()) then
@@ -362,8 +389,8 @@ function Blink:ProcessMoveOnWeapon(player, input)
 end
 
 
-local originalOnDestroy = Blink.OnDestroy
-function Blink:OnDestroy()
+local originalOnDestroy = WraithTeleport.OnDestroy
+function WraithTeleport:OnDestroy()
 
     if self.vortexCinematic then
     
@@ -380,3 +407,5 @@ function Blink:OnDestroy()
     end
     originalOnDestroy(self)
 end
+
+Shared.LinkClassToMap("WraithTeleport", WraithTeleport.kMapName, networkVars)

@@ -1,5 +1,5 @@
 
-local kEyeTexture = PrecacheAsset("ui/alien_night_vision.dds")
+local kEyeTexture = PrecacheAsset("ui/ShadowDance.dds")
 local kBackgroundNoiseTexture = PrecacheAsset("ui/alien_commander_bg_smoke.dds")
 local kShadowDanceRegenTime = 1
 
@@ -28,14 +28,14 @@ function GUIAlienHUD:Initialize()
     self.eyeBg:SetAdditionalTexture("noise", "ui/alien_logout_smkmask.dds")
     self.eyeBg:SetFloatParameter("correctionX", 0.5)
     self.eyeBg:SetFloatParameter("correctionY", -0.5)
-    self.eyeBg:SetIsVisible(true)
+    self.eyeBg:SetIsVisible(false)
     
     self.eyeIcon = GUIManager:CreateGraphicItem()
     self.eyeIcon:SetSize(Vector(GUIScale(kVisibilitylIconSize*0.75), GUIScale(kVisibilitylIconSize*0.75), 0))
     self.eyeIcon:SetAnchor(GUIItem.Middle, GUIItem.Center)
     self.eyeIcon:SetPosition(Vector(-GUIScale(kVisibilitylIconSize*0.75) / 2, -GUIScale(kVisibilitylIconSize*0.75) / 2, 0))
     self.eyeIcon:SetTexture(kEyeTexture)
-    self.eyeIcon:SetIsVisible(true)
+    self.eyeIcon:SetIsVisible(false)
     
     self.visibilityBg:AddChild(self.eyeBg)
     self.visibilityBg:AddChild(self.eyeIcon)
@@ -56,18 +56,7 @@ local oldUpdate = GUIAlienHUD.Update
 function GUIAlienHUD:Update(deltaTime)
     oldUpdate(self, deltaTime)
     if AlienUI_GetHasShadowDance() then
-        --[[
-        local shadowTime = AlienUI_GetTimeOfLastShadowDanceRegen()
-        local shadowDiff = Shared.GetTime() - shadowTime
-        local opacity = Clamp(1 - shadowDiff / kShadowDanceRegenTime, 0, 1)
-        self.eyeIcon:SetColor(Color(1, 1, 1, opacity))
-        if opacity <= 0 then
-            self.visibilityBg:SetIsVisible(false)
-        else
-            self.visibilityBg:SetIsVisible(true)
-        end
-        ]]--
-        self.visibilityBg:SetIsVisible(AlienUI_GetIsSighted())
+        self.visibilityBg:SetIsVisible(not AlienUI_GetIsSighted())
     else
         self.visibilityBg:SetIsVisible(false)
     end

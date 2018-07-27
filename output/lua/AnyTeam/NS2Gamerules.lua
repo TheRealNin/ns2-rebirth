@@ -253,7 +253,10 @@ if Server then
         self.botTeamController = BotTeamController()
         
         local config = LoadConfigFile("AnyTeam.json")
-        local teams = config.teams and config.teams:lower()
+        local teams
+        if config then
+            teams = config.teams and config.teams:lower()
+        end
         if teams == "mvm" then
             kForceMvM = true
             kForcedByConfig = true

@@ -13,6 +13,7 @@ ModLoader.SetupFileHook( "lua/Weapons/Marine/ClipWeapon.lua", "lua/AlienAtmos/We
 ModLoader.SetupFileHook( "lua/Weapons/Marine/Minigun.lua", "lua/AlienAtmos/Weapons/Marine/Minigun.lua", "post" )
 ModLoader.SetupFileHook( "lua/Weapons/Marine/Railgun.lua", "lua/AlienAtmos/Weapons/Marine/Railgun.lua", "post" )
 ModLoader.SetupFileHook( "lua/Weapons/Marine/HeavyMachineGun.lua", "lua/AlienAtmos/Weapons/Marine/HeavyMachineGun.lua", "post" )
+ModLoader.SetupFileHook( "lua/Weapons/Marine/Grenade.lua", "lua/AlienAtmos/Weapons/Marine/Grenade.lua", "post" )
 
 ModLoader.SetupFileHook( "lua/Cyst.lua", "lua/AlienAtmos/Cyst.lua", "post" )
 ModLoader.SetupFileHook( "lua/Harvester.lua", "lua/AlienAtmos/Harvester.lua", "post" )
@@ -36,7 +37,14 @@ ModLoader.SetupFileHook( "lua/RagdollMixin.lua", "lua/AlienAtmos/RagdollMixin.lu
 ModLoader.SetupFileHook( "lua/Player_Client.lua", "lua/AlienAtmos/Player_Client.lua", "post" )
 
 
+ModLoader.SetupFileHook( "lua/IdleMixin.lua", "lua/AlienAtmos/IdleMixin.lua", "post" )
+ModLoader.SetupFileHook( "lua/Lerk.lua", "lua/AlienAtmos/Lerk.lua", "post" )
+
+
 ModLoader.SetupFileHook( "lua/Globals.lua", "lua/AlienAtmos/Globals.lua", "post" )
 
 ModLoader.SetupFileHook( "lua/NS2Utility.lua", "lua/AlienAtmos/NS2Utility.lua", "post" )
+
+-- this basically removes the flinch mixin
+ModLoader.SetupFileHook( "lua/FlinchMixin.lua", "lua/AlienAtmos/FlinchMixin.lua", "replace" )
 
