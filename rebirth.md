@@ -3,6 +3,11 @@ title: Nin's NS2:Rebirth
 ---
 Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on the bottom of this window.
 
+## Changes for Aug 6
+* Increased machine gun move speed when firing
+* Increased machine gun on-ground accuracy
+* Decreased grenade launcher grenade "hitbox" size
+
 ## Changes for July 27
 * Focus now does +50% instead of +33% damage
 * Lerk glide is no longer perfectly silent (unless you have silence)
