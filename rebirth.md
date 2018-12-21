@@ -3,19 +3,11 @@ title: Nin's NS2:Rebirth
 ---
 Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on the bottom of this window.
 
-## Changes for Aug 6
-* Increased machine gun move speed when firing
-* Increased machine gun on-ground accuracy
-* Decreased grenade launcher grenade "hitbox" size
+## Changes for Dec 20
 
-## Changes for July 27
-* Focus now does +50% instead of +33% damage
-* Lerk glide is no longer perfectly silent (unless you have silence)
-* Wraith is now a separate life form from Fade
-* Wraith left-click energy requirements reduced
-* Improved all projectile physics
-* Various chat improvements
-* Marine GL grenades now glow so it's easier to spot them
+* Increased whip supply cost to 15 from 5
+* Teams now get 100 supply for each tech point they have built on
+* Aliens now deal full damage to other aliens (skulks still have some damage resistances)
 
 ## Summary
 * Each commander may choose their teams race (Marine or Alien)
@@ -50,6 +42,7 @@ Welcome to Rebirth, an overhaul of NS2. Please send feedback using the button on
 * * Advanced Metabolize is now Shadow Dance: You will automatically regenerate health when you are not visible to your enemies.
 * * Stab is now Acid Rocket: A 55 structural damage projectile with a small AOE. Requires biomass 6 (not 7, like stab)
 * Whips now have knockback.
+* Increased whip supply cost to 15 from 5
 * Gorge Hydras have been reworked. They now autobuild, cost 1 res, have very little health, but attack very quickly.
 * Gorge Webs now prevent lerks from gliding or flapping for 4 seconds. If this happens to you, it will be the longest 4 seconds of your life.
 * Skulks will spawn with their previous upgrades
