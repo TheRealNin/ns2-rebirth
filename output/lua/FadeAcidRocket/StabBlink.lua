@@ -53,3 +53,10 @@ end
 function StabBlink:GetBlinkAllowed()
     return true
 end
+
+if StabTeleport then
+
+	StabTeleport.DoAttack = StabBlink.DoAttack
+	StabTeleport.GetBlinkAllowed = StabBlink.GetBlinkAllowed
+
+end

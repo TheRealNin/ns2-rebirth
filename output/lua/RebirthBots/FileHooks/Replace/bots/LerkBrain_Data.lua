@@ -186,7 +186,7 @@ local function PerformAttackEntity( eyePos, bestTarget, lastSeenPos, bot, brain,
         move.commands = AddMoveCommand( move.commands, Move.PrimaryAttack )
     end
     
-    doFire = doFire and bot.aim:UpdateAim(bestTarget, aimPos)
+    doFire = doFire and bot.aim and bot.aim:UpdateAim(bestTarget, aimPos)
                 
     if doFire then
         

@@ -6,7 +6,7 @@ function MarineBuy_GetWeaponDescription(techId)
         return oldMarineBuy_GetWeaponDescription(techId)
     end
     
-    local description = "Replace your armor with an auto-recharging, 95% effective energy shield, giving you extra armor. Additionally, it has 30% resistance against Railgun, Minigun, and Grenade Launcher damage."
+    local description = "An auto-recharging shield, increasing your armor. Additionally, it provides 30% resistance against Railgun, Minigun, and Grenade Launcher damage. It will slow down your movement slightly and make jetpacks less efficient."
 
     local techTree = GetTechTree()
         

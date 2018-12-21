@@ -1,5 +1,6 @@
 
 kHydrasPerHive = 3
+kWhipSupply = 25 -- was 5
 
 kSentriesPerBattery = 2 -- was 3
 

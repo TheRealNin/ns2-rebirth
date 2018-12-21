@@ -11,6 +11,26 @@ function GetAliveEntitiesForTeam(class, teamNumber)
     return ents
 end
 
+function GetIsAreaSafe(teamNumber, origin, radius)
+
+	local memories = GetTeamMemories( teamNumber )
+    for _,mem in ipairs(memories) do
+		local target = Shared.GetEntity(mem.entId)
+		if target and target:isa("Player") and teamNumber ~= target:GetTeamNumber() and HasMixin(target, "Live") and target:GetIsAlive() then
+		
+			local dist = origin:GetDistance( mem.lastSeenPos )
+			
+			-- hack because some memories are at the origin of the map...
+			if dist < radius and Vector(0,0,0):GetDistance( mem.lastSeenPos ) > 5 then
+				return false
+			end
+			
+		end
+	end
+	return true
+	
+end
+
 function CreateBuildStructureAction( techId, className, numExistingToWeightLPF, buildNearClass, maxDist )
 
     return function(bot, brain)

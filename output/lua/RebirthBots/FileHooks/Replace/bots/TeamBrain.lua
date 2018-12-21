@@ -72,6 +72,13 @@ local function UpdateMemory(mem, ent, fromSound)
         local success, blipType, blipTeam, isAttacked, isParasited = ent:GetMapBlipInfo()
         mem.btype = blipType
         mem.lastSeenPos = ent:GetOrigin()
+		
+		--[[
+		if fromSound and not (ent.GetIsSighted and ent:GetIsSighted()) and not (ent.GetIsSpotted and ent:GetIsSpotted()) then
+			mem.lastSeenPos = mem.lastSeenPos + Vector(math.random() * 6 -3, math.random() * 6 -3,math.random() * 6 -3)
+		end
+		
+		]]--
         
         local timeSinceLastUpdated = Shared.GetTime() - mem.lastSeenTime
         if ent:isa("Player") and timeSinceLastUpdated > 2 then
@@ -333,7 +340,7 @@ function TeamBrain:Update()
             
             -- we time out very old player memories because they are
             -- not very likely to be around that long
-            local veryOldPlayerMemory = ent:isa("Player") and memAge > 10
+            local veryOldPlayerMemory = ent:isa("Player") and memAge > 5
             if not veryOldPlayerMemory then
                 
                 removeIt = false                

@@ -1,5 +1,7 @@
 
-CloakableMixin.kCloakRate = 1
+CloakableMixin.kCloakRate = 0.5
+
+CloakableMixin.kUncloakRate = 1000
 
 -- no need for this because players now cloak 100%
 --local kPlayerMaxCloak = 0.88
@@ -79,7 +81,7 @@ if Client then
         end
         
         local nearFraction = 1 - Clamp((dist - kPlayerNearCloakDist) / (kPlayerFarCloakDist - kPlayerNearCloakDist), 0, 1)
-        local modifiedCloak = Clamp(self.cloakFraction - nearFraction * kPlayerNearMaxCloakReduction, 0, self.cloakFraction)
+        local modifiedCloak = Clamp(self.cloakFraction - nearFraction * kPlayerNearMaxCloakReduction, 0.5, self.cloakFraction)
         
         local useMaterial = (self.cloakingDesired or self:GetCloakFraction() ~= 0) and not hideFromEnemy
 

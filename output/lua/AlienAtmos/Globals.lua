@@ -5,3 +5,5 @@ if AddModPanel then
 end
 
 kTracerSpeed = 230 -- was 115
+
+debug.appendtoenum(kHitEffectSurface, "organicCarapace")

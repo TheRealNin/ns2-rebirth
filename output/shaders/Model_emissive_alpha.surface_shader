@@ -34,7 +34,7 @@
             }
             
 			float4 specularGloss = tex2D(specularMap, input.texCoord);
-            float specularColor = saturate((specularGloss.r + specularGloss.g + specularGloss.b) * 0.1+0.1);
+            float specularColor = saturate((specularGloss.r + specularGloss.g + specularGloss.b) * 0.33);
 			
 			float3 ssDir = normalize(input.vsPosition);
             float intensity = -dot(ssDir, input.vsNormal);

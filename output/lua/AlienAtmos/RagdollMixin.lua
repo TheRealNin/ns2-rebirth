@@ -3,6 +3,8 @@ local kRagdollTime = 9.5
 
 local function SetRagdoll(self, deathTime)
 
+    --Log("setting ragdoll for %s, deathTime: %s", self:GetClassName(), deathTime)
+	
     if Server then
     
         if self:GetPhysicsGroup() ~= PhysicsGroup.RagdollGroup then

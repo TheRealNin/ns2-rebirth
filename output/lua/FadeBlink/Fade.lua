@@ -9,6 +9,7 @@ local kShadowStepTime = 0.15
 local kMinEnterEtherealTime = 0.35
 local kWraithFadeScanDuration = 4
 
+local poofCinematic = PrecacheAsset("cinematics/alien/fade/wraith_idle.cinematic")
 
 local kWraithFadeShadowDanceHealthRegen = 8
 local kWraithFadeShadowDanceEnergyRegen = 6
@@ -291,6 +292,19 @@ if Client then
             end
         end
     end
+	
+	local oldUpdateClientEffects = WraithFade.UpdateClientEffects
+	function WraithFade:UpdateClientEffects(deltaTime, isLocal)
+		oldUpdateClientEffects(self, deltaTime, isLocal)
+		if not isLocal and (not self._poofTime or self._poofTime + 0.05 < Shared.GetTime()) then
+			self._poofTime = Shared.GetTime()
+			local poof = Client.CreateCinematic(RenderScene.Zone_Default)
+			poof:SetCinematic(poofCinematic)
+			poof:SetRepeatStyle(Cinematic.Repeat_None)
+			poof:SetCoords(self:GetCoords())
+			poof:SetIsActive(true)
+		end
+	end
 end
 
 Shared.LinkClassToMap("WraithFade", WraithFade.kMapName, networkVars, true)

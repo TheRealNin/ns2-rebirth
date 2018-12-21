@@ -23,7 +23,14 @@ function CommanderGlowMixin:OnDestroy()
     end
     
 end
-    
+
+local function GlowCustomFilter(entity1, entity2)
+	-- return true to filter out ent
+	return function(test, targetPoint)
+		return (test == entity1 or test == entity2) or (not test:isa("Hive") and not test:isa("CommandStation") and not test:isa("Door") and not test:isa("Armory"))
+	end
+end
+
 function CommanderGlowMixin:UpdateHighlight()
 
     -- Show glowing outline for commander, to pick it out of the darkness
@@ -42,6 +49,20 @@ function CommanderGlowMixin:UpdateHighlight()
         visible = false
     end
     
+	if visible and not isCommander then
+		-- do the expensive trace
+		--visible = not GetCanSeeEntity(player, self)
+		local targetOrigin = HasMixin(self, "Target") and self:GetEngagementPoint() or self:GetOrigin()
+        local eyePos = GetEntityEyePos(player)
+		local filter = GlowCustomFilter(player, self)
+		local trace = Shared.TraceRay(eyePos, targetOrigin, CollisionRep.Move, PhysicsMask.Movement, filter)
+		
+		-- something is not blocking the way
+		if trace.fraction > 0.99 then
+			visible = false
+		end
+	end
+	
     -- Update the visibility status.
     if visible ~= self.commanderGlowOutline then
         self.commanderGlowOutline = visible   

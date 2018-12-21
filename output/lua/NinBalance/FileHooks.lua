@@ -19,6 +19,7 @@ ModLoader.SetupFileHook( "lua/Weapons/Marine/Minigun.lua", "lua/NinBalance/Weapo
 ModLoader.SetupFileHook( "lua/Weapons/Marine/Axe.lua", "lua/NinBalance/Weapons/Marine/Axe.lua", "post" )
 ModLoader.SetupFileHook( "lua/Weapons/Marine/Pistol.lua", "lua/NinBalance/Weapons/Marine/Pistol.lua", "post" )
 ModLoader.SetupFileHook( "lua/Weapons/Marine/PulseGrenade.lua", "lua/NinBalance/Weapons/Marine/PulseGrenade.lua", "post" )
+ModLoader.SetupFileHook( "lua/Weapons/Marine/GasGrenade.lua", "lua/NinBalance/Weapons/Marine/GasGrenade.lua", "post" )
 
 
 ModLoader.SetupFileHook( "lua/Weapons/Alien/Gore.lua", "lua/NinBalance/Weapons/Alien/Gore.lua", "post" )
@@ -38,6 +39,9 @@ ModLoader.SetupFileHook( "lua/Babbler.lua", "lua/NinBalance/Babbler.lua", "post"
 
 
 ModLoader.SetupFileHook( "lua/GUIAlienBuyMenu.lua", "lua/NinBalance/GUIAlienBuyMenu.lua", "post" )
+
+
+ModLoader.SetupFileHook( "lua/GUIVoiceChat.lua", "lua/NinBalance/GUIVoiceChat.lua", "post" )
 
 -- fix projectiless
 ModLoader.SetupFileHook( "lua/Weapons/PredictedProjectile.lua", "lua/NinBalance/Weapons/PredictedProjectile.lua", "replace" )

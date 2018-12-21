@@ -30,6 +30,5 @@ function Marine:ApplyCatPack()
     self:AddHealth(MedPack.kHealth, false, true)
     self:AddRegeneration()
     self.timeLastMedpack = Shared.GetTime()
-    StartSoundEffectAtOrigin(MedPack.kHealthSound, self:GetOrigin())
 
 end

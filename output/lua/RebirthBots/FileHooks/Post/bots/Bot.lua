@@ -12,7 +12,7 @@ function Bot:UpdateTeam()
         end
         
         if GetGamerules():GetCanJoinTeamNumber(player, self.team) or Shared.GetCheatsEnabled() then
-            GetGamerules():JoinTeam(player, self.team, true)
+            GetGamerules():JoinTeam(player, self.team, true, true)
         end
         
     end

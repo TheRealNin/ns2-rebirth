@@ -91,7 +91,8 @@ function PersonalShieldMixin:ActivatePersonalShield()
         if Server then
             
             self.deservesShield = true
-            
+            self:UpdateArmorAmount()
+			
         end
         
     end

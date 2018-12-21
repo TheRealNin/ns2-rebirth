@@ -1,4 +1,4 @@
 modEntry = {
 FileHooks = "lua/AnyTeam/FileHooks.lua",
-Priority = 45
+Priority = 46
 }

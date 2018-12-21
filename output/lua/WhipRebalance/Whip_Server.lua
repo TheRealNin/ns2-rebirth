@@ -4,7 +4,9 @@ local kWhipAttackScanInterval = 0.33
 local kSlapAfterBombardTimeout = 2
 local kBombardAfterBombardTimeout = 5.3
 
-local whipImpactForce = 400
+local whipImpactForce = 1600
+local whipImpactIncrease = Vector(0,2.5,0)
+local maxWhipHitVel = 9.0
 
 -- replace normal selector "validate target" with our own traceray
 function Whip:GetCanAttackTarget(selector, targetEntity, rangeSquared)
@@ -47,15 +49,23 @@ function Whip:SlapTarget(target)
     
     local targetPoint = target:GetEngagementPoint()
     local attackOrigin = self:GetEyePos()
-    local hitDirection = targetPoint - attackOrigin
+    local hitDirection = targetPoint - attackOrigin + whipImpactIncrease
     hitDirection:Normalize()
     
     if target.GetVelocity then
         local slapVel = hitDirection * (whipImpactForce / mass)
-        target:SetVelocity(target:GetVelocity() + slapVel)
+		
+		local newVel = target:GetVelocity() + slapVel
+		
+		if newVel:GetLength() > maxWhipHitVel then
+			newVel:Normalize()
+			newVel = newVel * maxWhipHitVel
+		end
+		
+        target:SetVelocity(newVel)
     end
     if target.DisableGroundMove then
-        target:DisableGroundMove(0.3)
+        target:DisableGroundMove(0.25)
     end
     if target.gliding then
         target.gliding = false

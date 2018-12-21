@@ -23,7 +23,6 @@ function Player:SetLightShakeAmount(amount, duration, scalar)
 end
 
 local originalUpdateClientEffects = Player.UpdateClientEffects
--- Disabled because perf
 function Player:UpdateClientEffects(deltaTime, isLocal)
 
     if isLocal then
@@ -31,9 +30,16 @@ function Player:UpdateClientEffects(deltaTime, isLocal)
     end
 
     -- Rumbling effects due to Onos
+	-- Disabled because perf
     --self:UpdateShakingLights(deltaTime)
     --self:UpdateDirtFalling(deltaTime)
     --self:UpdateOnosRumble(deltaTime)
-
+	if not self._GUI_shove then
+		self._GUI_shove = 0
+	end
+	local speed = deltaTime * 30.0
+	if self.GetIsOnGround and not self:GetIsOnGround() then
+		speed = speed * 0.60
+	end
+	self._GUI_shove = math.max(0, self._GUI_shove - self._GUI_shove/4 * speed)
 end
-

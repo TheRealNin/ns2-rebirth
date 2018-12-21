@@ -8,6 +8,10 @@ function Infestation:GetIsPointOnInfestation(point)
     local radius = point:GetDistanceTo(self.coords.origin)
     if radius <= self:GetRadius() then
     
+		local dist = GetPathDistance(self.coords.origin, point)
+		if dist and dist < self:GetRadius() * 1.3 then
+			onInfestation = true
+		end
         -- we remove this weird dotproduct thing... it causes a TON of bugs
         --[[
         -- Check dot product
@@ -16,8 +20,6 @@ function Infestation:GetIsPointOnInfestation(point)
         
         onInfestation = (verticalProjection < 1)
         ]]--
-        
-        onInfestation = true
     end
     
     return onInfestation
@@ -64,48 +66,19 @@ function Infestation:UpdateInfestables()
     
         local range = (origin - entity:GetOrigin()):GetLength()
         if range >= smallestRadius and range <= biggestRadius then
-            entity:UpdateInfestedState(onInfestation)
+			
+			local dist = GetPathDistance(self.coords.origin, entity:GetOrigin())
+			if dist then
+				if dist < self:GetRadius() * 1.3 then
+					entity:UpdateInfestedState(onInfestation)
+				else
+					entity:UpdateInfestedState(false)
+				end
+			else
+				entity:UpdateInfestedState(onInfestation)
+			end
         end
         
     end
 
-end
-
-
--- only called when the infestation actually changed
-local oldRenderInfestation = Infestation.RenderInfestation
-function Infestation:RenderInfestation(generateBlobs)
-    oldRenderInfestation(self, generateBlobs)
-    local localPlayer = Client.GetLocalPlayer()
-    local showHighlight = localPlayer ~= nil and localPlayer.GetTeamNumber and ((localPlayer:GetTeamNumber() == self:GetTeamNumber() or localPlayer:GetTeamNumber() == kNeutralTeamNumber))
-    if localPlayer ~= nil and HasMixin(localPlayer, "Team") and HasMixin(self, "Team") and (localPlayer:GetTeamNumber() == kTeamReadyRoom or localPlayer:GetTeamNumber() == kSpectatorIndex) then
-        showHighlight = self:GetTeamNumber() == kTeam2Index
-    end
-    
-    if self.infestationModelArray then
-        --Log("Setting infestationModelArray")
-        if showHighlight then
-            self.infestationModelArray:SetMaterialParameter("tint", 1)
-        else
-            self.infestationModelArray:SetMaterialParameter("tint", 0)
-        end
-    end
-    
-    if self.infestationShellModelArray then
-        --Log("Setting infestationShellModelArray")
-        if showHighlight then
-            self.infestationShellModelArray:SetMaterialParameter("tint", 1)
-        else
-            self.infestationShellModelArray:SetMaterialParameter("tint", 0)
-        end
-    end
-    if self.infestationDecals then
-        --Log("Setting infestation decals")
-        if showHighlight then
-            self.infestationMaterial:SetParameter("tint", 1)
-        else
-            self.infestationMaterial:SetParameter("tint", 0)
-        end
-        
-    end
 end

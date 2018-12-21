@@ -1,28 +1,10 @@
 
 
-local function AppendToEnum( tbl, key )
-	if rawget(tbl,key) ~= nil then
-		return
-	end
-	
-	local maxVal = 0
-    for k, v in next, tbl do
-        if type(v) == "number" and v > maxVal then
-            maxVal = v 
-        end
-    end
-	
-	rawset( tbl, key, maxVal+1 )
-	rawset( tbl, maxVal+1, key )
-  
-  -- incrase max each time...
-  kTechIdMax = kTechIdMax + 1
-	
-end
+
+debug.appendtoenum(kTechId, "ShieldGenerator")
+debug.appendtoenum(kTechId, "ShieldGeneratorTech")
+debug.appendtoenum(kTechId, "ShieldGeneratorTech2")
+debug.appendtoenum(kTechId, "ShieldGeneratorTech3")
 
 
-
-AppendToEnum(kTechId, "ShieldGenerator")
-AppendToEnum(kTechId, "ShieldGeneratorTech")
-AppendToEnum(kTechId, "ShieldGeneratorTech2")
-AppendToEnum(kTechId, "ShieldGeneratorTech3")
+kTechIdMax = kTechIdMax + 4

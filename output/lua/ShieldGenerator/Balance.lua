@@ -20,4 +20,9 @@ kShieldGenerator3TechResearchTime = 45
 kPersonalShield3ArmorBonus = 60.0
 kPersonalShield3RepairDelay = 3.0
 
-kPersonalShieldWeight = 0.1 -- same as a grenade
+kPersonalShieldWeight = 0.15 -- more than a grenade
+
+
+if kCombatVersion then
+	kPersonalShieldArmorBonus = 40.0
+end

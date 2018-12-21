@@ -8,8 +8,19 @@ function Welder:PerformWeld(player)
     local attackDirection = player:GetViewCoords().zAxis
     local success = false
     -- prioritize friendlies
-    local didHit, target, endPoint, direction, surface = CheckMeleeCapsule(self, player, 0, self:GetRange(), nil, true, 1, PrioritizeDamagedFriends, nil, PhysicsMask.Flame)
-    
+    local didHit, target, endPoint, direction, surface
+	
+	local eyePos = player:GetEyePos()
+	local viewCoords = player:GetViewCoords()
+	local trace = Shared.TraceRay(eyePos,  eyePos + viewCoords.zAxis * self:GetRange(), CollisionRep.Damage, PhysicsMask.Bullets, EntityFilterOneAndIsa(player, "Weapon"))
+	if trace.fraction ~= 1 and trace.entity then
+		didHit = true
+		target = trace.entity
+		endPoint = trace.endPoint
+	else
+		didHit, target, endPoint, direction, surface = CheckMeleeCapsule(self, player, 0, self:GetRange(), nil, true, 1, PrioritizeDamagedFriends, nil, PhysicsMask.Flame)
+    end
+	
     if didHit and target and HasMixin(target, "Live") then
         
         if not GetAreFriends(player, target) then

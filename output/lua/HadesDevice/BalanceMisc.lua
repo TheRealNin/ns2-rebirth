@@ -1,1 +1,1 @@
-kHadesDeviceArmTime = 0.1kHadesDeviceDetonateTime = 25kHadesDeviceDamage = 1800 -- 2300 + 320 * 2 = 2940 extractor health, kStructuralDamageScalar doubles structure damagekHadesDeviceDamageType = kDamageType.Structural
+kHadesDeviceArmTime = 0.1kHadesDeviceDetonateTime = 25kHadesDeviceDamage = 3000 -- fyi 2300 + 320 * 2 = 2940 extractor health, kStructuralDamageScalar doubles structure damagekHadesDeviceDamageType = kDamageType.Structural

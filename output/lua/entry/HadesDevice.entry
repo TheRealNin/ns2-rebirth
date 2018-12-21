@@ -1,4 +1,4 @@
 modEntry = {
 FileHooks = "lua/HadesDevice/FileHooks.lua",
-Priority = -10
+Priority = 10
 }

@@ -87,8 +87,8 @@ local function PerformMove( marinePos, targetPos, bot, brain, move )
         
         local player = bot:GetPlayer()
     
-        if player:isa("JetpackMarine") and player:GetFuel() > 0.6 and 
-            (not player:GetIsOnGround() or player:GetFuel() > 0.95) then
+        if player:isa("JetpackMarine") and player:GetFuel() > 0.91 and 
+            (not player:GetIsOnGround() or player:GetFuel() > 0.96) then
             move.commands = AddMoveCommand(move.commands, Move.Jump)
             move.commands = AddMoveCommand(move.commands, Move.Crouch)
         end
@@ -180,6 +180,8 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
     -- Avoid doing expensive vis check if we are too far
     local hasClearShot = dist < 45.0 and bot:GetBotCanSeeTarget( target )
     
+	
+	
     if (target.GetIsGhostStructure and target:GetIsGhostStructure()) then
     
         -- uses a gate
@@ -267,10 +269,12 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
             if strafeTarget:GetLengthSquared() > 0 then
                 bot:GetMotion():SetDesiredMoveDirection(strafeTarget)
                 if player:isa("JetpackMarine") then
-                    if not bot.lastJumpDodge or (bot.lastJumpDodge + 3 > time and bot.lastJumpDodge + 6 < time) or dist < 6.0 then
-                        bot.lastJumpDodge = Shared.GetTime()
-                        move.commands = AddMoveCommand(move.commands, Move.Jump)
-                    end
+					if (player:GetFuel() > 0.3 or not player:GetIsOnGround()) then
+						if not bot.lastJumpDodge or (bot.lastJumpDodge + 1 > time and bot.lastJumpDodge + 2 < time) or dist < 9.0 then
+							bot.lastJumpDodge = Shared.GetTime()
+							move.commands = AddMoveCommand(move.commands, Move.Jump)
+						end
+					end
                 else
                     if not bot.lastJumpDodge or (bot.lastJumpDodge + 2 > time and bot.lastJumpDodge + 15 < time) then
                         bot.lastJumpDodge = Shared.GetTime()
@@ -329,7 +333,7 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
         elseif not retreating and dist < 15.0  then
             if not bot.lastAimCheatTime or bot.lastAimCheatTime + 0.5 < Shared.GetTime() then
                 bot.lastAimCheatTime = Shared.GetTime()
-                bot.lastAimPos = aimPos + Vector(math.random() * 4 - 2,math.random() * 2 - 1,math.random() * 4 - 2)
+                bot.lastAimPos = aimPos
             end
             if bot.lastAimPos then
                 bot:GetMotion():SetDesiredViewTarget(bot.lastAimPos)
@@ -504,6 +508,10 @@ kMarineBrainActions =
                     })
         end
         
+		if kCombatVersion then
+			weight = 0
+		end
+		
         return { name = name, weight = weight,
                 perform = function(move)
                     if bestGun ~= nil then
@@ -691,6 +699,7 @@ kMarineBrainActions =
         local sdb = brain:GetSenses()
         local threat = sdb:Get("biggestThreat")
         local weight = 0.0
+		local isInCombat = (marine.GetIsInCombat and marine:GetIsInCombat())
 
         if threat ~= nil and sdb:Get("weaponOrPistolReady") then
 
@@ -707,6 +716,11 @@ kMarineBrainActions =
             
 
             weight = weight + weight * (bot.aggroAbility or 0)
+			
+			if isInCombat then
+				weight = weight * 3.0
+			end
+			
         end
 
 
@@ -808,6 +822,11 @@ kMarineBrainActions =
                 if sdb:Get("welderReady") then
                     weight = weight * 2
                 end
+				
+				-- if you're getting damaged by infestation, make killing a cyst be top priority (which is weight 0.9)
+				if weldTarget.isCorroded then
+					weight = math.min(0.85, weight)
+				end
             end
         end
 
@@ -1044,7 +1063,7 @@ kMarineBrainActions =
         local weight = 0.0
 
         if sdb:Get("attackNearestCyst") then
-            weight = 0.8
+            weight = 0.9
         else
             weight = 0.0
         end
@@ -1255,7 +1274,7 @@ kMarineBrainActions =
                 weight = weight * 5 -- gimme gimme gimme
             end
         end
-        
+		
         return { name = name, weight = weight,
             perform = function(move)
 
@@ -1627,7 +1646,7 @@ local function GetAttackUrgency(bot, mem)
             [kMinimapBlipType.Onos] =  numOthers >= 4  and 0.1 or 7.0,
             [kMinimapBlipType.Marine] = numOthers >= 2 and 0.1 or 6.0,
             [kMinimapBlipType.JetpackMarine] = numOthers >= 2 and 0.1 or 5.0,
-            [kMinimapBlipType.Exo] =  numOthers >= 4  and 0.1 or 4.0,
+            [kMinimapBlipType.Exo] =  numOthers >= 4  and 0.1 or 5.0,
             [kMinimapBlipType.Sentry]  = numOthers >= 2   and 0.1 or 5.0
         }
         if table.contains(kMinimapBlipType, "Prowler") then

@@ -9,6 +9,13 @@ local smallIconWidth = 128
 local bigIconWidth = 400
 local bigIconHeight = 300
 
+-- small override if combat is running
+if kCombatVersion then
+	shieldTexture = PrecacheAsset("ui/combat_shield.dds")
+	smallIconHeight = 80
+	smallIconWidth = 80
+end
+
 local old_InitializeItemButtons = GUIMarineBuyMenu._InitializeItemButtons
 function GUIMarineBuyMenu:_InitializeItemButtons()
     old_InitializeItemButtons(self)
@@ -31,7 +38,7 @@ function GUIMarineBuyMenu:_UpdateContent(deltaTime)
     if not self.hoverItem then
         techId = self.selectedItem
     end
-    if techId ~= nil and techId ~= kTechId.None then
+    if techId ~= nil and techId ~= kTechId.None and self.portrait then
         if techId == kTechId.ShieldGenerator then
             self.portrait:SetTexture(shieldBigIcon)
             self.portrait:SetTexturePixelCoordinates(0, 0, bigIconWidth, bigIconHeight)

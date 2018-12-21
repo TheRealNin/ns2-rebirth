@@ -31,8 +31,9 @@ debug.replaceupvalue( GrenadeLauncher.FirePrimary, "ShootGrenade", ShootGrenade,
 
 -- for fast reloading
 function GrenadeLauncher:GetCatalystSpeedBase()
+	local base = ClipWeapon.GetCatalystSpeedBase and ClipWeapon.GetCatalystSpeedBase(self) or 1
     if self:GetIsReloading() or not self.primaryAttacking then
-        return 1.5
+        return kGrenadeLauncherReload * base
     end
-    return 1
+    return base
 end

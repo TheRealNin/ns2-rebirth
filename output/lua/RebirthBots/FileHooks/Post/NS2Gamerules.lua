@@ -25,7 +25,14 @@ if Server then
         oldEndGame(self, winningTeam, autoConceded)
     end
 
-    
+    local oldOnCreate = NS2Gamerules.OnCreate
+    function NS2Gamerules:OnCreate()
+		oldOnCreate(self)
+		
+        if self.gameInfo:GetIsDedicated() then
+			self:SetEvenTeamsWithBots(Server.GetConfigSetting("even_teams_with_bots"))
+		end
+	end
     
     
     function NS2Gamerules:GetCanJoinTeamNumber(player, teamNumber)
@@ -65,6 +72,13 @@ if Server then
         return true
         
     end
+	
+	
+    function NS2Gamerules:SetEvenTeamsWithBots(evenTeams)
+        self.botTeamController:SetEvenTeamsWithBots(evenTeams)
+        self.botTeamController:UpdateBots()
+    end
+
     
     --TODO: Remove this hack
     local oldUpdate = NS2Gamerules.OnUpdate

@@ -42,7 +42,7 @@ local function PickupWeapon(self, weapon, wasAutoPickup)
     
     -- perform the actual weapon pickup (also drops weapon in the slot)
     self:AddWeapon(weapon, false) -- not wasAutoPickup
-    StartSoundEffectAtOrigin(Marine.kGunPickupSound, self:GetOrigin())
+    self:TriggerEffects("marine_weapon_pickup", { effecthostcoords = self:GetCoords() })
     
     -- switch to the active weapon if the player deliberately (non-automatically) picked up the weapon,
     -- or if the weapon they were picking up automatically replaced the currently held weapon

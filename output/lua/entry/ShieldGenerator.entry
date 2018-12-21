@@ -1,4 +1,4 @@
 modEntry = {
 FileHooks = "lua/ShieldGenerator/FileHooks.lua",
-Priority = -3
+Priority = 10
 }

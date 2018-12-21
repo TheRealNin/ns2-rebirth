@@ -1,7 +1,7 @@
 
 Grenade.kMinLifeTime = 0.0
 Grenade.kRadius = 0.02-- was 0.05
-Grenade.kDetonateRadius = 0.3 -- was 0.17
+Grenade.kDetonateRadius = 0.1 -- was 0.17
 local kGrenadeCameraShakeDistance = 15
 local kGrenadeMinShakeIntensity = 0.02
 local kGrenadeMaxShakeIntensity = 0.13
@@ -19,15 +19,14 @@ if Server then
         -- Remove grenade and add firing player.
         table.removevalue(hitEntities, self)
         
-        local damage = self.hasBounced and kGrenadeLauncherGrenadeDamageAfterBounce or kGrenadeLauncherGrenadeDamage
         
         -- full damage on direct impact
         if targetHit then
             table.removevalue(hitEntities, targetHit)
-            self:DoDamage(damage, targetHit, self:GetOrigin(), GetNormalizedVector(targetHit:GetOrigin() - self:GetOrigin()), "none")
+            self:DoDamage(kGrenadeLauncherGrenadeDamage, targetHit, self:GetOrigin(), GetNormalizedVector(targetHit:GetOrigin() - self:GetOrigin()), "none")
         end
 
-        RadiusDamage(hitEntities, self:GetOrigin(), kGrenadeLauncherGrenadeDamageRadius, damage, self)
+        RadiusDamage(hitEntities, self:GetOrigin(), kGrenadeLauncherGrenadeDamageRadius, kGrenadeLauncherGrenadeDamageSplash, self)
         
         CreateExplosionDecals(self)
         

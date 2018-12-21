@@ -324,3 +324,33 @@ function GetCystParentAvailable(techId, origin, normal, commander)
     return parent ~= nil
     
 end
+
+if Client then
+	
+	local origOnUpdate = Cyst.OnUpdate
+	function Cyst:OnUpdate(deltaTime)
+		origOnUpdate(self, deltaTime)
+		
+		
+		local player = Client.GetLocalPlayer()
+		
+		local model = self:GetRenderModel()
+		
+		if model and player then
+			local showTint = player ~= nil and GetAreEnemies(player, self)
+			
+			if Client.GetLocalClientTeamNumber() == kSpectatorIndex and self:GetTeamNumber() == kTeam1Index and 
+				player.specMode ~= nil and player.specMode ~= kSpectatorMode.Following and player.specMode ~= kSpectatorMode.FirstPerson then
+				showTint = false
+			end
+
+			if showTint then
+				model:SetMaterialParameter("tint", 1)
+			else
+				model:SetMaterialParameter("tint", 0)
+			end
+		end
+	end
+
+
+end

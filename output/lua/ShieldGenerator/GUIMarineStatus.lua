@@ -14,7 +14,7 @@ function GUIMarineStatus:Update(deltaTime, parameters)
     
     oldUpdate(self, deltaTime, parameters)
     
-    if updatePlz and GetHasTech(self, kTechId.ShieldGeneratorTech, true) then
+    if updatePlz then
     
         local player = Client.GetLocalPlayer()
         if player and player.personalShielded then

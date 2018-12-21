@@ -1,3 +1,3 @@
 
-kDissolveSpeed = 9.5
-kDissolveDelay = 1
+kDissolveSpeed = 10.0 -- actually the time
+kDissolveDelay = -1.25

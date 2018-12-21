@@ -54,15 +54,16 @@ function Ragdoll:OnUpdateRender()
     PROFILE("Ragdoll:OnUpdateRender")
     
     local now = Shared.GetTime()
+	local amount = 0.5
     if self.dissolveStart < now then
         
         if self.dissolveAmount < 1 then
             local t = (now - self.dissolveStart) / kRagdollTime
             self.dissolveAmount = Clamp( t * 0.5 + 0.5, 0.0, 1.0 )
         end
-        
-        self:SetOpacity(1-self.dissolveAmount, "dissolveAmount")
+        amount = 1-self.dissolveAmount
         
     end
+	self:SetOpacity(amount, "dissolveAmount")
     
 end

@@ -324,6 +324,12 @@ if Client then
             end
         end
     end
+	
+	function HadesDevice:GetStrobeIntensity()
+		local sirenRatio = Clamp((Shared.GetTime() - self.detonateTime) / kHadesDeviceDetonateTime, 0, 1)
+		
+		return math.cos(200 * math.pow(sirenRatio, 3)) * 0.5 + 0.5
+	end
 
     function HadesDevice:UpdateStrobe()
         
@@ -350,7 +356,7 @@ if Client then
                     self.strobeLight:SetIntensity(45.0 * self:GetDetonateRatio())
                 else
                     self.strobeLight:SetColor( Color(0.5 * self:GetDetonateRatio() + 0.5, 0.1, 0.0) )
-                    self.strobeLight:SetIntensity(Clamp(math.cos(sirenTime / (self:GetDetonateInterval() + 0.25)), 0, 1) * 45.0)
+                    self.strobeLight:SetIntensity(self:GetStrobeIntensity() * 45.0)
                 end
             elseif self:GetIsArmed() then
                 self.strobeLight:SetColor( Color(0.1, 0.9, 0.0) )

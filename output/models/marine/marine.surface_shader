@@ -105,7 +105,7 @@
                 material.albedo.r = pow(material.albedo.r, 0.95);
                 material.albedo.g = pow(material.albedo.g, 1.1);
                 material.albedo.b = pow(material.albedo.b, 1.1);
-                
+				
                 // this fucks with the channels
                 material.emissive.r = pow(material.emissive.b, 0.5);
                 material.emissive.g = pow(material.emissive.g, 10.0);

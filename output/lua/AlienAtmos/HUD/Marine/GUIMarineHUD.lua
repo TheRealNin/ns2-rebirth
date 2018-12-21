@@ -1,7 +1,7 @@
 
 
 -- this just bothered me
-GUIMarineHUD.kNumInitSquares = 45
+GUIMarineHUD.kNumInitSquares = 60
 function GUIMarineHUD:TriggerInitAnimations()
 
     self.scanLeft:SetColor(Color(1,1,1,0.8))
@@ -34,7 +34,7 @@ function GUIMarineHUD:TriggerInitAnimations()
         animatedSquare:SetPosition(randomPos)
         animatedSquare:SetSize(GUIMarineHUD.kInitSquareSize)
         animatedSquare:SetColor(GUIMarineHUD.kInitSquareColors)
-        animatedSquare:FadeOut(0.5 + i/GUIMarineHUD.kNumInitSquares, nil, AnimateLinear,
+        animatedSquare:FadeOut(0.1 + i/GUIMarineHUD.kNumInitSquares, nil, AnimateQuadratic,
             function (self, item)
                 item:Destroy()
             end
@@ -42,4 +42,28 @@ function GUIMarineHUD:TriggerInitAnimations()
     
     end
 
+end
+
+
+local oldUpdate = GUIMarineHUD.Update
+function GUIMarineHUD:Update(deltaTime)
+	oldUpdate(self, deltaTime)
+	
+    local player = Client.GetLocalPlayer()
+	if player then
+	
+		if not player._GUI_shove then
+			player._GUI_shove = 0
+		end
+		local shove = GUIScale(player._GUI_shove * 1.25)
+		if shove < 1 then
+			shove = 0
+		end
+		self.background:SetPosition( Vector(0, shove, 0) )
+		
+	else
+	
+		self.background:SetPosition( Vector(0, 0, 0) )
+		
+	end
 end

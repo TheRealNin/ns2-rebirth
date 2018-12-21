@@ -542,16 +542,20 @@ end
 local function LoadSoundEffect(className, groupName, values)
 
     local soundEffect = Server.CreateEntity(className)
+	Log("Loading "..className)
     if soundEffect then
     
         soundEffect:SetMapEntity()
         
         soundEffect:SetOrigin(values.origin)
         soundEffect:SetAngles(values.angles)
-        
+		
         Shared.PrecacheSound(values.eventName)
         soundEffect:SetAsset(values.eventName)
         
+		-- make maps way quieter
+        soundEffect:SetVolume(0.1)
+		
         if values.listenChannel then
             soundEffect:SetListenChannel(values.listenChannel)
         end

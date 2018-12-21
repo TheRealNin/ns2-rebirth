@@ -3,7 +3,7 @@ local kGrenadeCameraShakeDistance = 15
 local kGrenadeMinShakeIntensity = 0.01
 local kGrenadeMaxShakeIntensity = 0.14
 
-local function EnergyDamage(hitEntities, origin, radius, damage)
+local function EnergyDamage(hitEntities, origin, radius, damage, self)
 
     for _, entity in ipairs(hitEntities) do
     
@@ -42,7 +42,7 @@ if Server then
         end
         
         RadiusDamage(hitEntities, self:GetOrigin(), kPulseGrenadeDamageRadius, kPulseGrenadeDamage, self)
-        EnergyDamage(hitEntities, self:GetOrigin(), kPulseGrenadeEnergyDamageRadius, kPulseGrenadeEnergyDamage)
+        EnergyDamage(hitEntities, self:GetOrigin(), kPulseGrenadeEnergyDamageRadius, kPulseGrenadeEnergyDamage, self)
 
         local surface = GetSurfaceFromEntity(targetHit)
         

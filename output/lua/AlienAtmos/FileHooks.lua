@@ -34,11 +34,11 @@ ModLoader.SetupFileHook( "lua/Ragdoll.lua", "lua/AlienAtmos/Ragdoll.lua", "post"
 ModLoader.SetupFileHook( "lua/DamageMixin.lua", "lua/AlienAtmos/DamageMixin.lua", "post" )
 ModLoader.SetupFileHook( "lua/RagdollMixin.lua", "lua/AlienAtmos/RagdollMixin.lua", "post" )
 
+ModLoader.SetupFileHook( "lua/Player.lua", "lua/AlienAtmos/Player.lua", "post" )
 ModLoader.SetupFileHook( "lua/Player_Client.lua", "lua/AlienAtmos/Player_Client.lua", "post" )
 
 
 ModLoader.SetupFileHook( "lua/IdleMixin.lua", "lua/AlienAtmos/IdleMixin.lua", "post" )
-ModLoader.SetupFileHook( "lua/Lerk.lua", "lua/AlienAtmos/Lerk.lua", "post" )
 
 
 ModLoader.SetupFileHook( "lua/Globals.lua", "lua/AlienAtmos/Globals.lua", "post" )
@@ -47,4 +47,8 @@ ModLoader.SetupFileHook( "lua/NS2Utility.lua", "lua/AlienAtmos/NS2Utility.lua", 
 
 -- this basically removes the flinch mixin
 ModLoader.SetupFileHook( "lua/FlinchMixin.lua", "lua/AlienAtmos/FlinchMixin.lua", "replace" )
+
+-- GUI stuff
+ModLoader.SetupFileHook( "lua/Hud/Marine/GUIMarineHUD.lua", "lua/AlienAtmos/HUD/Marine/GUIMarineHUD.lua", "post" )
+ModLoader.SetupFileHook( "lua/GUIAlienHUD.lua", "lua/AlienAtmos/GUIAlienHUD.lua", "post" )
 

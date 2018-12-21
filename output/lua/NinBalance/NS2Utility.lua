@@ -106,3 +106,28 @@ function AttackMeleeCleaveCapsule(weapon, player, damage, range, optionalCoords,
     return didHit, targets[#targets], endPoint, surface
 
 end
+
+
+
+function GetMaxSupplyForTeam(teamNumber)
+
+    local maxSupply = 0
+
+    if Server then
+    
+        local team = GetGamerules():GetTeam(teamNumber)
+        if team and team.GetNumCapturedTechPoints then
+            maxSupply = team:GetNumCapturedTechPoints() * kSupplyPerTechpoint
+        end
+        
+    else    
+        
+        local teamInfoEnt = GetTeamInfoEntity(teamNumber)
+        if teamInfoEnt and teamInfoEnt.GetNumCapturedTechPoints then
+            maxSupply = teamInfoEnt:GetNumCapturedTechPoints() * kSupplyPerTechpoint
+        end
+
+    end   
+
+    return maxSupply 
+end

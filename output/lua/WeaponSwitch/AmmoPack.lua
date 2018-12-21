@@ -59,8 +59,8 @@ function WeaponAmmoPack:OnGiveAmmo(recipient)
         
     end  
     
-    if consumedSome then
-        StartSoundEffectAtOrigin(AmmoPack.kPickupSound, recipient:GetOrigin())
+    if consumedPack then
+        self:TriggerEffects("ammopack_pickup", { effecthostcoords = recipient:GetCoords()})
     end
     
     return consumedAll

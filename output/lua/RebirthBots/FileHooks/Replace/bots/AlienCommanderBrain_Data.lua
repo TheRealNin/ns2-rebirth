@@ -149,12 +149,14 @@ kAlienComBrainActions =
             if targetRP then
                 weight = EvalLPF( sdb:Get("numHarvesters"),
                     {
-                        {0, 10},
-                        {1, 9},
-                        {2, 7},
-                        {3, 6},
-                        {4, 5},
-                        {5, 4}
+                        {0, 15},
+                        {1, 10},
+                        {2, 9},
+                        {3, 8},
+                        {4, 7},
+                        {5, 6},
+                        {6, 5},
+                        {7, 4}
                     })
             end
 
@@ -186,7 +188,7 @@ kAlienComBrainActions =
             [kTechId.AlienAlertNeedMist] = function(target)
                 local timeleft = target and target.gestationTime or 0 --get evolve time
 
-                if #GetEntitiesForTeamWithinRange("NutrientMist", teamnumber, target:GetOrigin(), NutrientMist.kSearchRange) > 1 then
+                if #GetEntitiesForTeamWithinRange("NutrientMist", teamnumber, target:GetOrigin(), NutrientMist.kSearchRange) > 0 then
                     timeleft = 0
                 end
 
@@ -206,7 +208,7 @@ kAlienComBrainActions =
                     return 0.0
                 end
 
-                if #GetEntitiesForTeamWithinRange("NutrientMist", teamnumber, position, NutrientMist.kSearchRange) > 1 then
+                if #GetEntitiesForTeamWithinRange("NutrientMist", teamnumber, position, NutrientMist.kSearchRange) > 0 then
                     return 0.0
                 end
 
@@ -221,7 +223,7 @@ kAlienComBrainActions =
                     return 0.0
                 end
 
-                if #GetEntitiesForTeamWithinRange("NutrientMist", teamnumber, position, NutrientMist.kSearchRange) > 1 then
+                if #GetEntitiesForTeamWithinRange("NutrientMist", teamnumber, position, NutrientMist.kSearchRange) > 0 then
                     return 0.0
                 end
 
@@ -613,24 +615,11 @@ function CreateAlienComSenses()
     end)
 
     s:Add("techPointToTake", function(db)
+	
         local tps = GetAvailableTechPoints()
-        local memories = GetTeamMemories( db.bot:GetTeamNumber() )
         local avail_tps = {}
         for i, tp in ipairs(tps) do -- search through list of available techpoints
-            local tp_safe = true
-            for _,mem in ipairs(memories) do
-                local target = Shared.GetEntity(mem.entId)
-                if HasMixin(target, "Live") and target:GetIsAlive() and db.bot:GetTeamNumber() ~= target:GetTeamNumber() then
-                    local dist = tp:GetOrigin():GetDistance( mem.lastSeenPos )
-                    
-                    -- hack because some memories are at the origin of the map...
-                    if dist < 25 and Vector(0,0,0):GetDistance( mem.lastSeenPos ) > 5 then
-                        tp_safe = false
-                        break
-                    end
-                end
-            end
-            if tp_safe then
+            if GetIsAreaSafe(db.bot:GetTeamNumber(), tp:GetOrigin(), 25) then
                 table.insert(avail_tps, tp)
             end
         end
@@ -639,6 +628,7 @@ function CreateAlienComSenses()
             return GetMinDistToEntities( tp, cysts )
             end)
         return tp
+		
         end)
 
     -- RPs that are not taken, not necessarily good or on infestation
@@ -662,7 +652,7 @@ function CreateAlienComSenses()
             local hives = db:Get("hives")
             local dist, rp = GetMinTableEntry( rps, function(rp)
                 -- Check infestation
-                if GetIsPointOnInfestation(rp:GetOrigin(), db.bot:GetTeamNumber()) then
+                if GetIsPointOnInfestation(rp:GetOrigin(), db.bot:GetTeamNumber()) and GetIsAreaSafe(db.bot:GetTeamNumber(), rp:GetOrigin(), 15) then
                     return GetMinPathDistToEntities( rp, hives )
                 end
                 return nil

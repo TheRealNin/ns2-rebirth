@@ -1,0 +1,7 @@
+shader = "materials/biodome/biodome_glass.surface_shader"
+albedoMap = "materials/descent/descent_glass_tile_01.dds"
+specularMap = "materials/descent/descent_glass_tile_01_spec.dds"
+emissiveMap = "materials/refinery/docking_glass_01.dds"
+normalMap = "materials/refinery/docking_glass_01_normal.dds"
+opacityMap = "materials/refinery/docking_glass_01_alpha.dds"
+surface = "glass"

@@ -6,19 +6,29 @@ local personalities = {
         ["aim"] = 0.9,
         ["help"] = 0.0,
         ["aggro"] = 0.9,
-        ["sneaky"] = true
+        ["sneaky"] = true,
+        ["tricky"] = false
     },
     {["names"] = {"Apache Attack Helicopter", "Poor Life Decisions", "Suspiciously Slow", "Kony Hawk Pro Slaver", "Shaving Ryan's Privates", "Not A Human, Promise", "The Terrible Spicy Tea", "Believe it or not, France", "Nipple of the North", "Hank Hill", "Obesity Related Illness", "Nein Lives", "Gorge of the Jungle", "Sock Full of Shame", "Country-Steak:Sauce", "Only Couches Pull Out", "Stop Dying, you Cowards!", "Stone Cold Steve Autism", "Syndrome of a Down", "I Only Love My Mom", "I Hope Senpai Notices Me", "Harry P. Ness"},
         ["aim"] = 0.5,
         ["help"] = 0.9,
         ["aggro"] = 0.0,
-        ["sneaky"] = true
+        ["sneaky"] = true,
+        ["tricky"] = false
     },
     {["names"] = {"IronHorse", "BeigeAlert", "McGlaspie", "Flayra", "Ghoul", "sclark39", "fsfod", "rantology", "WasabiOne"},
         ["aim"] = 0.0,
         ["help"] = 0.0,
         ["aggro"] = 0.9,
-        ["sneaky"] = false
+        ["sneaky"] = false,
+        ["tricky"] = false
+    },
+    {["names"] = {"Tachi", "Bleu", "Jon", "Nordic", "Tiny Rick", "Bums", "jusma", "Fluffy Cloud Zombie", "barlth", "wooza", "Death", "Sog", "technicsix"},
+        ["aim"] = 0.8,
+        ["help"] = 0.5,
+        ["aggro"] = 0.5,
+        ["sneaky"] = true,
+        ["tricky"] = true
     },
 }
 
@@ -46,6 +56,7 @@ function PlayerBot:OnThink()
         self.helpAbility = botType.help
         self.aggroAbility = botType.aggro
         self.sneakyAbility = botType.sneaky
+        self.trickyAbility = botType.tricky
         self.initializedBot = true
     end
         
@@ -112,22 +123,24 @@ function PlayerBot:UpdateNameAndGender()
         name = self:GetNamePrefix()..TrimName(self.botName)
         player:SetName(name)
 
-        -- set gender
-        self.client.variantData = {
+		self.client.variantData = {
             isMale = math.random() < 0.8,
-            marineVariant = kMarineVariant[kMarineVariant[math.random(1, #kMarineVariant)]],
-            skulkVariant = kSkulkVariant[kSkulkVariant[math.random(1, #kSkulkVariant)]],
-            gorgeVariant = kGorgeVariant[kGorgeVariant[math.random(1, #kGorgeVariant)]],
-            lerkVariant = kLerkVariant[kLerkVariant[math.random(1, #kLerkVariant)]],
-            fadeVariant = kFadeVariant[kFadeVariant[math.random(1, #kFadeVariant)]],
-            onosVariant = kOnosVariant[kOnosVariant[math.random(1, #kOnosVariant)]],
-            rifleVariant = kRifleVariant[kRifleVariant[math.random(1, #kRifleVariant)]],
-            pistolVariant = kPistolVariant[kPistolVariant[math.random(1, #kPistolVariant)]],
-            axeVariant = kAxeVariant[kAxeVariant[math.random(1, #kAxeVariant)]],
-            shotgunVariant = kShotgunVariant[kShotgunVariant[math.random(1, #kShotgunVariant)]],
-            exoVariant = kExoVariant[kExoVariant[math.random(1, #kExoVariant)]],
-            shoulderPadIndex = 0
-        }
+			marineVariant = kMarineVariant[kMarineVariant[math.random(1, #kMarineVariant)]],
+			skulkVariant = kSkulkVariant[kSkulkVariant[math.random(1, #kSkulkVariant)]],
+			gorgeVariant = kGorgeVariant[kGorgeVariant[math.random(1, #kGorgeVariant)]],
+			lerkVariant = kLerkVariant[kLerkVariant[math.random(1, #kLerkVariant)]],
+			fadeVariant = kFadeVariant[kFadeVariant[math.random(1, #kFadeVariant)]],
+			onosVariant = kOnosVariant[kOnosVariant[math.random(1, #kOnosVariant)]],
+			rifleVariant = kRifleVariant[kRifleVariant[math.random(1, #kRifleVariant)]],
+			pistolVariant = kPistolVariant[kPistolVariant[math.random(1, #kPistolVariant)]],
+			axeVariant = kAxeVariant[kAxeVariant[math.random(1, #kAxeVariant)]],
+			shotgunVariant = kShotgunVariant[kShotgunVariant[math.random(1, #kShotgunVariant)]],
+			exoVariant = kExoVariant[kExoVariant[math.random(1, #kExoVariant)]],
+			flamethrowerVariant = kFlamethrowerVariant[kFlamethrowerVariant[math.random(1, #kFlamethrowerVariant)]],
+			grenadeLauncherVariant = kGrenadeLauncherVariant[kGrenadeLauncherVariant[math.random(1, #kGrenadeLauncherVariant)]],
+			welderVariant = kWelderVariant[kWelderVariant[math.random(1, #kWelderVariant)]],
+			shoulderPadIndex = 0
+		}
         self.client:GetControllingPlayer():OnClientUpdated(self.client)
         
     end

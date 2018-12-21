@@ -12,6 +12,7 @@
 		<input name="glowIntensity" type="float">1.0</input>
 		<input name="highlight" type="float">0.0</input>
 		<input name="outline" type="float">0.0</input>
+		<input name="tint" type="float">1.0</input>
 	</inputs>
 	
 	<params>
@@ -45,12 +46,13 @@
 			float param         = tex2D(blendMap, input.texCoord).a; // speading parameter
 			float textureSpeed  = 2;
 			float destroySpeed  = 2.5;
+			float tintTeam      = tint;
 		
 			float4 specularGloss = tex2D(specularMap, input.texCoord);
 			material.tsNormal 	= DecodeNormal( tex2D(normalMap, input.texCoord) );			
 			
             float specAmount    = (specularGloss.r + specularGloss.g + specularGloss.b) * 3.5 + 0.1;
-			material.gloss		= specularGloss.a * 0.5;
+			material.gloss		= specularGloss.a * 0.1;
 			
 			float opacity       = paramSlow(param,destroySpeed);
 			float blend         = paramQuick(param,textureSpeed);
@@ -64,6 +66,7 @@
 			    material.albedo = tex2D(overlayMap, input.texCoord * 4).rgb;
 			}
 
+			
 			// Opacity
 			material.opacity = (opacity + f - 0.5) * tex2D(opacityMap, input.texCoord).rgb;
 			material.emissive   = tex2D(emissiveMap, input.texCoord).rgb * f * glowIntensity;
@@ -75,6 +78,19 @@
             float shine = saturate( specularGloss.a * 2);
             material.albedo += intensity * shine;
 			material.specular	= (float3)specAmount * intensity;
+            
+			// this is reversed from marines
+            if (tintTeam < 0.5){
+                material.albedo.r = pow(material.albedo.r, 0.95);
+                material.albedo.g = pow(material.albedo.g, 1.1);
+                material.albedo.b = pow(material.albedo.b, 1.1);
+				
+                // this fucks with the channels
+                material.emissive.b = pow(material.emissive.r, 0.5);
+                material.emissive.g = pow(material.emissive.g, 0.9);
+                material.emissive.r = pow(material.emissive.g, 0.9);
+				
+            }
             
 			material.id = 1*highlightId; // To make it show up on alien vision
 			material.outline = outline;

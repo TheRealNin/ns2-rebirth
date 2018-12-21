@@ -482,6 +482,7 @@ local networkVars =
 
 AddMixinNetworkVars(TechMixin, networkVars)
 AddMixinNetworkVars(TeamMixin, networkVars)
+AddMixinNetworkVars(LOSMixin, networkVars)
 
 function PredictedProjectile:OnCreate()
 
@@ -489,6 +490,9 @@ function PredictedProjectile:OnCreate()
 
     InitMixin(self, EffectsMixin)
     InitMixin(self, TechMixin)
+    InitMixin(self, TeamMixin)
+    InitMixin(self, EntityChangeMixin)
+    InitMixin(self, LOSMixin)
 
     if Server then
 
@@ -499,7 +503,13 @@ function PredictedProjectile:OnCreate()
 
     self:SetUpdates(true)
     self:SetRelevancyDistance(kMaxRelevancyDistance)
+	
+	self:SetPhysicsCullable(false)
 
+end
+
+function PredictedProjectile:OverrideCheckVision()
+    return false
 end
 
 function PredictedProjectile:OnInitialized()
@@ -613,18 +623,20 @@ if Server then
 
 end
 
-function PredictedProjectile:OnUpdateRender()
+if Client then
+	function PredictedProjectile:OnUpdate(deltaTime)
+		Entity.OnUpdate(self, deltaTime)
+		UpdateRenderCoords(self)
 
-    UpdateRenderCoords(self)
+		if self.renderModel then
+			self.renderModel:SetCoords(self.renderCoords)
+		end
 
-    if self.renderModel then
-        self.renderModel:SetCoords(self.renderCoords)
-    end
+		if self.projectileCinematic then
+			self.projectileCinematic:SetCoords(self.renderCoords)
+		end
 
-    if self.projectileCinematic then
-        self.projectileCinematic:SetCoords(self.renderCoords)
-    end
-
+	end
 end
 
 Shared.LinkClassToMap("PredictedProjectile", PredictedProjectile.kMapName, networkVars, true)

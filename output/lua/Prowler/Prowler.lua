@@ -24,7 +24,8 @@ class 'Prowler' (Alien)
 
 Prowler.kMapName = "prowler"
 
-Prowler.kMaxSpeed = 8.25 -- skulk is 7.25, but 8.25 in Nin's Balance Mod
+Prowler.kMaxSpeed = 7.25 -- skulk is 7.25, but 8.25 in Nin's Balance Mod
+Prowler.kWalkBackwardSpeedScalar = 0.8
 Prowler.kWallJumpForce = 6.0 -- skulk was 6.4 -- scales down the faster you are
 Prowler.kWallJumpMaxSpeed = 11 -- skulk is 11
 Prowler.kMinWallJumpForce = 0.1
@@ -244,6 +245,11 @@ function Prowler:GetMaxSpeed(possible)
     return maxspeed
     
 end
+
+function Prowler:GetMaxBackwardSpeedScalar()
+    return Prowler.kWalkBackwardSpeedScalar
+end
+
 
 function Prowler:OnProcessMove(input)
 

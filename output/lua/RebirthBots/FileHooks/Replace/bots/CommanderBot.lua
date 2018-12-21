@@ -57,7 +57,7 @@ end
 ------------------------------------------
 function CommanderBot:_LazilyInitBrain()
 
-    if self.brain == nil and self.GetPlayer and self:GetPlayer().GetClassName then
+    if self.brain == nil and self.GetPlayer and self:GetPlayer() and self:GetPlayer().GetClassName then
 
         local brainClass = kCommander2BrainClass[ self:GetPlayer():GetClassName() ]
 

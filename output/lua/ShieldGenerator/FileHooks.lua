@@ -15,3 +15,10 @@ ModLoader.SetupFileHook( "lua/MarineTechMap.lua", "lua/ShieldGenerator/MarineTec
 ModLoader.SetupFileHook( "lua/Hud/Marine/GUIMarineStatus.lua", "lua/ShieldGenerator/GUIMarineStatus.lua", "post" )
 
 ModLoader.SetupFileHook( "lua/Player_Server.lua", "lua/ShieldGenerator/Player_Server.lua", "post" )
+
+-- add to combat!
+ModLoader.SetupFileHook( "lua/Combat/ExperienceData.lua", "lua/ShieldGenerator/Combat/ExperienceData.lua", "post" )
+ModLoader.SetupFileHook( "lua/Combat/ExperienceEnums.lua", "lua/ShieldGenerator/Combat/ExperienceEnums.lua", "post" )
+ModLoader.SetupFileHook( "lua/Combat/MarineBuyFuncs.lua", "lua/ShieldGenerator/Combat/MarineBuyFuncs.lua", "post" )
+ModLoader.SetupFileHook( "lua/Combat/Player_Upgrades.lua", "lua/ShieldGenerator/Combat/Player_Upgrades.lua", "post" )
+ModLoader.SetupFileHook( "lua/Combat/FileHooks/Post/Player_Server.lua", "lua/ShieldGenerator/Combat/Player_Server.lua", "post" )

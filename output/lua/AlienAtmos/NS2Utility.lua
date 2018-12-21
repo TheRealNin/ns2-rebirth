@@ -111,8 +111,6 @@ function HandleHitEffect(position, doer, surface, target, showtracer, altMode, d
     if doer then
         tableParams[kEffectFilterDoerName] = doer:GetClassName()
     end
-    tableParams[kEffectSurface] = surface
-    tableParams[kEffectFilterInAltMode] = altMode
 
     if target then
 
@@ -122,8 +120,18 @@ function HandleHitEffect(position, doer, surface, target, showtracer, altMode, d
 
             tableParams[kEffectFilterIsMarine] = target:GetTeamType() == kMarineTeamType
             tableParams[kEffectFilterIsAlien] = target:GetTeamType() == kAlienTeamType
-
+			
+			if target:GetTeamType() == kAlienTeamType and target.GetBaseArmor then
+				
+				if target:GetArmor() > target:GetBaseArmor() then
+					surface = "organicCarapace"
+				end
+				
+			end
+			
         end
+		
+		
 
     else
 
@@ -131,6 +139,11 @@ function HandleHitEffect(position, doer, surface, target, showtracer, altMode, d
         tableParams[kEffectFilterIsAlien] = false
 
     end
+	
+    tableParams[kEffectSurface] = surface
+    tableParams[kEffectFilterInAltMode] = altMode
+	
+
 
     -- Don't play the hit cinematic, those are made for third person.
     if target ~= Client.GetLocalPlayer() then

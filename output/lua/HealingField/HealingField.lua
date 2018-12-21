@@ -6,6 +6,7 @@ HealingField.kMapName = "healingfield"
 HealingField.kFieldEffect = PrecacheAsset("cinematics/healing_field/healing_field.cinematic")
 HealingField.kFieldEffectEnemy = PrecacheAsset("cinematics/healing_field/healing_field_enemy.cinematic")
 HealingField.kSound = PrecacheAsset("sound/NS2.fev/marine/structures/generic_spawn")
+HealingField.kHealthSound = PrecacheAsset("sound/NS2.fev/marine/common/health")
 
 HealingField.kType = CommanderAbility.kType.Repeat
 local kHealingInterval = 0.2
@@ -74,7 +75,7 @@ if Server then
             local healed = recipient:Heal(self:GetIntervalHealingAmount())
             -- recipient:AddRegeneration()
             if healed and (not recipient.timeLastMedpack or recipient.timeLastMedpack + kMedpackSoundInterval <= Shared.GetTime()) then 
-                StartSoundEffectAtOrigin(MedPack.kHealthSound, self:GetOrigin())
+                StartSoundEffectAtOrigin(HealingField.kHealthSound, self:GetOrigin())
                 recipient.timeLastMedpack = Shared.GetTime()
             end
 

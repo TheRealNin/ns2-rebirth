@@ -2,7 +2,7 @@
 local maxDistOffPath = 0.65
 local minDistToUnstuck = 3.0
 local timeToBeStuck = 60.0
-local rotateSpeedRatio = 2.0
+local rotateSpeedRatio = 1.33
 
 function BotMotion:OnGenerateMove(player)
     PROFILE("BotMotion:OnGenerateMove")
@@ -36,11 +36,29 @@ function BotMotion:OnGenerateMove(player)
 
         else
 
-            local updateMoveDir = self.nextMoveUpdate < now
-            local unstuckDuration = 0.4
+            local updateMoveDir = self.nextMoveUpdate <= now
+            local unstuckDuration = 1.2
             local isStuck = delta:GetLength() < 1e-2 or self.unstuckUntil > now
+			
+			if not isGroundMover and not isStuck and not isSneaking then
+				if not self.lastFlyingPos then
+					self.lastFlyingPos = currentPos
+					self.lastFlyingTime = Shared.GetTime()
+				else
+					if self.lastFlyingTime + 3 < Shared.GetTime() then
+						local flyingDelta = currentPos - self.lastFlyingPos
+						if flyingDelta:GetLength() < 2.5 then
+							isStuck = true
+							self.unstuckUntil = now + unstuckDuration * math.random()
+						else
+							self.lastFlyingPos = currentPos
+							self.lastFlyingTime = Shared.GetTime()
+						end
+					end
+				end
+			end
             
-            if self.desiredMoveTarget and isGroundMover then
+            if self.desiredMoveTarget and isGroundMover and not isStuck then
                 local moveTargetDelta = self.desiredMoveTarget - player:GetOrigin()
                 local vertDist = math.abs(moveTargetDelta.y)
                 if vertDist > 3.5 and vertDist > moveTargetDelta:GetLengthXZ() then
@@ -48,10 +66,11 @@ function BotMotion:OnGenerateMove(player)
                     -- but not actually stuck! we just want the random movement/jumping
                     self.lastStuckPos = nil
                     self.lastStuckTime = nil
-                    self.unstuckUntil = now + unstuckDuration * 2
+                    self.unstuckUntil = now + unstuckDuration * math.random()
                 end
             end
-            
+			
+			
             if updateMoveDir then
 
                self.nextMoveUpdate = now + kPlayerBrainTickFrametime
@@ -65,18 +84,22 @@ function BotMotion:OnGenerateMove(player)
                     end
                     
                     if self.unstuckUntil < now then
-                         -- Move randomly during Xs
-                         self.unstuckUntil = now + unstuckDuration
+						-- Move randomly during Xs
+						self.unstuckUntil = now + unstuckDuration * math.random()
 
-                         self.currMoveDir = GetRandomDirXZ()
-                         self:SetDesiredMoveDirection(self.currMoveDir)
-                         
-                         if not player:isa("Lerk") then
-                             doJump = true
-                             self.lastJumpTime = Shared.GetTime()
-                         else
-                             self.currMoveDir.y = -2
-                         end
+						self.currMoveDir = GetRandomDirXZ()
+
+						if isGroundMover then
+							doJump = true
+							self.lastJumpTime = Shared.GetTime()
+							self:SetDesiredMoveDirection(self.currMoveDir)
+						else
+							self.currMoveDir.y = math.sin(Shared.GetTime() * 0.3) * 4 - 2
+							self.desiredViewTarget = nil
+							groundPoint = nil
+						end
+
+							 
                     end
 
                 elseif distToTarget <= 1.0 then
@@ -162,7 +185,9 @@ function BotMotion:OnGenerateMove(player)
             desiredDir = self:GetCurPathLook(eyePos) -- self.currMoveDir
         else
             desiredDir = self.currMoveDir
-            desiredDir.y = 0.0  -- pathing points are slightly above ground, which leads to funny looking-up
+			if isGroundMover then
+				desiredDir.y = 0.0  -- pathing points are slightly above ground, which leads to funny looking-up
+			end
             desiredDir = desiredDir:GetUnit()
         end
         
@@ -184,7 +209,7 @@ function BotMotion:OnGenerateMove(player)
                 desiredDir.y =  (math.sin(time * 5.78 ) + math.cos(time * 8.35 )) * 0.9
             else
                 desiredDir = self:GetCurPathLook(eyePos)
-                desiredDir.y = desiredDir.y - 0.2
+                desiredDir.y = desiredDir.y - 0.3
             end
         elseif (player:isa("Lerk") or player:isa("Fade") or player:isa("Skulk")) and groundPoint then
         

@@ -29,8 +29,8 @@
 			material.specular	= float3(7, 7, 7) * fresnelIntensity  + float3(0.15, 0.15, 0.15);
 			material.gloss		= 2.0 * fresnelIntensity + 1.75;
             
-			float3 emissive     = input.color.rgb * tex2D(opacityMap, input.texCoord).rgb * 16.0f;
-			material.transmissionColor = input.color.rgb + input.color.rgb * fresnelIntensity + emissive - float3(0.60, 0.45, 0.42) * 1.2;
+			float3 emissive     = tex2D(opacityMap, input.texCoord).rgb * 16.0f;
+			material.transmissionColor = input.color.rgb + input.color.rgb * fresnelIntensity + emissive - input.color.rgb * float3(0.60, 0.45, 0.42) * 1.5;
             material.opacity    = 1;
 			material.ssDistortion = input.vsNormal.xy * float2(1, -1) * -0.004;
 			

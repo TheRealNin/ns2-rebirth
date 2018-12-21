@@ -96,12 +96,12 @@ function GetIsPointOnInfestation(point, teamNumber)
     for infestationIndex = 1, #infestationEntities do
 
         local infestation = infestationEntities[infestationIndex]
-        if infestation:GetIsPointOnInfestation(point) then
+		if infestation:GetIsPointOnInfestation(point) then
 
-            onInfestation = true
-            break
+			onInfestation = true
+			break
 
-        end
+		end
 
     end
 

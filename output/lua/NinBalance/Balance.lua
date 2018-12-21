@@ -15,9 +15,10 @@ kGoreDamage = 100 -- was 90
 -- marine changes
 
 kGrenadeLauncherGrenadeDamage = 120 -- was 165, but this number is also reduced by 20%. -- 115 will not killa skulk at w0 and bio0
-kGrenadeLauncherGrenadeDamageAfterBounce = 70 
-kGrenadeLauncherGrenadeDamageRadius = 4.0 -- was 4.8
+kGrenadeLauncherGrenadeDamageSplash = 80 
+kGrenadeLauncherGrenadeDamageRadius = 3.0 -- was 4.8
 kGrenadeLifetime = 2.5 -- was 2.0
+kGrenadeLauncherReload = 1.3
 
 --kWelderDamagePerSecond = 30 -- was 30
 kAxeDamage = 30 -- was 25
@@ -31,7 +32,7 @@ kBulletDamageFalloffEnd = 35
 kBulletDamageFalloffFraction = 0.5
 
 kShotgunDamageFalloffStart = 8
-kShotgunDamageFalloffEnd = 20
+kShotgunDamageFalloffEnd = 15
 kShotgunDamageFalloffFraction = 0.25
 kShotgunFireRate = 0.88 -- was 0.88
 kShotgunDamage = 18 -- was 10 for 17 pellets
@@ -44,12 +45,13 @@ kMinigunDamageFalloffFraction = 0.6
 
 kClusterGrenadeDamage = 55 * 1.4
 kClusterFragmentDamage = 20 * 1.4
+kClusterGrenadeDamageType = kDamageType.Normal
 
 kClusterGrenadeDamageRadius = 4 -- was 10
-kClusterFragmentDamageRadius = 4 -- was 6
+kClusterFragmentDamageRadius = 5 -- was 6
 
 kPulseGrenadeDamage = 95 -- was 110
-
+kPulseGrenadeDamageRadius = 4 -- was 6
 
 kRoboticsFactoryCost = 5 -- was 10
 kUpgradeRoboticsFactoryCost = 10 -- was 5

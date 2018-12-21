@@ -28,8 +28,24 @@ if Client then
         local visible = parasited
         local player = Client.GetLocalPlayer()
         local now = Shared.GetTime()
+		local model = self:GetRenderModel()
         
         
+		if model then
+			local showTint = player ~= nil and GetAreEnemies(player, self)
+			
+			if Client.GetLocalClientTeamNumber() == kSpectatorIndex and self:GetTeamNumber() == kTeam1Index and 
+				player.specMode ~= nil and player.specMode ~= kSpectatorMode.Following and player.specMode ~= kSpectatorMode.FirstPerson then
+				showTint = false
+			end
+
+			if showTint then
+				model:SetMaterialParameter("tint", 1)
+			else
+				model:SetMaterialParameter("tint", 0)
+			end
+		end
+		
         -- for spectators
         if Client.GetLocalClientTeamNumber() == kSpectatorIndex
               and (self:GetTeamNumber() == kTeam1Index or self:GetTeamNumber() == kTeam2Index or self:GetTeamNumber() == kNeutralTeamNumber)
@@ -39,7 +55,6 @@ if Client then
             
             if visible ~= self.hiveSightVisible then
                 
-                local model = self:GetRenderModel()
                 if visible and model ~= nil then
                     if self:GetTeamNumber() == kTeam2Index then
                         HiveVision_AddModel( model, kHiveVisionOutlineColor.KharaaOrange )
@@ -75,10 +90,10 @@ if Client then
             -- Update the visibility status.
             if visible ~= self.hiveSightVisible then
             
-                local model = self:GetRenderModel()
                 local addModelColor = nil
                 if model ~= nil then
-                
+					
+					
                     if visible then
                         if not GetAreEnemies(self, player) then
                             addModelColor = kHiveVisionOutlineColor.Blue

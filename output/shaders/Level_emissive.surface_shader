@@ -28,7 +28,7 @@
 			float shininess  = albedo.a * 20;
             float greyscale = (albedo.r + albedo.g + albedo.b)*0.3;
 			float glossiness = 20;
-            float specularColor = saturate(pow(greyscale, 0.6)*0.1);
+            float specularColor = saturate(pow(greyscale, 0.6)*0.2);
 			
 			float3 ssDir = normalize(input.vsPosition);
             float intensity = -dot(ssDir, input.vsNormal);

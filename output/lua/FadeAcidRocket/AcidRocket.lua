@@ -19,13 +19,11 @@ AcidRocket.kLifetime = 6
 
 local networkVars = { }
 
-AddMixinNetworkVars(TeamMixin, networkVars)
 
 function AcidRocket:OnCreate()
     
     PredictedProjectile.OnCreate(self)
     
-    InitMixin(self, TeamMixin)
     InitMixin(self, DamageMixin)
     
     if Server then

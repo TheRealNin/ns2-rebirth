@@ -12,7 +12,7 @@ kTeamVsTeamDamage[kMarineTeamType][kMarineTeamType]  = 1.33
 --kTeamVsTeamDamage[kMarineTeamType][kNeutralTeamType] = 1.33
     
 kTeamVsTeamDamage[kAlienTeamType] = {}
-kTeamVsTeamDamage[kAlienTeamType][kAlienTeamType] = 0.85
+kTeamVsTeamDamage[kAlienTeamType][kAlienTeamType] = 1.0
 
 -- this is the exo speed modifier when you get hit by a shock grenade
 kElectrifiedSpeedScalar = 0.5

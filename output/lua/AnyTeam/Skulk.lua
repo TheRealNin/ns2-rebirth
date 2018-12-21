@@ -2,6 +2,7 @@ function Skulk:GetHeartOffset()
     return Vector(0, 0.6, 0)
 end
 
+--[[
 local kSkulkBiteModifier = 0.70
 
 local kSkulkModifier = {}
@@ -28,3 +29,4 @@ function Skulk:ModifyDamageTaken(damageTable, attacker, doer, damageType)
     
 
 end
+]]--

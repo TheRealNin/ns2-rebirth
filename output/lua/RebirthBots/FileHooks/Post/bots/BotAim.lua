@@ -1,9 +1,21 @@
 
-local aimRandomness = 0.0001
+local aimRandomness = 0.001
 
-BotAim.viewAngle = math.rad(47)
-BotAim.reactionTime = 0.35 -- was 0.3
+BotAim.viewAngle = math.rad(27)
+BotAim.reactionTime = 0.40 -- was 0.30
 BotAim.panicDistSquared = 2.0 * 2.0
+
+local oldBotAim_UpdateAim = BotAim_UpdateAim
+function BotAim_UpdateAim(self, target, targetAimPoint)
+    local player = self.owner:GetPlayer()
+	if player then
+		local dist = player:GetEyePos():GetDistance(targetAimPoint)
+		local d = dist * aimRandomness
+		local randPoint = Vector(math.random() * d - d*0.5,math.random() *  d - d*0.5,math.random() *  d - d*0.5)
+		targetAimPoint = targetAimPoint + randPoint
+	end
+	return oldBotAim_UpdateAim(self, target, targetAimPoint)
+end
 
 function BotAim:UpdateAim(target, targetAimPoint)
     PROFILE("BotAim:UpdateAim")
@@ -22,6 +34,10 @@ end
 
 function BotAim:GetReactionTime()
     local reducedReaction = self.owner.aimAbility * 0.1
+	local serverSkill = GetGameInfoEntity():GetAveragePlayerSkill()
+	if serverSkill then
+		reducedReaction = reducedReaction * Clamp((serverSkill-500)/2000, -1, 1)
+	end
     return BotAim.reactionTime - reducedReaction
 end
 
@@ -51,14 +67,11 @@ function BotAim_GetAimPoint(self, now, aimPoint)
                     local movementVector = (p2 - p1) / mt
                     local speed = movementVector:GetLength()
                     local result = p1 + movementVector * (dt)
-                    local delta = result - aimPoint
-                    
-                    local d = delta:GetLength() * aimRandomness
-                    local randPoint = Vector(math.random() * d - d*0.5,math.random() *  d - d*0.5,math.random() *  d - d*0.5)
                     if gBotDebug:Get("aim") then
+						local delta = result - aimPoint
                         Log("%s: Aiming at %s, off by %s, speed %s (%s tracks)", self.owner, target1, delta:GetLength(), speed, #self.targetTrack)
                     end
-                    return result + randPoint
+                    return result
                 end
             end
             if gBotDebug:Get("aim") and gBotDebug:Get("spam") then

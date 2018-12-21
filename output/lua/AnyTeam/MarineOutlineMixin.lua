@@ -3,13 +3,14 @@ if Client then
 
 
     function MarineOutlineMixin:OnUpdate(deltaTime)   
+	
         PROFILE("MarineOutlineMixin:OnUpdate")
+		
         local player = Client.GetLocalPlayer()
-        
-        
         local model = self:GetRenderModel()
+		
         if model ~= nil then 
-        
+		
             local outlineModel = Client.GetOutlinePlayers() and 
                                     ( ( Client.GetLocalClientTeamNumber() == kSpectatorIndex ) or 
                                       ( player:GetTeamType() == kMarineTeamType and not GetAreEnemies(player, self)) )
